@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:iconify_flutter/iconify_flutter.dart';
 import 'package:iconify_flutter/icons/material_symbols.dart';
 import 'package:iconify_flutter/icons/ic.dart';
 import 'package:iconify_flutter/icons/uil.dart';
 import 'package:iconify_flutter/icons/ph.dart';
+import 'drawer_item.dart';
 
 
 class AdminDrawer extends HookWidget{
@@ -18,7 +18,8 @@ class AdminDrawer extends HookWidget{
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.zero
       ),
-      child: ListView(
+      child: SafeArea(
+        child: ListView(
         padding: EdgeInsets.all(20),
         children: [
           Container(
@@ -68,112 +69,58 @@ class AdminDrawer extends HookWidget{
 
           SizedBox(height: 15,),
 
-          Container(
-            decoration: BoxDecoration(
-              color: Color(0xFF002055),
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-              leading: const Iconify(MaterialSymbols.home_outline_rounded, color: Colors.white,),
-              title: const Text(
-                'Trang chủ',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white),
-              ),
-              onTap: () {},
-            ),
+          DrawerItem(
+            icon: MaterialSymbols.home_outline_rounded,
+            title: 'Trang chủ',
+            iconColor: Colors.white,
+            backgroundColor: const Color(0xFF002055),
+            textColor: Colors.white,
+            onTap: () {},
           ),
 
           SizedBox(height: 15,),
 
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-              leading: Iconify(Ic.baseline_people_outline),
-              title: const Text(
-                'Quản lý người dùng',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-              ),
-              onTap: () {},
-            ),
+          DrawerItem(
+            icon: Ic.baseline_people_outline,
+            title: 'Quản lý người dùng',
+            onTap: () {},
           ),
 
           SizedBox(height: 15,),
 
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-              leading: Iconify(Uil.schedule),
-              title: const Text(
-                'Quản lý lịch học',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-              ),
-              onTap: () {},
-            ),
+          DrawerItem(
+            icon: Uil.schedule,
+            title: 'Quản lý lịch học',
+            onTap: () {},
           ),
 
           SizedBox(height: 15,),
 
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-              leading: Iconify(Ph.chalkboard_teacher),
-              title: const Text(
-                'Quản lý lớp học',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-              ),
-              onTap: () {},
-            ),
+          DrawerItem(
+            icon: Ph.chalkboard_teacher,
+            title: 'Quản lý lớp học',
+            onTap: () {},
           ),
 
           SizedBox(height: 15,),
 
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-              leading: Iconify(Ic.outline_settings),
-              title: const Text(
-                'Cài đặt',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-              ),
-              onTap: () {},
-            ),
+          DrawerItem(
+            icon: Ic.outline_settings,
+            title: 'Cài đặt',
+            onTap: () {},
           ),
 
           SizedBox(height: 15,),
 
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-              leading: Iconify(MaterialSymbols.logout, color: Colors.red,),
-              title: const Text(
-                'Đăng xuất',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.red),
-              ),
-              onTap: () {},
-            ),
+          DrawerItem(
+            icon: MaterialSymbols.logout,
+            title: 'Đăng xuất',
+            iconColor: Colors.red,
+            textColor: Colors.red,
+            onTap: () {},
           ),
         ],
+        ),
       ),
     );
   }}

@@ -9,7 +9,7 @@ class StudentHome extends HookWidget{
 
   @override
   Widget build(BuildContext context) {
-    return HeaderScaffold(
+    return ProfileScaffold(
         body: Center(
           child: Column(
             children: [

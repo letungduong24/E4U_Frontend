@@ -15,7 +15,9 @@ class MyApp extends HookWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
+        brightness: Brightness.light,
+        scaffoldBackgroundColor: Colors.white,
+        primaryColor: Colors.white,
         highlightColor: Colors.transparent,
         hoverColor: Colors.transparent,
         splashFactory: NoSplash.splashFactory,

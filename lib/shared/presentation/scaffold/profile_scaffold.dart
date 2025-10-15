@@ -15,64 +15,67 @@ class ProfileScaffold extends HookWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      endDrawer: TeacherDrawer(),
+      endDrawer: StudentDrawer(),
       body: Builder(
         builder: (context) => Column(
           children: [
-            Container(
-              color: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    radius: 20,
-                    backgroundImage:
-                    AssetImage('assets/images/default_avatar.jpg'),
-                  ),
-                  const SizedBox(width: 15),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
-                        "Lê Tùng Dương",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
+            SafeArea(
+                bottom: false,
+                child: Container(
+                  color: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 20,
+                        backgroundImage:
+                        AssetImage('assets/images/default_avatar.jpg'),
                       ),
-                      Text(
-                        "Quản trị viên",
-                        style: TextStyle(fontSize: 12),
+                      const SizedBox(width: 15),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          Text(
+                            "Lê Tùng Dương",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            "Quản trị viên",
+                            style: TextStyle(fontSize: 12),
+                          ),
+                        ],
+                      ),
+                      const Spacer(),
+                      Container(
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                            color: Colors.grey[100], shape: BoxShape.circle),
+                        child: Icon(
+                          Icons.notifications,
+                          color: Colors.black,
+                          size: 25,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      GestureDetector(
+                        onTap: () => Scaffold.of(context).openEndDrawer(),
+                        child: Container(
+                          alignment: Alignment.center,
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                              color: Colors.grey[100], shape: BoxShape.circle),
+                          child: Icon(
+                            Icons.apps,
+                            color: Colors.black,
+                            size: 25,
+                          ),
+                        ),
                       ),
                     ],
                   ),
-                  const Spacer(),
-                  Container(
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                        color: Colors.grey[100], shape: BoxShape.circle),
-                    child: Icon(
-                      Icons.notifications,
-                      color: Colors.black,
-                      size: 25,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  GestureDetector(
-                    onTap: () => Scaffold.of(context).openEndDrawer(),
-                    child: Container(
-                      alignment: Alignment.center,
-                      padding: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                          color: Colors.grey[100], shape: BoxShape.circle),
-                      child: Icon(
-                        Icons.apps,
-                        color: Colors.black,
-                        size: 25,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
             ),
             Expanded(child: body),
           ],
