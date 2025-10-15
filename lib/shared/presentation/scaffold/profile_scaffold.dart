@@ -21,7 +21,7 @@ class ProfileScaffold extends HookWidget {
           children: [
             Container(
               color: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
               child: Row(
                 children: [
                   CircleAvatar(
