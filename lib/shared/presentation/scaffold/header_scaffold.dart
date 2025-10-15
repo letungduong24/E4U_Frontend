@@ -2,20 +2,36 @@ import 'package:e4uflutter/shared/presentation/drawer/admin_drawer.dart';
 import 'package:e4uflutter/shared/presentation/drawer/student_drawer.dart';
 import 'package:e4uflutter/shared/presentation/drawer/teacher_drawer.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:get/get.dart';
+import 'package:e4uflutter/feature/auth/presentation/controller/auth_controller.dart';
 
 
-class HeaderScaffold extends HookWidget {
+class HeaderScaffold extends StatelessWidget {
   final Widget body;
+  final String title;
   const HeaderScaffold({
     super.key,
     required this.body,
+    required this.title
   });
+
+  Widget _getDrawerByRole() {
+    final userRole = AuthController.user.value?.role;
+    switch (userRole) {
+      case 'admin':
+        return const AdminDrawer();
+      case 'teacher':
+        return const TeacherDrawer();
+      case 'student':
+      default:
+        return const StudentDrawer();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      endDrawer: StudentDrawer(),
+      endDrawer: _getDrawerByRole(),
       body: Builder(
         builder: (context) => Column(
           children: [
@@ -28,7 +44,7 @@ class HeaderScaffold extends HookWidget {
                     children: [
                       Container(
                         child: Text(
-                          "Tra cứu điểm",
+                          title,
                           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                       ),

@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:iconify_flutter/icons/material_symbols.dart';
 import 'package:iconify_flutter/icons/ic.dart';
 import 'package:iconify_flutter/icons/uil.dart';
 import 'package:iconify_flutter/icons/ph.dart';
 import 'package:iconify_flutter/icons/mdi.dart';
 import 'drawer_item.dart';
+import 'package:get/get.dart';
+import 'package:e4uflutter/feature/auth/presentation/controller/auth_controller.dart';
 
 
-class TeacherDrawer extends HookWidget{
+class TeacherDrawer extends StatelessWidget{
   const TeacherDrawer({super.key});
 
   @override
@@ -41,7 +42,7 @@ class TeacherDrawer extends HookWidget{
 
           GestureDetector(
             onTap: () {
-              print('Chuyển hươn Profile');
+              Get.toNamed('/profile');
             },
             child: Container(
               padding: const EdgeInsets.all(15),
@@ -52,17 +53,23 @@ class TeacherDrawer extends HookWidget{
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
-                children: const [
-                  CircleAvatar(
-                    radius: 14,
-                    backgroundImage:
-                    AssetImage('assets/images/default_avatar.jpg'),
-                  ),
-                  SizedBox(width: 10),
-                  Text(
-                    'Lê Tùng Dương',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
+                children: [
+                  Obx(() {
+                    final user = AuthController.user.value;
+                    final avatarUrl = user?.profile?.avatar;
+                    
+                    return CircleAvatar(
+                      radius: 14,
+                      backgroundImage: avatarUrl != null && avatarUrl.isNotEmpty
+                          ? NetworkImage(avatarUrl)
+                          : const AssetImage('assets/images/default_avatar.jpg') as ImageProvider,
+                    );
+                  }),
+                  const SizedBox(width: 10),
+                  Obx(() => Text(
+                    AuthController.user.value?.fullName ?? "Teacher",
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  )),
                 ],
               ),
             ),
@@ -76,7 +83,7 @@ class TeacherDrawer extends HookWidget{
             iconColor: Colors.white,
             backgroundColor: const Color(0xFF002055),
             textColor: Colors.white,
-            onTap: () {},
+            onTap: () => Get.toNamed('/home'),
           ),
 
           SizedBox(height: 15,),
@@ -118,7 +125,9 @@ class TeacherDrawer extends HookWidget{
             title: 'Đăng xuất',
             iconColor: Colors.red,
             textColor: Colors.red,
-            onTap: () {},
+            onTap: () {
+              Get.find<AuthController>().logout();
+            },
           ),
         ],
         ),

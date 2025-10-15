@@ -2,9 +2,8 @@ import 'package:e4uflutter/shared/presentation/scaffold/header_scaffold.dart';
 import 'package:e4uflutter/shared/presentation/scaffold/profile_scaffold.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 
-class StudentHome extends HookWidget{
+class StudentHome extends StatelessWidget{
   const StudentHome({super.key});
 
   @override
@@ -13,7 +12,7 @@ class StudentHome extends HookWidget{
         body: Center(
           child: Column(
             children: [
-              Text("Hello")
+              Text("Hello student")
             ],
           ),
         )
