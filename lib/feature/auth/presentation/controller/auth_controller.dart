@@ -12,6 +12,7 @@ class AuthController extends GetxController {
   static final Rx<UserEntity?> user = Rx<UserEntity?>(null);
   static final RxBool isLoading = false.obs;
   static final RxString error = ''.obs;
+  static final RxBool isInitialized = false.obs;
 
   // Dependencies
   late final AuthDatasource _authDatasource;
@@ -30,6 +31,7 @@ class AuthController extends GetxController {
   void onInit() {
     super.onInit();
     _initializeDependencies();
+    _initializeAuthState();
   }
 
   void _initializeDependencies() {
@@ -39,6 +41,19 @@ class AuthController extends GetxController {
     _loginUsecase = LoginUsecase(_authRepository);
     _getCurrentUserUsecase = GetCurrentUserUsecase(_authRepository);
     _logoutUsecase = LogoutUsecase(_authRepository);
+  }
+
+  Future<void> _initializeAuthState() async {
+    try {
+      isLoading.value = true;
+      final userData = await _getCurrentUserUsecase();
+      user.value = userData;
+    } catch (e) {
+      user.value = null;
+    } finally {
+      isLoading.value = false;
+      isInitialized.value = true;
+    }
   }
 
   Future<void> login(String email, String password) async {

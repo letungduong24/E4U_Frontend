@@ -6,7 +6,14 @@ class AuthMiddleware extends GetMiddleware {
   @override
   RouteSettings? redirect(String? route) {
     try {
-      // Use static state instead of instance
+      // Check if auth state is initialized
+      if (!AuthController.isInitialized.value) {
+        // If not initialized, allow splash screen or redirect to splash
+        if (route == '/splash') return null;
+        return const RouteSettings(name: '/splash');
+      }
+      
+      // Use static state after initialization
       final isAuthenticated = AuthController.user.value != null;
       final userRole = AuthController.user.value?.role;
       
