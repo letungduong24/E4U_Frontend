@@ -29,7 +29,7 @@ class UserModel extends UserEntity {
       currentClass: json['currentClass'] != null ? json['currentClass']['name'] : null,
       teachingClass: json['teachingClass'] != null ? json['teachingClass']['name'] : null,
       enrollmentHistory: (json['enrollmentHistory'] as List?)
-          ?.map((e) => e.toString())
+          ?.map((e) => EnrollmentModel.fromJson(e))
           .toList(),
     );
   }
@@ -85,4 +85,24 @@ class ProfileModel extends ProfileEntity {
       'notification': notification,
     };
   }
+}
+
+class EnrollmentModel extends EnrollmentEntity {
+  const EnrollmentModel({
+    required super.className,
+    required super.completedAt,
+    required super.enrolledAt,
+    required super.status,
+  });
+
+  factory EnrollmentModel.fromJson(Map<String, dynamic> json) {
+    return EnrollmentModel(
+      className: json['class']['name'].toString(),
+      completedAt: DateTime.parse(json['completedAt']),
+      enrolledAt: DateTime.parse(json['completedAt']),
+      status: json['status'].toString(),
+
+    );
+  }
+
 }

@@ -1,6 +1,7 @@
 import 'package:e4uflutter/shared/presentation/drawer/admin_drawer.dart';
 import 'package:e4uflutter/shared/presentation/drawer/student_drawer.dart';
 import 'package:e4uflutter/shared/presentation/drawer/teacher_drawer.dart';
+import 'package:e4uflutter/shared/utils/role_util.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e4uflutter/feature/auth/presentation/controller/auth_controller.dart';
@@ -12,19 +13,6 @@ class ProfileScaffold extends StatelessWidget {
     super.key,
     required this.body,
   });
-
-  String _getRoleDisplayName(String role) {
-    switch (role) {
-      case 'admin':
-        return 'Quản trị viên';
-      case 'teacher':
-        return 'Giáo viên';
-      case 'student':
-        return 'Học viên';
-      default:
-        return 'Người dùng';
-    }
-  }
 
   Widget _getDrawerByRole() {
     final userRole = AuthController.user.value?.role;
@@ -74,7 +62,7 @@ class ProfileScaffold extends StatelessWidget {
                                 fontSize: 16, fontWeight: FontWeight.bold),
                           )),
                           Obx(() => Text(
-                            _getRoleDisplayName(AuthController.user.value?.role ?? 'student'),
+                            RoleUtil.GetRoleDisplayName(AuthController.user.value?.role ?? 'student'),
                             style: const TextStyle(fontSize: 12),
                           )),
                         ],
