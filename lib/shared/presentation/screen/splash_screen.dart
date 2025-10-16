@@ -15,9 +15,10 @@ class SplashScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CircularProgressIndicator(),
-                SizedBox(height: 16),
-                Text('Đang khởi tạo...'),
+                Text(
+                    "English For You",
+                  style: TextStyle(color: Colors.blue, fontSize: 30, fontWeight: FontWeight.bold),
+                )
               ],
             ),
           ),
@@ -51,8 +52,6 @@ class SplashScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CircularProgressIndicator(),
-              SizedBox(height: 16),
-              Text('Đang chuyển hướng...'),
             ],
           ),
         ),
