@@ -80,7 +80,8 @@ class AuthController extends GetxController {
       }
     } catch (e) {
       isLoading.value = false;
-      error.value = "Thông tin đăng nhập không hợp lệ";
+      error.value = e.toString();
+      print('Login error: $e'); // Debug log
     }
   }
 

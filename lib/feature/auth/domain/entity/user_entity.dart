@@ -45,13 +45,13 @@ class ProfileEntity {
 class EnrollmentEntity {
   final String className;
   final String status;
-  final DateTime completedAt;
+  final DateTime? completedAt;
   final DateTime enrolledAt;
 
   const EnrollmentEntity({
     required this.className,
     required this.status,
-    required this.completedAt,
+    this.completedAt,
     required this.enrolledAt,
   });
 }

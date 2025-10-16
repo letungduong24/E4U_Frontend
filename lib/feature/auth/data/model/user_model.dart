@@ -90,7 +90,7 @@ class ProfileModel extends ProfileEntity {
 class EnrollmentModel extends EnrollmentEntity {
   const EnrollmentModel({
     required super.className,
-    required super.completedAt,
+    super.completedAt,
     required super.enrolledAt,
     required super.status,
   });
@@ -98,10 +98,11 @@ class EnrollmentModel extends EnrollmentEntity {
   factory EnrollmentModel.fromJson(Map<String, dynamic> json) {
     return EnrollmentModel(
       className: json['class']['name'].toString(),
-      completedAt: DateTime.parse(json['completedAt']),
-      enrolledAt: DateTime.parse(json['completedAt']),
+      completedAt: json['completedAt'] != null 
+          ? DateTime.parse(json['completedAt']) 
+          : null,
+      enrolledAt: DateTime.parse(json['enrolledAt']),
       status: json['status'].toString(),
-
     );
   }
 

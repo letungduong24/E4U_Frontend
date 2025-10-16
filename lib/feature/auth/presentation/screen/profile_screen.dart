@@ -2,6 +2,7 @@ import 'package:e4uflutter/feature/auth/presentation/controller/auth_controller.
 import 'package:e4uflutter/shared/presentation/button.dart';
 import 'package:e4uflutter/shared/presentation/scaffold/header_scaffold.dart';
 import 'package:e4uflutter/shared/utils/role_util.dart';
+import 'package:e4uflutter/shared/utils/status_util.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -139,11 +140,55 @@ class ProfileScreen extends StatelessWidget {
                         borderRadius: 20,
                         onPressed: () {},
                       ),
-                    )
-
+                    ),
                   ],
                 )
               ),
+              // enrollment history
+              Padding(
+                padding: const EdgeInsets.all(15),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Lịch sử học tập", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),),
+                    SizedBox(height: 5,),
+                    if (user?.enrollmentHistory != null)
+                      ...?user?.enrollmentHistory?.map((item) =>
+                          Container(
+                            padding: EdgeInsets.all((12)),
+                            decoration: BoxDecoration(
+                                color: Colors.grey[100],
+                                borderRadius: BorderRadius.circular(20)
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(item.className, style: TextStyle(fontWeight: FontWeight.bold),),
+                                    Container(
+                                      padding: EdgeInsets.all(5),
+                                      decoration: BoxDecoration(
+                                        color: StatusUtil.GetStatusDisplayColor(item.status),
+                                        borderRadius: BorderRadius.circular(10)
+                                      ),
+                                      child: Text(StatusUtil.GetStatusDisplayName(item.status), style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white),),
+                                    )
+                                  ],
+                                ),
+                                Text("Ngày bắt đầu: ${DateFormat('dd/MM/yyyy').format(item.enrolledAt)}"),
+                                Text("Ngày kết thúc: ${item.completedAt != null ? DateFormat('dd/MM/yyyy').format(item.completedAt!) : 'Chưa kết thúc'}")
+                              ],
+                            ),
+                          )
+                      )
+                    else
+                      Text("Không có lịch sử học"),
+                  ],
+                ),
+              )
+
             ],
           );
         }),
