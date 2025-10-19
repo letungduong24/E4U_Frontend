@@ -15,7 +15,6 @@ class ProfileScreen extends StatelessWidget {
     return HeaderScaffold(
       title: "Trang cá nhân",
       body: Center(
-        // 👇 Chỉ cần 1 Obx bao ngoài toàn bộ nội dung
         child: Obx(() {
           final user = AuthController.user.value;
           final avatarUrl = user?.profile?.avatar;

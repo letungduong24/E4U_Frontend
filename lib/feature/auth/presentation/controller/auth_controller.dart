@@ -1,11 +1,9 @@
 import 'package:get/get.dart';
 import 'package:e4uflutter/feature/auth/data/datasource/auth_datasource.dart';
 import 'package:e4uflutter/feature/auth/data/repository/auth_repo_impl.dart';
-import 'package:e4uflutter/feature/auth/domain/usecase/login_usecase.dart';
-import 'package:e4uflutter/feature/auth/domain/usecase/get_current_user_usecase.dart';
-import 'package:e4uflutter/feature/auth/domain/usecase/logout_usecase.dart';
 import 'package:e4uflutter/feature/auth/domain/entity/user_entity.dart';
 import 'package:e4uflutter/core/storage/token_storage.dart';
+import 'package:flutter/material.dart';
 
 class AuthController extends GetxController {
   // Observable state - using global GetX state
@@ -18,9 +16,6 @@ class AuthController extends GetxController {
   late final AuthDatasource _authDatasource;
   late final TokenStorage _tokenStorage;
   late final AuthRepositoryImpl _authRepository;
-  late final LoginUsecase _loginUsecase;
-  late final GetCurrentUserUsecase _getCurrentUserUsecase;
-  late final LogoutUsecase _logoutUsecase;
 
   // Getters
   bool get isAuthenticated => user.value != null;
@@ -38,15 +33,12 @@ class AuthController extends GetxController {
     _authDatasource = AuthDatasource();
     _tokenStorage = TokenStorage();
     _authRepository = AuthRepositoryImpl(_authDatasource, _tokenStorage);
-    _loginUsecase = LoginUsecase(_authRepository);
-    _getCurrentUserUsecase = GetCurrentUserUsecase(_authRepository);
-    _logoutUsecase = LogoutUsecase(_authRepository);
   }
 
   Future<void> _initializeAuthState() async {
     try {
       isLoading.value = true;
-      final userData = await _getCurrentUserUsecase();
+      final userData = await _authRepository.getCurrentUser();
       user.value = userData;
     } catch (e) {
       user.value = null;
@@ -57,11 +49,27 @@ class AuthController extends GetxController {
   }
 
   Future<void> login(String email, String password) async {
+    // Validation
+    if (email.isEmpty || password.isEmpty) {
+      Get.snackbar('Lỗi', 'Email và mật khẩu không được để trống', backgroundColor: Colors.red, colorText: Colors.white);
+      return;
+    }
+
+    if (!email.contains('@')) {
+      Get.snackbar('Lỗi', 'Email không hợp lệ', backgroundColor: Colors.red, colorText: Colors.white);
+      return;
+    }
+
+    if (password.length < 6) {
+      Get.snackbar('Lỗi', 'Mật khẩu phải có ít nhất 6 ký tự', backgroundColor: Colors.red, colorText: Colors.white);
+      return;
+    }
+
     isLoading.value = true;
-    error.value = '';
+    Get.snackbar('Thông báo', 'Đang đăng nhập...', backgroundColor: Colors.blue, colorText: Colors.white, duration: Duration(seconds: 1));
     
     try {
-      final userData = await _loginUsecase(email, password);
+      final userData = await _authRepository.login(email, password);
       user.value = userData;
       isLoading.value = false;
       
@@ -80,14 +88,14 @@ class AuthController extends GetxController {
       }
     } catch (e) {
       isLoading.value = false;
-      error.value = e.toString();
-      print('Login error: $e'); // Debug log
+      String errorMessage = e.toString().replaceFirst('Exception: ', '');
+      Get.snackbar('Lỗi', errorMessage, backgroundColor: Colors.red, colorText: Colors.white);
     }
   }
 
   Future<void> getCurrentUser() async {
     try {
-      final userData = await _getCurrentUserUsecase();
+      final userData = await _authRepository.getCurrentUser();
       user.value = userData;
     } catch (e) {
       user.value = null;
@@ -96,16 +104,18 @@ class AuthController extends GetxController {
 
   Future<void> logout() async {
     isLoading.value = true;
+    Get.snackbar('Thông báo', 'Đang đăng xuất...', backgroundColor: Colors.blue, colorText: Colors.white, duration: Duration(seconds: 1));
     
     try {
-      await _logoutUsecase();
+      await _authRepository.logout();
       user.value = null;
       isLoading.value = false;
       
       Get.offAllNamed('/login');
     } catch (e) {
       isLoading.value = false;
-      error.value = e.toString();
+      String errorMessage = e.toString().replaceFirst('Exception: ', '');
+      Get.snackbar('Lỗi', errorMessage, backgroundColor: Colors.red, colorText: Colors.white);
     }
   }
 

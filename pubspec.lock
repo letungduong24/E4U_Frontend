@@ -389,6 +389,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  sonner_flutter:
+    dependency: "direct main"
+    description:
+      name: sonner_flutter
+      sha256: "889ac91b11b6f5d476e6916b672353125a7caea1923ea63bfad8df81966b856c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.1"
   source_span:
     dependency: transitive
     description:

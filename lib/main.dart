@@ -12,7 +12,6 @@ import 'package:e4uflutter/shared/presentation/screen/splash_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Initialize AuthController only
   Get.put(AuthController(), permanent: true);
   
   runApp(const MyApp());
