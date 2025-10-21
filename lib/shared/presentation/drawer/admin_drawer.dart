@@ -90,7 +90,7 @@ class AdminDrawer extends StatelessWidget{
           DrawerItem(
             icon: Ic.baseline_people_outline,
             title: 'Quản lý người dùng',
-            onTap: () {},
+            onTap: () => Get.toNamed('/user-management'),
           ),
 
           SizedBox(height: 15,),

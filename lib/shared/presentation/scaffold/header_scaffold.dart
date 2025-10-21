@@ -9,10 +9,12 @@ import 'package:e4uflutter/feature/auth/presentation/controller/auth_controller.
 class HeaderScaffold extends StatelessWidget {
   final Widget body;
   final String title;
+  final Widget? floatingButton;
   const HeaderScaffold({
     super.key,
     required this.body,
-    required this.title
+    required this.title,
+    this.floatingButton
   });
 
   Widget _getDrawerByRole() {
@@ -83,6 +85,7 @@ class HeaderScaffold extends StatelessWidget {
           ],
         ),
       ),
+      floatingActionButton: floatingButton,
     );
   }
 }
