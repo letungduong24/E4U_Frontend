@@ -14,17 +14,37 @@ class UserManagementDatasource {
     String? sortOrder,
   }) async {
     try {
-      // API chưa hỗ trợ filter/sort, chỉ lấy tất cả users
-      print('Making API call to /admin/users (no filters - API not ready)');
-      final response = await _dio.get('/admin/users');
+      // Build query parameters
+      final queryParams = <String, dynamic>{};
+      print('Filter parameters received:');
+      print('- role: $role');
+      print('- searchQuery: $searchQuery');
+      print('- classFilter: $classFilter');
+      
+      if (role != null && role.isNotEmpty) {
+        queryParams['role'] = role;
+      }
+      if (searchQuery != null && searchQuery.isNotEmpty) {
+        queryParams['q'] = searchQuery;
+      }
+      if (classFilter != null && classFilter.isNotEmpty) {
+        queryParams['classId'] = classFilter;
+        print('Added classId to query: $classFilter');
+      }
+      
+      print('Making API call to /admin/users with params: $queryParams');
+      final response = await _dio.get('/admin/users', queryParameters: queryParams);
       
       // Debug logging
       print('API Response status: ${response.statusCode}');
       print('API Response data: ${response.data}');
       
-      // Handle API response structure: data.items
+      // Handle API response structure: data.users
       List<dynamic> usersJson;
-      if (response.data['data'] != null && response.data['data']['items'] != null) {
+      if (response.data['data'] != null && response.data['data']['users'] != null) {
+        usersJson = response.data['data']['users'];
+        print('Found ${usersJson.length} users in data.users');
+      } else if (response.data['data'] != null && response.data['data']['items'] != null) {
         usersJson = response.data['data']['items'];
         print('Found ${usersJson.length} users in data.items');
       } else if (response.data['data'] is List) {
@@ -36,8 +56,24 @@ class UserManagementDatasource {
         print('Response structure: ${response.data.keys}');
       }
       
-      final allUsers = usersJson.map((json) => UserManagementModel.fromJson(json)).toList();
-      print('Parsed ${allUsers.length} users from API');
+      final allUsers = <UserManagementModel>[];
+      for (int i = 0; i < usersJson.length; i++) {
+        try {
+          print('Parsing user $i: ${usersJson[i]}');
+          final user = UserManagementModel.fromJson(usersJson[i]);
+          allUsers.add(user);
+          print('Successfully parsed user: ${user.fullName}');
+        } catch (e) {
+          print('Error parsing user $i: $e');
+          print('User data: ${usersJson[i]}');
+          // Skip this user and continue with others
+        }
+      }
+      print('Successfully parsed ${allUsers.length} users from API');
+      print('Users before filtering:');
+      for (var user in allUsers) {
+        print('- ${user.fullName} (${user.role}) - currentClass: ${user.currentClass}, teachingClass: ${user.teachingClass}');
+      }
       
       // Apply frontend filtering and sorting
       var filteredUsers = allUsers;
@@ -57,13 +93,9 @@ class UserManagementDatasource {
         print('Filtered by search "$searchQuery": ${filteredUsers.length} users');
       }
       
-      // Filter by class
+      // Note: Class filtering is handled by API backend
       if (classFilter != null && classFilter.isNotEmpty) {
-        filteredUsers = filteredUsers.where((user) => 
-          (user.currentClass != null && user.currentClass!.toLowerCase().contains(classFilter.toLowerCase())) ||
-          (user.teachingClass != null && user.teachingClass!.toLowerCase().contains(classFilter.toLowerCase()))
-        ).toList();
-        print('Filtered by class "$classFilter": ${filteredUsers.length} users');
+        print('Class filtering handled by API backend with classId: $classFilter');
       }
       
       // Filter by active status
@@ -97,16 +129,25 @@ class UserManagementDatasource {
       }
       
       print('Final result: ${filteredUsers.length} users');
+      print('Final users:');
+      for (var user in filteredUsers) {
+        print('- ${user.fullName} (${user.role})');
+      }
+      print('Returning ${filteredUsers.length} users from API (not mock)');
       return filteredUsers;
     } on DioException catch (e) {
       print('DioException: ${e.message}');
       print('Response: ${e.response?.data}');
+      print('Status code: ${e.response?.statusCode}');
+      print('Request URL: ${e.requestOptions.uri}');
+      print('Request method: ${e.requestOptions.method}');
       
       // Fallback to mock data if API fails
       print('API failed, using mock data');
       return _getMockUsers();
     } catch (e) {
       print('General error: $e');
+      print('Stack trace: ${StackTrace.current}');
       // Fallback to mock data if any error
       print('Error occurred, using mock data');
       return _getMockUsers();
@@ -180,7 +221,7 @@ class UserManagementDatasource {
 
   Future<UserManagementModel> getUserById(String userId) async {
     try {
-      final response = await _dio.get('/admin/users/$userId');
+      final response = await _dio.get('/api/admin/users/$userId');
       return UserManagementModel.fromJson(response.data['data']['user']);
     } on DioException catch (e) {
       throw Exception(e.response?.data['message'] ?? 'Lấy thông tin người dùng thất bại');
@@ -192,20 +233,35 @@ class UserManagementDatasource {
     required String lastName,
     required String email,
     required String role,
+    String? password,
+    String? phone,
+    String? gender,
+    String? dateOfBirth,
     String? currentClass,
     String? teachingClass,
   }) async {
     try {
-      final response = await _dio.post('/admin/users', data: {
+      final requestData = {
         'firstName': firstName,
         'lastName': lastName,
         'email': email,
+        'password': password ?? 'password123', // Default password
         'role': role,
-        'currentClass': currentClass,
-        'teachingClass': teachingClass,
-      });
+        'profile': {
+          if (phone != null && phone.isNotEmpty) 'phone': phone,
+          'gender': gender ?? 'Nam', // Default to Nam
+          if (dateOfBirth != null && dateOfBirth.isNotEmpty) 'dateOfBirth': dateOfBirth,
+        },
+      };
+
+      print('Creating user with data: $requestData');
+      final response = await _dio.post('/admin/users', data: requestData);
+      
+      print('Create user response: ${response.data}');
       return UserManagementModel.fromJson(response.data['data']['user']);
     } on DioException catch (e) {
+      print('Error creating user: ${e.message}');
+      print('Response: ${e.response?.data}');
       throw Exception(e.response?.data['message'] ?? 'Tạo người dùng thất bại');
     }
   }
@@ -229,7 +285,7 @@ class UserManagementDatasource {
       if (teachingClass != null) data['teachingClass'] = teachingClass;
       if (isActive != null) data['isActive'] = isActive;
 
-      final response = await _dio.put('/admin/users/$userId', data: data);
+      final response = await _dio.put('/api/admin/users/$userId', data: data);
       return UserManagementModel.fromJson(response.data['data']['user']);
     } on DioException catch (e) {
       throw Exception(e.response?.data['message'] ?? 'Cập nhật người dùng thất bại');
@@ -250,5 +306,84 @@ class UserManagementDatasource {
     } on DioException catch (e) {
       throw Exception(e.response?.data['message'] ?? 'Thay đổi trạng thái người dùng thất bại');
     }
+  }
+
+  Future<void> setTeacherClass(String teacherId, String className) async {
+    try {
+      await _dio.patch('/admin/users/$teacherId/class', data: {'teachingClass': className});
+    } on DioException catch (e) {
+      throw Exception(e.response?.data['message'] ?? 'Gán lớp học cho giáo viên thất bại');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getClasses() async {
+    try {
+      print('Making API call to /classes');
+      final response = await _dio.get('/classes');
+      
+      print('Classes API Response status: ${response.statusCode}');
+      print('Classes API Response data: ${response.data}');
+      
+      // Handle API response structure: data.classes
+      List<dynamic> classesJson;
+      if (response.data['data'] != null && response.data['data']['classes'] != null) {
+        classesJson = response.data['data']['classes'];
+        print('Found ${classesJson.length} classes in data.classes');
+      } else {
+        classesJson = [];
+        print('No classes found in response');
+        print('Response structure: ${response.data.keys}');
+      }
+      
+      final classes = classesJson.map((json) => {
+        'id': json['_id'],
+        'name': json['name'],
+        'code': json['code'],
+        'description': json['description'],
+        'isActive': json['isActive'] ?? true,
+      }).toList();
+      
+      // Remove duplicates based on id
+      final uniqueClasses = <String, Map<String, dynamic>>{};
+      for (var classItem in classes) {
+        uniqueClasses[classItem['id']] = classItem;
+      }
+      
+      print('Removed duplicates, final classes: ${uniqueClasses.length}');
+      return uniqueClasses.values.toList();
+    } on DioException catch (e) {
+      print('DioException getting classes: ${e.message}');
+      print('Response: ${e.response?.data}');
+      print('Status code: ${e.response?.statusCode}');
+      
+      // Fallback to mock data if API fails
+      print('Classes API failed, using mock data');
+      return _getMockClasses();
+    } catch (e) {
+      print('General error getting classes: $e');
+      print('Stack trace: ${StackTrace.current}');
+      // Fallback to mock data if any error
+      print('Error occurred getting classes, using mock data');
+      return _getMockClasses();
+    }
+  }
+
+  List<Map<String, dynamic>> _getMockClasses() {
+    return [
+      {
+        'id': '68f11b630db875085481a9a5',
+        'name': 'IELTS Foundation - Band 4.0-5.5',
+        'code': 'IELTS-FOUNDATION',
+        'description': 'Lớp IELTS Foundation dành cho học viên mới bắt đầu, mục tiêu đạt band 4.0-5.5',
+        'isActive': true,
+      },
+      {
+        'id': '68f11b630db875085481a9a6',
+        'name': 'IELTS Advanced - Band 6.0-7.5',
+        'code': 'IELTS-ADVANCED',
+        'description': 'Lớp IELTS Advanced dành cho học viên có nền tảng, mục tiêu đạt band 6.0-7.5',
+        'isActive': true,
+      },
+    ];
   }
 }

@@ -17,6 +17,10 @@ abstract class UserManagementRepository {
     required String lastName,
     required String email,
     required String role,
+    String? password,
+    String? phone,
+    String? gender,
+    String? dateOfBirth,
     String? currentClass,
     String? teachingClass,
   });
@@ -34,4 +38,8 @@ abstract class UserManagementRepository {
   Future<void> deleteUser(String userId);
 
   Future<void> toggleUserStatus(String userId, bool isActive);
+
+  Future<void> setTeacherClass(String teacherId, String className);
+
+  Future<List<Map<String, dynamic>>> getClasses();
 }

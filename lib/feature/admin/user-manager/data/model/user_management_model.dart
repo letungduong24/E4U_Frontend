@@ -13,11 +13,32 @@ class UserManagementModel extends UserManagementEntity {
     required super.createdAt,
     super.lastLoginAt,
     required super.isActive,
+    super.profile,
   });
 
   factory UserManagementModel.fromJson(Map<String, dynamic> json) {
     try {
       print('Parsing user: ${json['fullName']} (${json['email']})');
+      
+      // Parse createdAt with fallback
+      DateTime createdAt;
+      try {
+        createdAt = DateTime.parse(json['createdAt']);
+      } catch (e) {
+        print('Error parsing createdAt: $e, using current time');
+        createdAt = DateTime.now();
+      }
+      
+      // Parse lastLoginAt with fallback
+      DateTime? lastLoginAt;
+      if (json['lastLoginAt'] != null) {
+        try {
+          lastLoginAt = DateTime.parse(json['lastLoginAt']);
+        } catch (e) {
+          print('Error parsing lastLoginAt: $e, setting to null');
+          lastLoginAt = null;
+        }
+      }
       
       return UserManagementModel(
         id: json['_id'] ?? json['id'] ?? '',
@@ -28,9 +49,10 @@ class UserManagementModel extends UserManagementEntity {
         role: json['role'] ?? 'student',
         currentClass: json['currentClass'] != null ? json['currentClass']['name'] : null,
         teachingClass: json['teachingClass'] != null ? json['teachingClass']['name'] : null,
-        createdAt: DateTime.parse(json['createdAt']),
-        lastLoginAt: json['lastLoginAt'] != null ? DateTime.parse(json['lastLoginAt']) : null,
+        createdAt: createdAt,
+        lastLoginAt: lastLoginAt,
         isActive: json['isActive'] ?? true, // Default to true if not provided
+        profile: json['profile'] != null ? ProfileModel.fromJson(json['profile']) : null,
       );
     } catch (e) {
       print('Error parsing user JSON: $e');
@@ -56,35 +78,36 @@ class UserManagementModel extends UserManagementEntity {
   }
 }
 
-class UserFilterModel extends UserFilterEntity {
-  const UserFilterModel({
-    super.role,
-    super.searchQuery,
-    super.classFilter,
-    super.isActive,
-    super.sortBy,
-    super.sortOrder,
+class ProfileModel extends ProfileEntity {
+  const ProfileModel({
+    super.avatar,
+    super.phone,
+    super.dateOfBirth,
+    super.gender,
+    super.address,
+    super.notification,
   });
 
-  factory UserFilterModel.fromJson(Map<String, dynamic> json) {
-    return UserFilterModel(
-      role: json['role'],
-      searchQuery: json['searchQuery'],
-      classFilter: json['classFilter'],
-      isActive: json['isActive'],
-      sortBy: json['sortBy'],
-      sortOrder: json['sortOrder'],
+  factory ProfileModel.fromJson(Map<String, dynamic> json) {
+    return ProfileModel(
+      avatar: json['avatar'],
+      phone: json['phone'],
+      dateOfBirth: json['dateOfBirth'] != null ? DateTime.parse(json['dateOfBirth']) : null,
+      gender: json['gender'],
+      address: json['address'],
+      notification: json['notification'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'role': role,
-      'searchQuery': searchQuery,
-      'classFilter': classFilter,
-      'isActive': isActive,
-      'sortBy': sortBy,
-      'sortOrder': sortOrder,
+      'avatar': avatar,
+      'phone': phone,
+      'dateOfBirth': dateOfBirth?.toIso8601String(),
+      'gender': gender,
+      'address': address,
+      'notification': notification,
     };
   }
 }
+

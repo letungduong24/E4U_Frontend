@@ -82,9 +82,30 @@ class ProfileScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
+                        const Text(
+                          "Email:",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        Expanded(
+                          child: Text(
+                            user?.email ?? "Chưa cập nhật",
+                            style: const TextStyle(fontSize: 15),
+                            textAlign: TextAlign.end,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
                           "Ngày sinh:",
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 15,
                           ),
@@ -136,7 +157,7 @@ class ProfileScreen extends StatelessWidget {
                     SizedBox(
                       width: double.infinity,
                       child: DefaultButton(
-                        text: "Yêu cầu sửa thông tin",
+                        text: "Sửa thông tin",
                         borderRadius: 20,
                         onPressed: () {},
                       ),

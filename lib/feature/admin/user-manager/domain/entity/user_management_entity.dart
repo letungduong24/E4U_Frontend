@@ -10,6 +10,7 @@ class UserManagementEntity {
   final DateTime createdAt;
   final DateTime? lastLoginAt;
   final bool isActive;
+  final ProfileEntity? profile;
 
   const UserManagementEntity({
     required this.id,
@@ -23,6 +24,25 @@ class UserManagementEntity {
     required this.createdAt,
     this.lastLoginAt,
     required this.isActive,
+    this.profile,
+  });
+}
+
+class ProfileEntity {
+  final String? avatar;
+  final String? phone;
+  final DateTime? dateOfBirth;
+  final String? gender;
+  final String? address;
+  final bool? notification;
+
+  const ProfileEntity({
+    this.avatar,
+    this.phone,
+    this.dateOfBirth,
+    this.gender,
+    this.address,
+    this.notification,
   });
 }
 

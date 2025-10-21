@@ -17,8 +17,21 @@ class LoginForm extends StatelessWidget {
       final password = passwordController.text;
 
       if (email.isEmpty || password.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Vui lòng nhập đầy đủ thông tin')),
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            title: const Text("Lỗi"),
+            content: const Text("Vui lòng nhập đầy đủ thông tin"),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("OK"),
+              ),
+            ],
+          ),
         );
         return;
       }
@@ -30,23 +43,30 @@ class LoginForm extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 24.0),
       child: Column(
         children: [
-          // Error message
+          // Error message - hiển thị AlertDialog khi có lỗi
           Obx(() {
             if (AuthController.error.value.isNotEmpty) {
-              return Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(12),
-                margin: const EdgeInsets.only(bottom: 16),
-                decoration: BoxDecoration(
-                  color: Colors.red[50],
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  AuthController.error.value,
-                  style: TextStyle(color: Colors.red[600]),
-                  textAlign: TextAlign.center,
-                ),
-              );
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    title: const Text("Lỗi"),
+                    content: Text(AuthController.error.value),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          Get.find<AuthController>().clearError();
+                        },
+                        child: const Text("OK"),
+                      ),
+                    ],
+                  ),
+                );
+              });
             }
             return const SizedBox.shrink();
           }),
@@ -127,8 +147,21 @@ class LoginForm extends StatelessWidget {
           // Forgot password
           TextButton(
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Tính năng đang phát triển')),
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  title: const Text("Thông báo"),
+                  content: const Text("Tính năng đang phát triển"),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text("OK"),
+                    ),
+                  ],
+                ),
               );
             },
             child: const Text('Quên mật khẩu?', style: TextStyle(color: Colors.grey)),

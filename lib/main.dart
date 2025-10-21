@@ -27,6 +27,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'E4U Flutter',
       theme: ThemeData(
+        useMaterial3: false,
         brightness: Brightness.light,
         scaffoldBackgroundColor: Colors.white,
         primaryColor: Colors.white,

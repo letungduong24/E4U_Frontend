@@ -2,11 +2,6 @@ import 'package:get/get.dart';
 import 'package:e4uflutter/feature/admin/user-manager/data/datasource/user_management_datasource.dart';
 import 'package:e4uflutter/feature/admin/user-manager/data/repository/user_management_repository_impl.dart';
 import 'package:e4uflutter/feature/admin/user-manager/domain/entity/user_management_entity.dart';
-import 'package:e4uflutter/feature/admin/user-manager/domain/usecase/get_all_users_usecase.dart';
-import 'package:e4uflutter/feature/admin/user-manager/domain/usecase/create_user_usecase.dart';
-import 'package:e4uflutter/feature/admin/user-manager/domain/usecase/update_user_usecase.dart';
-import 'package:e4uflutter/feature/admin/user-manager/domain/usecase/delete_user_usecase.dart';
-import 'package:e4uflutter/feature/admin/user-manager/domain/usecase/toggle_user_status_usecase.dart';
 
 class UserManagementController extends GetxController {
   // Observable state
@@ -19,30 +14,24 @@ class UserManagementController extends GetxController {
   final RxBool showActiveOnly = true.obs;
   final RxString sortBy = 'createdAt'.obs;
   final RxString sortOrder = 'desc'.obs;
+  final RxList<Map<String, dynamic>> classes = <Map<String, dynamic>>[].obs;
 
   // Dependencies
-  late final GetAllUsersUsecase _getAllUsersUsecase;
-  late final CreateUserUsecase _createUserUsecase;
-  late final UpdateUserUsecase _updateUserUsecase;
-  late final DeleteUserUsecase _deleteUserUsecase;
-  late final ToggleUserStatusUsecase _toggleUserStatusUsecase;
+  late final UserManagementRepositoryImpl _repository;
 
   @override
   void onInit() {
     super.onInit();
     _initializeDependencies();
     loadUsers();
+    // Load classes immediately
+    loadClasses();
   }
+
 
   void _initializeDependencies() {
     final datasource = UserManagementDatasource();
-    final repository = UserManagementRepositoryImpl(datasource);
-    
-    _getAllUsersUsecase = GetAllUsersUsecase(repository);
-    _createUserUsecase = CreateUserUsecase(repository);
-    _updateUserUsecase = UpdateUserUsecase(repository);
-    _deleteUserUsecase = DeleteUserUsecase(repository);
-    _toggleUserStatusUsecase = ToggleUserStatusUsecase(repository);
+    _repository = UserManagementRepositoryImpl(datasource);
   }
 
   Future<void> loadUsers() async {
@@ -57,7 +46,7 @@ class UserManagementController extends GetxController {
       print('- sortBy: ${sortBy.value}');
       print('- sortOrder: ${sortOrder.value}');
       
-      final result = await _getAllUsersUsecase(
+      final result = await _repository.getAllUsers(
         role: selectedRole.value.isEmpty ? null : selectedRole.value,
         searchQuery: searchQuery.value.isEmpty ? null : searchQuery.value,
         classFilter: selectedClass.value.isEmpty ? null : selectedClass.value,
@@ -67,6 +56,10 @@ class UserManagementController extends GetxController {
       );
       
       print('Received ${result.length} users from API');
+      print('Users details:');
+      for (var user in result) {
+        print('- ${user.fullName} (${user.email}) - ${user.role}');
+      }
       users.value = result;
     } catch (e) {
       print('Error loading users: $e');
@@ -81,6 +74,10 @@ class UserManagementController extends GetxController {
     required String lastName,
     required String email,
     required String role,
+    String? password,
+    String? phone,
+    String? gender,
+    String? dateOfBirth,
     String? currentClass,
     String? teachingClass,
   }) async {
@@ -88,11 +85,15 @@ class UserManagementController extends GetxController {
       isLoading.value = true;
       error.value = '';
       
-      await _createUserUsecase(
+      await _repository.createUser(
         firstName: firstName,
         lastName: lastName,
         email: email,
         role: role,
+        password: password,
+        phone: phone,
+        gender: gender,
+        dateOfBirth: dateOfBirth,
         currentClass: currentClass,
         teachingClass: teachingClass,
       );
@@ -100,6 +101,7 @@ class UserManagementController extends GetxController {
       await loadUsers(); // Reload users after creation
     } catch (e) {
       error.value = e.toString();
+      rethrow; // Re-throw the exception so dialog can catch it
     } finally {
       isLoading.value = false;
     }
@@ -118,7 +120,7 @@ class UserManagementController extends GetxController {
       isLoading.value = true;
       error.value = '';
       
-      await _updateUserUsecase(
+      await _repository.updateUser(
         userId,
         firstName: firstName,
         lastName: lastName,
@@ -142,7 +144,7 @@ class UserManagementController extends GetxController {
       isLoading.value = true;
       error.value = '';
       
-      await _deleteUserUsecase(userId);
+      await _repository.deleteUser(userId);
       
       await loadUsers(); // Reload users after deletion
     } catch (e) {
@@ -157,7 +159,7 @@ class UserManagementController extends GetxController {
       isLoading.value = true;
       error.value = '';
       
-      await _toggleUserStatusUsecase(userId, isActive);
+      await _repository.toggleUserStatus(userId, isActive);
       
       await loadUsers(); // Reload users after status change
     } catch (e) {
@@ -167,8 +169,27 @@ class UserManagementController extends GetxController {
     }
   }
 
+  Future<void> setTeacherClass(String teacherId, String className) async {
+    try {
+      isLoading.value = true;
+      error.value = '';
+      
+      await _repository.setTeacherClass(teacherId, className);
+      
+      await loadUsers(); // Reload users after setting class
+    } catch (e) {
+      error.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   void setSearchQuery(String query) {
     searchQuery.value = query;
+    // Don't search automatically - only when user presses Enter
+  }
+
+  void performSearch() {
     loadUsers();
   }
 
@@ -177,8 +198,9 @@ class UserManagementController extends GetxController {
     loadUsers();
   }
 
-  void setSelectedClass(String className) {
-    selectedClass.value = className;
+  void setSelectedClass(String classId) {
+    selectedClass.value = classId;
+    print('Selected class ID: $classId');
     loadUsers();
   }
 
@@ -201,5 +223,30 @@ class UserManagementController extends GetxController {
     sortBy.value = 'createdAt';
     sortOrder.value = 'desc';
     loadUsers();
+  }
+
+  void resetFilters() {
+    searchQuery.value = '';
+    selectedRole.value = '';
+    selectedClass.value = '';
+    showActiveOnly.value = true;
+    sortBy.value = 'createdAt';
+    sortOrder.value = 'desc';
+  }
+
+  Future<void> loadClasses() async {
+    try {
+      print('Loading classes...');
+      final classesList = await _repository.getClasses();
+      print('Loaded ${classesList.length} classes:');
+      for (var classItem in classesList) {
+        print('- ${classItem['name']} (${classItem['id']})');
+      }
+      classes.value = classesList;
+      print('Classes updated in controller: ${classes.length}');
+    } catch (e) {
+      print('Error loading classes: $e');
+      print('Stack trace: ${StackTrace.current}');
+    }
   }
 }

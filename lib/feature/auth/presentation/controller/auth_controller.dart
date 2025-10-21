@@ -49,24 +49,7 @@ class AuthController extends GetxController {
   }
 
   Future<void> login(String email, String password) async {
-    // Validation
-    if (email.isEmpty || password.isEmpty) {
-      Get.snackbar('Lỗi', 'Email và mật khẩu không được để trống', backgroundColor: Colors.red, colorText: Colors.white);
-      return;
-    }
-
-    if (!email.contains('@')) {
-      Get.snackbar('Lỗi', 'Email không hợp lệ', backgroundColor: Colors.red, colorText: Colors.white);
-      return;
-    }
-
-    if (password.length < 6) {
-      Get.snackbar('Lỗi', 'Mật khẩu phải có ít nhất 6 ký tự', backgroundColor: Colors.red, colorText: Colors.white);
-      return;
-    }
-
     isLoading.value = true;
-    Get.snackbar('Thông báo', 'Đang đăng nhập...', backgroundColor: Colors.blue, colorText: Colors.white, duration: Duration(seconds: 1));
     
     try {
       final userData = await _authRepository.login(email, password);
@@ -89,7 +72,7 @@ class AuthController extends GetxController {
     } catch (e) {
       isLoading.value = false;
       String errorMessage = e.toString().replaceFirst('Exception: ', '');
-      Get.snackbar('Lỗi', errorMessage, backgroundColor: Colors.red, colorText: Colors.white);
+      error.value = errorMessage;
     }
   }
 
@@ -104,7 +87,6 @@ class AuthController extends GetxController {
 
   Future<void> logout() async {
     isLoading.value = true;
-    Get.snackbar('Thông báo', 'Đang đăng xuất...', backgroundColor: Colors.blue, colorText: Colors.white, duration: Duration(seconds: 1));
     
     try {
       await _authRepository.logout();
@@ -115,7 +97,7 @@ class AuthController extends GetxController {
     } catch (e) {
       isLoading.value = false;
       String errorMessage = e.toString().replaceFirst('Exception: ', '');
-      Get.snackbar('Lỗi', errorMessage, backgroundColor: Colors.red, colorText: Colors.white);
+      error.value = errorMessage;
     }
   }
 

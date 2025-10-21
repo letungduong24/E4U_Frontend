@@ -22,7 +22,16 @@ class AuthDatasource{
       if (e.type == DioExceptionType.connectionTimeout) {
         throw Exception('Kết nối quá thời gian. Vui lòng thử lại.');
       } else {
-        throw Exception(e.response?.data['message'] ?? 'Đăng nhập thất bại');
+        String errorMessage = e.response?.data['message'] ?? 'Đăng nhập thất bại';
+        
+        // Dịch các lỗi phổ biến sang tiếng Việt
+        if (errorMessage.contains('Invalid credentials') || errorMessage.contains('invalid credentials')) {
+          errorMessage = 'Email hoặc mật khẩu không đúng';
+        } else if (errorMessage.contains('Validation failed')) {
+          errorMessage = 'Thông tin không hợp lệ';
+        }
+        
+        throw Exception(errorMessage);
       }
     }
   }
