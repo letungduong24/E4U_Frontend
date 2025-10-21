@@ -29,14 +29,14 @@ class ProfileScreen extends StatelessWidget {
               // Avatar + Basic info
               Padding(
                 padding: const EdgeInsets.all(15),
-                child: Row(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Container(
                       width: 120,
                       height: 120,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
+                        borderRadius: BorderRadius.circular(60),
                         image: DecorationImage(
                           image: avatarUrl != null && avatarUrl.isNotEmpty
                               ? NetworkImage(avatarUrl)
@@ -46,28 +46,29 @@ class ProfileScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            user != null ? user.fullName : "Người dùng",
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                            ),
+                    const SizedBox(height: 15),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          user != null ? user.fullName : "Người dùng",
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
                           ),
-                          Text(
-                            user != null
-                                ? RoleUtil.GetRoleTitle(user)
-                                : "Người dùng",
-                            style: const TextStyle(fontSize: 15),
-                            softWrap: true,
-                            overflow: TextOverflow.visible,
-                          ),
-                        ],
-                      ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          user != null
+                              ? RoleUtil.GetRoleTitle(user)
+                              : "Người dùng",
+                          style: const TextStyle(fontSize: 15),
+                          textAlign: TextAlign.center,
+                          softWrap: true,
+                          overflow: TextOverflow.visible,
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -143,50 +144,51 @@ class ProfileScreen extends StatelessWidget {
                   ],
                 )
               ),
-              // enrollment history
-              Padding(
-                padding: const EdgeInsets.all(15),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Lịch sử học tập", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),),
-                    SizedBox(height: 5,),
-                    if (user?.enrollmentHistory != null)
-                      ...?user?.enrollmentHistory?.map((item) =>
-                          Container(
-                            padding: EdgeInsets.all((12)),
-                            decoration: BoxDecoration(
-                                color: Colors.grey[100],
-                                borderRadius: BorderRadius.circular(20)
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(item.className, style: TextStyle(fontWeight: FontWeight.bold),),
-                                    Container(
-                                      padding: EdgeInsets.all(5),
-                                      decoration: BoxDecoration(
-                                        color: StatusUtil.GetStatusDisplayColor(item.status),
-                                        borderRadius: BorderRadius.circular(10)
-                                      ),
-                                      child: Text(StatusUtil.GetStatusDisplayName(item.status), style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white),),
-                                    )
-                                  ],
-                                ),
-                                Text("Ngày bắt đầu: ${DateFormat('dd/MM/yyyy').format(item.enrolledAt)}"),
-                                Text("Ngày kết thúc: ${item.completedAt != null ? DateFormat('dd/MM/yyyy').format(item.completedAt!) : 'Chưa kết thúc'}")
-                              ],
-                            ),
-                          )
-                      )
-                    else
-                      Text("Không có lịch sử học"),
-                  ],
-                ),
-              )
+              // enrollment history - chỉ hiển thị cho học sinh
+              if (user?.role == 'student')
+                Padding(
+                  padding: const EdgeInsets.all(15),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Lịch sử học tập", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),),
+                      SizedBox(height: 5,),
+                      if (user?.enrollmentHistory != null)
+                        ...?user?.enrollmentHistory?.map((item) =>
+                            Container(
+                              padding: EdgeInsets.all((12)),
+                              decoration: BoxDecoration(
+                                  color: Colors.grey[100],
+                                  borderRadius: BorderRadius.circular(20)
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(item.className, style: TextStyle(fontWeight: FontWeight.bold),),
+                                      Container(
+                                        padding: EdgeInsets.all(5),
+                                        decoration: BoxDecoration(
+                                          color: StatusUtil.GetStatusDisplayColor(item.status),
+                                          borderRadius: BorderRadius.circular(10)
+                                        ),
+                                        child: Text(StatusUtil.GetStatusDisplayName(item.status), style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white),),
+                                      )
+                                    ],
+                                  ),
+                                  Text("Ngày bắt đầu: ${DateFormat('dd/MM/yyyy').format(item.enrolledAt)}"),
+                                  Text("Ngày kết thúc: ${item.completedAt != null ? DateFormat('dd/MM/yyyy').format(item.completedAt!) : 'Chưa kết thúc'}")
+                                ],
+                              ),
+                            )
+                        )
+                      else
+                        Text("Không có lịch sử học"),
+                    ],
+                  ),
+                )
 
             ],
           );

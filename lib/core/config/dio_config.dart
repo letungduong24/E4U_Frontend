@@ -31,7 +31,6 @@ class DioClient {
               options.headers['Authorization'] = 'Bearer $token';
             }
           } catch (e) {
-            // Silent error handling
           }
           
           return handler.next(options);
