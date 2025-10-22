@@ -1,7 +1,10 @@
 import 'package:e4uflutter/feature/admin/user-manager/domain/entity/user_management_entity.dart';
+import 'package:e4uflutter/feature/admin/user-manager/presentation/controller/user_management_controller.dart';
+import 'package:e4uflutter/feature/admin/user-manager/presentation/widget/delete_user_confirmation_dialog.dart';
 import 'package:e4uflutter/shared/presentation/button.dart';
 import 'package:e4uflutter/shared/utils/role_util.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class UserProfileDialog extends StatelessWidget {
@@ -39,24 +42,13 @@ class UserProfileDialog extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Header với nút X
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          "Chi tiết người dùng",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () => Navigator.pop(context),
-                          icon: const Icon(Icons.close),
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
-                        ),
-                      ],
+                    // Header
+                    const Text(
+                      "Chi tiết người dùng",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 20),
 
@@ -204,8 +196,8 @@ class UserProfileDialog extends StatelessWidget {
                                     child: InkWell(
                                       borderRadius: BorderRadius.circular(20),
                                       onTap: () {
-                                        // TODO: Implement delete user
-                                        Navigator.pop(context);
+                                        Navigator.pop(context); // Đóng dialog hiện tại
+                                        _showDeleteConfirmation(context);
                                       },
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(vertical: 12),
@@ -265,6 +257,17 @@ class UserProfileDialog extends StatelessWidget {
             ),
           );
         },
+      ),
+    );
+  }
+
+  void _showDeleteConfirmation(BuildContext context) {
+    final controller = Get.find<UserManagementController>();
+    showDialog(
+      context: context,
+      builder: (context) => DeleteUserConfirmationDialog(
+        user: user,
+        controller: controller,
       ),
     );
   }

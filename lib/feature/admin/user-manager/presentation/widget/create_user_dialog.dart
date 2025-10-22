@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e4uflutter/feature/admin/user-manager/presentation/controller/user_management_controller.dart';
+import 'package:e4uflutter/shared/presentation/dialog/success_dialog.dart';
 
 class CreateUserDialog extends StatefulWidget {
   final UserManagementController controller;
@@ -54,37 +55,28 @@ class _CreateUserDialogState extends State<CreateUserDialog> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
-      child: Container(
-        width: double.infinity,
-        constraints: const BoxConstraints(
-          maxHeight: 600,
-          minHeight: 400,
-        ),
-        child: SingleChildScrollView(
-          controller: _scrollController,
-          physics: const BouncingScrollPhysics(),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Stack(
+        children: [
+          Container(
+            width: double.infinity,
+            constraints: const BoxConstraints(
+              maxHeight: 600,
+              minHeight: 400,
+            ),
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              physics: const BouncingScrollPhysics(),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text(
-                      "Tạo người dùng",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.close),
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                    ),
-                  ],
+                const Text(
+                  "Tạo người dùng",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 20),
 
@@ -382,8 +374,8 @@ class _CreateUserDialogState extends State<CreateUserDialog> {
                   children: [
                     SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: _handleCreateUser,
+                      child: Obx(() => ElevatedButton(
+                        onPressed: widget.controller.isLoading.value ? null : _handleCreateUser,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF3396D3),
                           foregroundColor: Colors.white,
@@ -400,7 +392,7 @@ class _CreateUserDialogState extends State<CreateUserDialog> {
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                      ),
+                      )),
                     ),
                     const SizedBox(height: 12),
                     SizedBox(
@@ -430,6 +422,27 @@ class _CreateUserDialogState extends State<CreateUserDialog> {
             ),
           ),
         ),
+        ),
+          // Loading overlay
+          Obx(() {
+            if (widget.controller.isLoading.value) {
+              return Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: const Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              );
+            }
+            return const SizedBox.shrink();
+          }),
+        ],
       ),
     );
   }
@@ -452,6 +465,8 @@ class _CreateUserDialogState extends State<CreateUserDialog> {
         );
         // Only close dialog if successful
         Navigator.pop(context);
+        // Show success dialog
+        _showSuccessDialog(context);
       } catch (e) {
         // Show error alert but keep dialog open
         showDialog(
@@ -489,5 +504,14 @@ class _CreateUserDialogState extends State<CreateUserDialog> {
         ),
       );
     }
+  }
+
+  void _showSuccessDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => SuccessDialog(
+        title: "Tạo người dùng thành công",
+      ),
+    );
   }
 }
