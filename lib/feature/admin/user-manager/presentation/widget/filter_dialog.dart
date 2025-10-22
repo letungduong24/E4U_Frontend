@@ -53,6 +53,7 @@ class _FilterDialogState extends State<FilterDialog> {
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Header với nút X
                     const Text(

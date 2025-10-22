@@ -1,6 +1,6 @@
 import 'package:e4uflutter/feature/admin/user-manager/domain/entity/user_management_entity.dart';
 import 'package:e4uflutter/feature/admin/user-manager/presentation/controller/user_management_controller.dart';
-import 'package:e4uflutter/feature/admin/user-manager/presentation/widget/delete_user_confirmation_dialog.dart';
+import 'package:e4uflutter/shared/presentation/dialog/delete_confirmation_dialog.dart';
 import 'package:e4uflutter/shared/presentation/button.dart';
 import 'package:e4uflutter/shared/utils/role_util.dart';
 import 'package:flutter/material.dart';
@@ -265,8 +265,9 @@ class UserProfileDialog extends StatelessWidget {
     final controller = Get.find<UserManagementController>();
     showDialog(
       context: context,
-      builder: (context) => DeleteUserConfirmationDialog(
-        user: user,
+      builder: (context) => DeleteConfirmationDialog(
+        objectName: "người dùng",
+        deleteFunction: () => controller.deleteUser(user.id),
         controller: controller,
       ),
     );

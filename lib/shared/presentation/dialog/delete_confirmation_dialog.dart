@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconify_flutter/iconify_flutter.dart';
 import 'package:iconify_flutter/icons/ph.dart';
-import 'package:e4uflutter/feature/admin/user-manager/domain/entity/user_management_entity.dart';
-import 'package:e4uflutter/feature/admin/user-manager/presentation/controller/user_management_controller.dart';
 import 'package:e4uflutter/shared/presentation/dialog/success_dialog.dart';
 
-class DeleteUserConfirmationDialog extends StatelessWidget {
-  final UserManagementEntity user;
-  final UserManagementController controller;
+class DeleteConfirmationDialog extends StatelessWidget {
+  final String objectName;
+  final Future<void> Function() deleteFunction;
+  final GetxController controller;
 
-  const DeleteUserConfirmationDialog({
+  const DeleteConfirmationDialog({
     super.key,
-    required this.user,
+    required this.objectName,
+    required this.deleteFunction,
     required this.controller,
   });
 
@@ -56,9 +56,9 @@ class DeleteUserConfirmationDialog extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      const Text(
-                        "Xóa người dùng",
-                        style: TextStyle(
+                      Text(
+                        "Xóa $objectName",
+                        style: const TextStyle(
                           fontSize: 25,
                           fontWeight: FontWeight.bold,
                         ),
@@ -76,9 +76,9 @@ class DeleteUserConfirmationDialog extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          "Bạn có chắc chắn muốn xóa bài viết này?",
-                          style: TextStyle(
+                        Text(
+                          "Bạn có chắc chắn muốn xóa $objectName này?",
+                          style: const TextStyle(
                             fontSize: 16,
                             color: Colors.black54,
                           ),
@@ -103,7 +103,7 @@ class DeleteUserConfirmationDialog extends StatelessWidget {
                   SizedBox(
                     width: double.infinity,
                     child: Obx(() => ElevatedButton(
-                      onPressed: controller.isLoading.value ? null : () => _handleDeleteUser(context),
+                      onPressed: (controller as dynamic).isLoading.value ? null : () => _handleDelete(context),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFD92D20),
                         foregroundColor: Colors.white,
@@ -152,7 +152,7 @@ class DeleteUserConfirmationDialog extends StatelessWidget {
         ),
           // Loading overlay
           Obx(() {
-            if (controller.isLoading.value) {
+            if ((controller as dynamic).isLoading.value) {
               return Positioned.fill(
                 child: Container(
                   decoration: BoxDecoration(
@@ -174,10 +174,10 @@ class DeleteUserConfirmationDialog extends StatelessWidget {
     );
   }
 
-  void _handleDeleteUser(BuildContext context) async {
+  void _handleDelete(BuildContext context) async {
     try {
-      // Gọi API xóa người dùng (controller sẽ tự động reload)
-      await controller.deleteUser(user.id);
+      // Gọi hàm xóa được truyền vào
+      await deleteFunction();
       
       // Đóng dialog xác nhận
       Navigator.pop(context);
@@ -195,7 +195,7 @@ class DeleteUserConfirmationDialog extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => SuccessDialog(
-        title: "Xóa người dùng thành công",
+        title: "Xóa $objectName thành công",
       ),
     );
   }
