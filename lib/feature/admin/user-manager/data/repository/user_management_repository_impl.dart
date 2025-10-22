@@ -69,6 +69,9 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
     String? currentClass,
     String? teachingClass,
     bool? isActive,
+    String? phone,
+    String? gender,
+    String? dateOfBirth,
   }) async {
     return await _datasource.updateUser(
       userId,
@@ -79,6 +82,9 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
       currentClass: currentClass,
       teachingClass: teachingClass,
       isActive: isActive,
+      phone: phone,
+      gender: gender,
+      dateOfBirth: dateOfBirth,
     );
   }
 

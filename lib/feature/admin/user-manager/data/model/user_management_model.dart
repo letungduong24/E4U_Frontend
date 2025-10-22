@@ -19,6 +19,7 @@ class UserManagementModel extends UserManagementEntity {
   factory UserManagementModel.fromJson(Map<String, dynamic> json) {
     try {
       print('Parsing user: ${json['fullName']} (${json['email']})');
+      print('Full JSON data: $json');
       
       // Parse createdAt with fallback
       DateTime createdAt;

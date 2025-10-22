@@ -274,21 +274,52 @@ class UserManagementDatasource {
     String? currentClass,
     String? teachingClass,
     bool? isActive,
+    String? phone,
+    String? gender,
+    String? dateOfBirth,
   }) async {
     try {
       final data = <String, dynamic>{};
       if (firstName != null) data['firstName'] = firstName;
       if (lastName != null) data['lastName'] = lastName;
-      if (email != null) data['email'] = email;
+      // Gửi email giống như CreateUser
+      if (email != null) {
+        data['email'] = email.trim(); // Trim whitespace
+      }
       if (role != null) data['role'] = role;
       if (currentClass != null) data['currentClass'] = currentClass;
       if (teachingClass != null) data['teachingClass'] = teachingClass;
       if (isActive != null) data['isActive'] = isActive;
+      
+      // Thêm profile data
+      final profileData = <String, dynamic>{};
+      if (phone != null) profileData['phone'] = phone;
+      if (gender != null) profileData['gender'] = gender;
+      if (dateOfBirth != null) profileData['dateOfBirth'] = dateOfBirth;
+      // Thêm address field để match với Postman
+      profileData['address'] = '123 Đường AdBC, Quận 1, TP.HCM';
+      
+      if (profileData.isNotEmpty) {
+        data['profile'] = profileData;
+      }
 
-      final response = await _dio.put('/api/admin/users/$userId', data: data);
+      
+      // Thử gửi với Content-Type header rõ ràng
+      final response = await _dio.put(
+        '/admin/users/$userId', 
+        data: data,
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
       return UserManagementModel.fromJson(response.data['data']['user']);
     } on DioException catch (e) {
       throw Exception(e.response?.data['message'] ?? 'Cập nhật người dùng thất bại');
+    } catch (e) {
+      print('General error in updateUser: $e');
+      throw Exception('Cập nhật người dùng thất bại: $e');
     }
   }
 

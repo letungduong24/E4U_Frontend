@@ -115,6 +115,9 @@ class UserManagementController extends GetxController {
     String? currentClass,
     String? teachingClass,
     bool? isActive,
+    String? phone,
+    String? gender,
+    String? dateOfBirth,
   }) async {
     try {
       isLoading.value = true;
@@ -129,11 +132,21 @@ class UserManagementController extends GetxController {
         currentClass: currentClass,
         teachingClass: teachingClass,
         isActive: isActive,
+        phone: phone,
+        gender: gender,
+        dateOfBirth: dateOfBirth,
       );
       
-      await loadUsers(); // Reload users after update
+      // Reload users after successful update
+      try {
+        await loadUsers();
+      } catch (loadError) {
+        // Log load error but don't fail the update
+        print('Error reloading users: $loadError');
+      }
     } catch (e) {
       error.value = e.toString();
+      rethrow; // Re-throw để dialog có thể catch
     } finally {
       isLoading.value = false;
     }

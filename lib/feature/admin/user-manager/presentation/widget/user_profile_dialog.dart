@@ -1,5 +1,6 @@
 import 'package:e4uflutter/feature/admin/user-manager/domain/entity/user_management_entity.dart';
 import 'package:e4uflutter/feature/admin/user-manager/presentation/controller/user_management_controller.dart';
+import 'package:e4uflutter/feature/admin/user-manager/presentation/widget/update_user_dialog.dart';
 import 'package:e4uflutter/shared/presentation/dialog/delete_confirmation_dialog.dart';
 import 'package:e4uflutter/shared/presentation/button.dart';
 import 'package:e4uflutter/shared/utils/role_util.dart';
@@ -181,6 +182,46 @@ class UserProfileDialog extends StatelessWidget {
                               ),
                             ],
                           ),
+                          const SizedBox(height: 10),
+                          
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                "Ngày sinh:",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                user.profile?.dateOfBirth != null 
+                                    ? DateFormat('dd/MM/yyyy').format(user.profile!.dateOfBirth!)
+                                    : "Chưa có thông tin",
+                                style: const TextStyle(fontSize: 15),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                "Giới tính:",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                user.profile?.gender ?? "Chưa có thông tin",
+                                style: const TextStyle(fontSize: 15),
+                              ),
+                            ],
+                          ),
                           const SizedBox(height: 20),
                           
                           Row(
@@ -227,8 +268,8 @@ class UserProfileDialog extends StatelessWidget {
                                     child: InkWell(
                                       borderRadius: BorderRadius.circular(20),
                                       onTap: () {
-                                        // TODO: Implement edit user
-                                        Navigator.pop(context);
+                                        Navigator.pop(context); // Đóng dialog hiện tại
+                                        _showUpdateUserDialog(context);
                                       },
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(vertical: 12),
@@ -268,6 +309,17 @@ class UserProfileDialog extends StatelessWidget {
       builder: (context) => DeleteConfirmationDialog(
         objectName: "người dùng",
         deleteFunction: () => controller.deleteUser(user.id),
+        controller: controller,
+      ),
+    );
+  }
+
+  void _showUpdateUserDialog(BuildContext context) {
+    final controller = Get.find<UserManagementController>();
+    showDialog(
+      context: context,
+      builder: (context) => UpdateUserDialog(
+        user: user,
         controller: controller,
       ),
     );

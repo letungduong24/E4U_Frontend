@@ -33,6 +33,9 @@ abstract class UserManagementRepository {
     String? currentClass,
     String? teachingClass,
     bool? isActive,
+    String? phone,
+    String? gender,
+    String? dateOfBirth,
   });
 
   Future<void> deleteUser(String userId);
