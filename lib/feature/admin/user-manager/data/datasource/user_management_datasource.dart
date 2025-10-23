@@ -216,6 +216,30 @@ class UserManagementDatasource {
         lastLoginAt: now.subtract(const Duration(minutes: 30)),
         isActive: true,
       ),
+      UserManagementModel(
+        id: '6',
+        firstName: 'Nguyễn',
+        lastName: 'Thị Giáo',
+        fullName: 'Nguyễn Thị Giáo',
+        email: 'giao.nguyen@example.com',
+        role: 'teacher',
+        teachingClass: 'IELTS Advanced - Band 6.0-7.5',
+        createdAt: now.subtract(const Duration(days: 45)),
+        lastLoginAt: now.subtract(const Duration(hours: 3)),
+        isActive: true,
+      ),
+      UserManagementModel(
+        id: '7',
+        firstName: 'Trần',
+        lastName: 'Văn Học',
+        fullName: 'Trần Văn Học',
+        email: 'hoc.tran@example.com',
+        role: 'teacher',
+        teachingClass: 'TOEIC Preparation',
+        createdAt: now.subtract(const Duration(days: 30)),
+        lastLoginAt: now.subtract(const Duration(days: 1)),
+        isActive: false,
+      ),
     ];
   }
 

@@ -106,7 +106,7 @@ class AdminDrawer extends StatelessWidget{
           DrawerItem(
             icon: Ph.chalkboard_teacher,
             title: 'Quản lý lớp học',
-            onTap: () {},
+            onTap: () => Get.toNamed('/class-management'),
           ),
 
           SizedBox(height: 15,),
