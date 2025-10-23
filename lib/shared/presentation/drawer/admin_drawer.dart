@@ -98,7 +98,7 @@ class AdminDrawer extends StatelessWidget{
           DrawerItem(
             icon: Uil.schedule,
             title: 'Quản lý lịch học',
-            onTap: () {},
+            onTap: () => Get.toNamed('/admin-schedule'),
           ),
 
           SizedBox(height: 15,),
