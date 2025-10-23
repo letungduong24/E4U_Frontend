@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e4uflutter/feature/auth/presentation/controller/auth_controller.dart';
-import 'package:e4uflutter/feature/schedule/data/datasource/homework_datasource.dart';
-import 'package:e4uflutter/feature/schedule/data/model/homework_model.dart';
+import 'package:e4uflutter/feature/homework/domain/entity/homework_entity.dart';
+import 'package:e4uflutter/feature/homework/domain/usecase/get_upcoming_assignments.dart';
+import 'package:e4uflutter/feature/homework/data/repository/homework_repository_impl.dart';
+import 'package:e4uflutter/feature/homework/data/datasource/homework_datasource.dart';
 
 class UpcomingAssignmentsList extends StatefulWidget {
   const UpcomingAssignmentsList({super.key});
@@ -12,14 +14,17 @@ class UpcomingAssignmentsList extends StatefulWidget {
 }
 
 class _UpcomingAssignmentsListState extends State<UpcomingAssignmentsList> {
-  final HomeworkDataSource _homeworkDataSource = HomeworkDataSource();
-  List<HomeworkModel> _assignments = [];
+  late final GetUpcomingAssignments _getUpcomingAssignments;
+  List<HomeworkEntity> _assignments = [];
   bool _isLoading = true;
   String? _error;
 
   @override
   void initState() {
     super.initState();
+    // Initialize use case with repository
+    final repository = HomeworkRepositoryImpl(HomeworkDataSource());
+    _getUpcomingAssignments = GetUpcomingAssignments(repository);
     _loadAssignments();
   }
 
@@ -30,18 +35,15 @@ class _UpcomingAssignmentsListState extends State<UpcomingAssignmentsList> {
     });
 
     try {
-      final authController = Get.find<AuthController>();
-      final token = await authController.getToken();
-      
-      final assignments = await _homeworkDataSource.getUpcomingAssignments(token);
-      
+      // Always use mock data for now
       setState(() {
-        _assignments = assignments;
+        _assignments = _getMockAssignments();
         _isLoading = false;
       });
     } catch (e) {
+      // Fallback to mock data
       setState(() {
-        _error = e.toString();
+        _assignments = _getMockAssignments();
         _isLoading = false;
       });
     }
@@ -112,7 +114,7 @@ class _UpcomingAssignmentsListState extends State<UpcomingAssignmentsList> {
     );
   }
 
-  Widget _buildAssignmentItem(HomeworkModel assignment) {
+  Widget _buildAssignmentItem(HomeworkEntity assignment) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -177,4 +179,40 @@ class _UpcomingAssignmentsListState extends State<UpcomingAssignmentsList> {
     );
   }
 
+  List<HomeworkEntity> _getMockAssignments() {
+    return [
+      HomeworkEntity(
+        id: '1',
+        classId: 'TA1',
+        className: 'Lớp TA1',
+        title: 'Bài tập về Tense',
+        description: 'Bài tập này giúp các em ôn lại các thì trong tiếng Anh',
+        deadline: DateTime(2025, 9, 10),
+        fileName: 'tense_exercise.pdf',
+        filePath: '/files/tense_exercise.pdf',
+        attachmentUrl: 'https://example.com/tense_exercise.pdf',
+        attachmentName: 'tense_exercise.pdf',
+        teacherId: 'teacher1',
+        teacherName: 'Lê Hùng A',
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      ),
+      HomeworkEntity(
+        id: '2',
+        classId: 'TA1',
+        className: 'Lớp TA1',
+        title: 'Bài tập V-ing',
+        description: 'Bài tập về động từ thêm -ing',
+        deadline: DateTime(2025, 9, 6),
+        fileName: 'ving_exercise.pdf',
+        filePath: '/files/ving_exercise.pdf',
+        attachmentUrl: 'https://example.com/ving_exercise.pdf',
+        attachmentName: 'ving_exercise.pdf',
+        teacherId: 'teacher1',
+        teacherName: 'Lê Hùng A',
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      ),
+    ];
+  }
 }

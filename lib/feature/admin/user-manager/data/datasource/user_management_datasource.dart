@@ -367,7 +367,7 @@ class UserManagementDatasource {
       }
       
       final classes = classesJson.map((json) => {
-        'id': json['_id'],
+        'id': json['_id']?.toString() ?? json['id']?.toString() ?? '',
         'name': json['name'],
         'code': json['code'],
         'description': json['description'],

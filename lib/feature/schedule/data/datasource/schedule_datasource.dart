@@ -114,4 +114,80 @@ class ScheduleDataSource {
       throw Exception('Failed to fetch schedules by class: $e');
     }
   }
+
+  // Get all schedules
+  Future<List<ScheduleModel>> getAllSchedules(String? token) async {
+    try {
+      final response = await _dioClient.dio.get('/schedules');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['status'] == 'success' && data['data']?['schedules'] != null) {
+          final List<dynamic> schedulesJson = data['data']['schedules'];
+          return schedulesJson.map((json) => ScheduleModel.fromJson(json)).toList();
+        }
+      }
+      return [];
+    } catch (e) {
+      throw Exception('Failed to fetch all schedules: $e');
+    }
+  }
+
+  // Get schedule by ID
+  Future<ScheduleModel> getScheduleById(String scheduleId, String? token) async {
+    try {
+      final response = await _dioClient.dio.get('/schedules/$scheduleId');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['status'] == 'success' && data['data']?['schedule'] != null) {
+          return ScheduleModel.fromJson(data['data']['schedule']);
+        }
+      }
+      throw Exception('Schedule not found');
+    } catch (e) {
+      throw Exception('Failed to fetch schedule: $e');
+    }
+  }
+
+
+  // Get schedules by class
+  Future<List<ScheduleModel>> getSchedulesByClass(String classCode, String? token) async {
+    try {
+      final response = await _dioClient.dio.get(
+        '/schedules/class/$classCode',
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['status'] == 'success' && data['data']?['schedules'] != null) {
+          final List<dynamic> schedulesJson = data['data']['schedules'];
+          return schedulesJson.map((json) => ScheduleModel.fromJson(json)).toList();
+        }
+      }
+      return [];
+    } catch (e) {
+      throw Exception('Failed to fetch schedules by class: $e');
+    }
+  }
+
+  // Get schedules by teacher
+  Future<List<ScheduleModel>> getSchedulesByTeacher(String teacherId, String? token) async {
+    try {
+      final response = await _dioClient.dio.get(
+        '/schedules/teacher/$teacherId',
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['status'] == 'success' && data['data']?['schedules'] != null) {
+          final List<dynamic> schedulesJson = data['data']['schedules'];
+          return schedulesJson.map((json) => ScheduleModel.fromJson(json)).toList();
+        }
+      }
+      return [];
+    } catch (e) {
+      throw Exception('Failed to fetch schedules by teacher: $e');
+    }
+  }
 }

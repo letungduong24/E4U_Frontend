@@ -1,6 +1,7 @@
 import 'package:e4uflutter/shared/presentation/drawer/admin_drawer.dart';
 import 'package:e4uflutter/shared/presentation/drawer/student_drawer.dart';
 import 'package:e4uflutter/shared/presentation/drawer/teacher_drawer.dart';
+import 'package:e4uflutter/shared/presentation/widget/header_actions.dart';
 import 'package:e4uflutter/shared/utils/role_util.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -68,31 +69,9 @@ class ProfileScaffold extends StatelessWidget {
                         ],
                       ),
                       const Spacer(),
-                      Container(
-                        alignment: Alignment.center,
-                        padding: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                            color: Colors.grey[100], shape: BoxShape.circle),
-                        child: Icon(
-                          Icons.notifications,
-                          color: Colors.black,
-                          size: 25,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
                       GestureDetector(
                         onTap: () => Scaffold.of(context).openEndDrawer(),
-                        child: Container(
-                          alignment: Alignment.center,
-                          padding: EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                              color: Colors.grey[100], shape: BoxShape.circle),
-                          child: Icon(
-                            Icons.apps,
-                            color: Colors.black,
-                            size: 25,
-                          ),
-                        ),
+                        child: const HeaderActions(),
                       ),
                     ],
                   ),

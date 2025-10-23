@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
 
-class DeleteConfirmModal extends StatelessWidget {
-  final String scheduleName;
-  final VoidCallback onConfirm;
+class HomeworkSuccessPopup extends StatelessWidget {
+  final String title;
+  final String message;
+  final String primaryButtonText;
+  final String secondaryButtonText;
+  final VoidCallback? onPrimaryPressed;
+  final VoidCallback? onSecondaryPressed;
 
-  const DeleteConfirmModal({
+  const HomeworkSuccessPopup({
     super.key,
-    required this.scheduleName,
-    required this.onConfirm,
+    required this.title,
+    required this.message,
+    required this.primaryButtonText,
+    required this.secondaryButtonText,
+    this.onPrimaryPressed,
+    this.onSecondaryPressed,
   });
 
   @override
@@ -22,19 +30,19 @@ class DeleteConfirmModal extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Trash Icon
+            // Success Icon
             Align(
               alignment: Alignment.centerLeft,
               child: Container(
                 width: 60,
                 height: 60,
                 decoration: BoxDecoration(
-                  color: Colors.red[50],
+                  color: Colors.green[50],
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  Icons.delete_outline,
-                  color: Colors.red[600],
+                  Icons.check,
+                  color: Colors.green[600],
                   size: 30,
                 ),
               ),
@@ -42,11 +50,11 @@ class DeleteConfirmModal extends StatelessWidget {
             const SizedBox(height: 16),
 
             // Title
-            const Align(
+            Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                'Xoá lịch',
-                style: TextStyle(
+                title,
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
@@ -55,13 +63,13 @@ class DeleteConfirmModal extends StatelessWidget {
             ),
             const SizedBox(height: 12),
 
-            // Description
-            const Align(
+            // Message
+            Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                'Bạn có chắc chắn muốn xóa lịch này?\nThao tác này không thể hoàn tác.',
+                message,
                 textAlign: TextAlign.left,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 14,
                   color: Colors.grey,
                   height: 1.4,
@@ -73,26 +81,23 @@ class DeleteConfirmModal extends StatelessWidget {
             // Action Buttons
             Column(
               children: [
-                // Delete Button (Primary)
+                // Primary Button
                 SizedBox(
                   width: double.infinity,
                   height: 48,
                   child: ElevatedButton(
-                    onPressed: () {
-                      onConfirm();
-                      Navigator.of(context).pop();
-                    },
+                    onPressed: onPrimaryPressed,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
+                      backgroundColor: Colors.blue,
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
                       elevation: 0,
                     ),
-                    child: const Text(
-                      'Xoá',
-                      style: TextStyle(
+                    child: Text(
+                      primaryButtonText,
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                       ),
@@ -101,12 +106,12 @@ class DeleteConfirmModal extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
 
-                // Cancel Button (Secondary)
+                // Secondary Button
                 SizedBox(
                   width: double.infinity,
                   height: 48,
                   child: OutlinedButton(
-                    onPressed: () => Navigator.of(context).pop(),
+                    onPressed: onSecondaryPressed,
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.grey[600],
                       side: BorderSide(color: Colors.grey[300]!),
@@ -114,9 +119,9 @@ class DeleteConfirmModal extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: const Text(
-                      'Huỷ',
-                      style: TextStyle(
+                    child: Text(
+                      secondaryButtonText,
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                       ),

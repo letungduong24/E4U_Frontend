@@ -42,7 +42,7 @@ class UserManagementModel extends UserManagementEntity {
       }
       
       return UserManagementModel(
-        id: json['_id'] ?? json['id'] ?? '',
+        id: _parseId(json['_id']) ?? _parseId(json['id']) ?? '',
         firstName: json['firstName'] ?? '',
         lastName: json['lastName'] ?? '',
         fullName: json['fullName'] ?? '',
@@ -76,6 +76,13 @@ class UserManagementModel extends UserManagementEntity {
       'lastLoginAt': lastLoginAt?.toIso8601String(),
       'isActive': isActive,
     };
+  }
+
+  static String? _parseId(dynamic value) {
+    if (value == null) return null;
+    if (value is String) return value;
+    if (value is int) return value.toString();
+    return value.toString();
   }
 }
 

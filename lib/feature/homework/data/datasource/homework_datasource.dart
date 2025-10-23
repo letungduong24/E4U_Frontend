@@ -1,5 +1,5 @@
 import 'package:e4uflutter/core/config/dio_config.dart';
-import 'package:e4uflutter/feature/schedule/data/model/homework_model.dart';
+import 'package:e4uflutter/feature/homework/data/model/homework_model.dart';
 
 class HomeworkDataSource {
   final DioClient _dioClient = DioClient();
@@ -146,6 +146,32 @@ class HomeworkDataSource {
       return response.statusCode == 200;
     } catch (e) {
       throw Exception('Failed to delete homework: $e');
+    }
+  }
+
+  // Get homework by class ID
+  Future<List<HomeworkModel>> getClassHomework(String classId, String? token) async {
+    try {
+      final response = await _dioClient.dio.get('/homeworks?class_id=$classId');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['status'] == 'success' && data['data'] != null) {
+          // Handle both array and object responses
+          List<dynamic> assignmentsJson;
+          if (data['data'] is List) {
+            assignmentsJson = data['data'];
+          } else if (data['data'] is Map && data['data']['homeworks'] != null) {
+            assignmentsJson = data['data']['homeworks'];
+          } else {
+            assignmentsJson = [];
+          }
+          return assignmentsJson.map((json) => HomeworkModel.fromJson(json)).toList();
+        }
+      }
+      return [];
+    } catch (e) {
+      throw Exception('Failed to fetch class homework: $e');
     }
   }
 }

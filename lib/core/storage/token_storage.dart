@@ -22,9 +22,16 @@ class TokenStorage {
     if (kIsWeb) {
       // For web, use SharedPreferences
       final prefs = await SharedPreferences.getInstance();
-      return prefs.getString(_key);
+      final token = prefs.getString(_key);
+      print('🌐 Web TokenStorage.readToken(): ${token != null ? "Found" : "Not found"}');
+      if (token != null) {
+        print('🌐 Token preview: ${token.substring(0, 20)}...');
+      }
+      return token;
     } else {
-      return await _secureStorage.read(key: _key);
+      final token = await _secureStorage.read(key: _key);
+      print('📱 Mobile TokenStorage.readToken(): ${token != null ? "Found" : "Not found"}');
+      return token;
     }
   }
 

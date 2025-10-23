@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:e4uflutter/shared/presentation/scaffold/profile_scaffold.dart';
+import 'package:e4uflutter/shared/presentation/widget/header_actions.dart';
 import 'package:e4uflutter/feature/schedule/presentation/widget/table_calendar_widget.dart';
 import 'package:e4uflutter/feature/schedule/presentation/widget/teacher_schedule_list.dart';
 
@@ -25,44 +26,16 @@ class _TeacherScheduleScreenState extends State<TeacherScheduleScreen> {
             Container(
               padding: const EdgeInsets.symmetric(vertical: 8),
               child: Row(
-                children: [
-                  const Text(
-                    'Lịch dạy',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                  const Spacer(),
-                  // Notifications icon
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[100],
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Icon(
-                      Icons.notifications_outlined,
-                      color: Colors.grey,
-                      size: 20,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  // Menu icon
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[100],
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Icon(
-                      Icons.grid_view,
-                      color: Colors.grey,
-                      size: 20,
-                    ),
-                  ),
-                ],
+                    children: [
+                      const Text(
+                        'Lịch dạy',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
               ),
             ),
 

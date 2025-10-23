@@ -17,7 +17,7 @@ class UserModel extends UserEntity {
   // Factory để tạo từ JSON
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      id: json['_id'] ?? '',
+      id: _parseId(json['_id']) ?? '',
       firstName: json['firstName'] ?? '',
       lastName: json['lastName'] ?? '',
       fullName: json['fullName'] ?? '',
@@ -32,6 +32,13 @@ class UserModel extends UserEntity {
           ?.map((e) => EnrollmentModel.fromJson(e))
           .toList(),
     );
+  }
+
+  static String? _parseId(dynamic value) {
+    if (value == null) return null;
+    if (value is String) return value;
+    if (value is int) return value.toString();
+    return value.toString();
   }
 
   Map<String, dynamic> toJson() {

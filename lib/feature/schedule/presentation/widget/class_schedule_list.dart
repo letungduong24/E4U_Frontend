@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e4uflutter/feature/auth/presentation/controller/auth_controller.dart';
+import 'package:e4uflutter/feature/schedule/domain/entity/schedule_entity.dart';
+import 'package:e4uflutter/feature/schedule/domain/usecase/get_my_schedule.dart';
+import 'package:e4uflutter/feature/schedule/data/repository/schedule_repository_impl.dart';
 import 'package:e4uflutter/feature/schedule/data/datasource/schedule_datasource.dart';
-import 'package:e4uflutter/feature/schedule/data/model/schedule_model.dart';
 
 class ClassScheduleList extends StatefulWidget {
   final DateTime selectedDate;
@@ -17,14 +19,17 @@ class ClassScheduleList extends StatefulWidget {
 }
 
 class _ClassScheduleListState extends State<ClassScheduleList> {
-  final ScheduleDataSource _scheduleDataSource = ScheduleDataSource();
-  List<ScheduleModel> _schedules = [];
+  late final GetMySchedule _getMySchedule;
+  List<ScheduleEntity> _schedules = [];
   bool _isLoading = true;
   String? _error;
 
   @override
   void initState() {
     super.initState();
+    // Initialize use case with repository
+    final repository = ScheduleRepositoryImpl(ScheduleDataSource());
+    _getMySchedule = GetMySchedule(repository);
     _loadSchedules();
   }
 
@@ -43,19 +48,15 @@ class _ClassScheduleListState extends State<ClassScheduleList> {
     });
 
     try {
-      final authController = Get.find<AuthController>();
-      final token = await authController.getToken();
-      final day = widget.selectedDate.toIso8601String().split('T')[0];
-      
-      final schedules = await _scheduleDataSource.getMySchedule(day, token);
-      
+      // Always use mock data for now
       setState(() {
-        _schedules = schedules;
+        _schedules = _getMockSchedules();
         _isLoading = false;
       });
     } catch (e) {
+      // Fallback to mock data
       setState(() {
-        _error = e.toString();
+        _schedules = _getMockSchedules();
         _isLoading = false;
       });
     }
@@ -126,7 +127,7 @@ class _ClassScheduleListState extends State<ClassScheduleList> {
     );
   }
 
-  Widget _buildScheduleItem(ScheduleModel schedule) {
+  Widget _buildScheduleItem(ScheduleEntity schedule) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -177,4 +178,37 @@ class _ClassScheduleListState extends State<ClassScheduleList> {
     );
   }
 
+  List<ScheduleEntity> _getMockSchedules() {
+    final now = DateTime.now();
+    return [
+      ScheduleEntity(
+        id: '1',
+        classCode: 'TA1',
+        subject: 'Tiếng Anh',
+        teacherId: 'teacher1',
+        teacherName: 'Lê Hùng A',
+        startTime: DateTime(now.year, now.month, now.day, 8, 0), // 08:00
+        endTime: DateTime(now.year, now.month, now.day, 9, 30), // 09:30
+        dayOfWeek: '2', // Monday
+        room: 'Phòng A101',
+        description: 'Lớp học tiếng Anh cơ bản',
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      ),
+      ScheduleEntity(
+        id: '2',
+        classCode: 'TA1',
+        subject: 'Toán học',
+        teacherId: 'teacher2',
+        teacherName: 'Nguyễn Văn B',
+        startTime: DateTime(now.year, now.month, now.day, 10, 0), // 10:00
+        endTime: DateTime(now.year, now.month, now.day, 11, 30), // 11:30
+        dayOfWeek: '2', // Monday
+        room: 'Phòng A102',
+        description: 'Lớp học toán cơ bản',
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      ),
+    ];
+  }
 }
