@@ -64,70 +64,14 @@ class ClassManagementDatasource {
         }
       }
       print('Successfully parsed ${allClasses.length} classes from API');
-      print('Classes before filtering:');
+      print('Classes from API:');
       for (var classItem in allClasses) {
         print('- ${classItem.name} (${classItem.code}) - Teacher: ${classItem.homeroomTeacherName}');
       }
       
-      // Apply frontend filtering and sorting
-      var filteredClasses = allClasses;
-      
-      // Filter by teacher
-      if (teacher != null && teacher.isNotEmpty) {
-        filteredClasses = filteredClasses.where((classItem) => 
-          classItem.homeroomTeacherId == teacher || 
-          classItem.homeroomTeacherName?.toLowerCase().contains(teacher.toLowerCase()) == true
-        ).toList();
-        print('Filtered by teacher $teacher: ${filteredClasses.length} classes');
-      }
-      
-      // Filter by search query
-      if (searchQuery != null && searchQuery.isNotEmpty) {
-        filteredClasses = filteredClasses.where((classItem) => 
-          classItem.name.toLowerCase().contains(searchQuery.toLowerCase()) ||
-          classItem.code.toLowerCase().contains(searchQuery.toLowerCase()) ||
-          classItem.description.toLowerCase().contains(searchQuery.toLowerCase())
-        ).toList();
-        print('Filtered by search "$searchQuery": ${filteredClasses.length} classes');
-      }
-      
-      // Filter by active status
-      if (isActive != null) {
-        filteredClasses = filteredClasses.where((classItem) => classItem.isActive == isActive).toList();
-        print('Filtered by isActive $isActive: ${filteredClasses.length} classes');
-      }
-      
-      // Sort classes
-      if (sortBy != null && sortBy.isNotEmpty) {
-        if (sortBy == 'createdAt') {
-          if (sortOrder == 'desc') {
-            filteredClasses.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-          } else {
-            filteredClasses.sort((a, b) => a.createdAt.compareTo(b.createdAt));
-          }
-        } else if (sortBy == 'name') {
-          if (sortOrder == 'desc') {
-            filteredClasses.sort((a, b) => b.name.compareTo(a.name));
-          } else {
-            filteredClasses.sort((a, b) => a.name.compareTo(b.name));
-          }
-        } else if (sortBy == 'code') {
-          if (sortOrder == 'desc') {
-            filteredClasses.sort((a, b) => b.code.compareTo(a.code));
-          } else {
-            filteredClasses.sort((a, b) => a.code.compareTo(b.code));
-          }
-        }
-        print('Sorted by $sortBy $sortOrder');
-      }
-      
-      print('Final result: ${filteredClasses.length} classes');
-      print('Final classes:');
-      for (var classItem in filteredClasses) {
-        print('- ${classItem.name} (${classItem.code})');
-      }
-      print('Returning ${filteredClasses.length} classes from API (not mock)');
-      return filteredClasses;
+      // Backend already handles filtering, just return the classes
+      print('Returning ${allClasses.length} classes from API');
+      return allClasses;
     } on DioException catch (e) {
       print('DioException: ${e.message}');
       print('Response: ${e.response?.data}');
@@ -313,6 +257,7 @@ class ClassManagementDatasource {
       throw Exception(e.response?.data['message'] ?? 'Xóa giáo viên chủ nhiệm thất bại');
     }
   }
+
 
   Future<List<Map<String, dynamic>>> getUnassignedTeachers() async {
     try {

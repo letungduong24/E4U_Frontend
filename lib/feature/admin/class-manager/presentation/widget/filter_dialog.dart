@@ -21,8 +21,10 @@ class _FilterDialogState extends State<FilterDialog> {
   void initState() {
     super.initState();
     selectedTeacher = widget.controller.selectedTeacher.value;
-    // Ensure teachers are loaded when dialog opens
-    widget.controller.loadTeachers();
+    // Load all teachers for filtering when dialog opens - after build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      widget.controller.loadAllTeachers();
+    });
   }
 
   @override
@@ -84,8 +86,11 @@ class _FilterDialogState extends State<FilterDialog> {
                           ),
                           child: Obx(() {
                             print('FilterDialog: teachers.length = ${widget.controller.teachers.length}');
+                            
                             return DropdownButtonFormField<String>(
-                              value: selectedTeacher.isEmpty ? null : selectedTeacher,
+                              value: selectedTeacher.isEmpty || 
+                                     !widget.controller.teachers.any((teacher) => teacher['id'] == selectedTeacher) 
+                                     ? null : selectedTeacher,
                               decoration: const InputDecoration(
                                 border: InputBorder.none,
                                 contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),

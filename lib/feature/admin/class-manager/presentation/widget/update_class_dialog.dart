@@ -23,8 +23,6 @@ class _UpdateClassDialogState extends State<UpdateClassDialog> {
   final codeController = TextEditingController();
   final descriptionController = TextEditingController();
   final maxStudentsController = TextEditingController();
-  String selectedTeacher = '';
-  bool isActive = true;
   
   // Cache để tránh rebuild không cần thiết
   late final ScrollController _scrollController;
@@ -39,11 +37,6 @@ class _UpdateClassDialogState extends State<UpdateClassDialog> {
     codeController.text = widget.classItem.code;
     descriptionController.text = widget.classItem.description;
     maxStudentsController.text = widget.classItem.maxStudents.toString();
-    selectedTeacher = widget.classItem.homeroomTeacherId;
-    isActive = widget.classItem.isActive;
-    
-    // Load teachers when dialog opens
-    widget.controller.loadTeachers();
   }
 
   @override
@@ -190,50 +183,6 @@ class _UpdateClassDialogState extends State<UpdateClassDialog> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      "Giáo viên chủ nhiệm",
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.grey.shade300),
-                      ),
-                      child: Obx(() => DropdownButtonFormField<String>(
-                        value: selectedTeacher.isEmpty ? null : selectedTeacher,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                        ),
-                        items: [
-                          const DropdownMenuItem(value: '', child: Text('Chọn giáo viên')),
-                          ...widget.controller.teachers.map((teacher) {
-                            return DropdownMenuItem(
-                              value: teacher['id'],
-                              child: Text(teacher['name']),
-                            );
-                          }),
-                        ],
-                        onChanged: (value) {
-                          setState(() {
-                            selectedTeacher = value ?? '';
-                          });
-                        },
-                      )),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
                       "Số học viên tối đa",
                       style: TextStyle(
                         fontSize: 14,
@@ -256,45 +205,6 @@ class _UpdateClassDialogState extends State<UpdateClassDialog> {
                           border: InputBorder.none,
                           contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                         ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Trạng thái",
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.grey.shade300),
-                      ),
-                      child: DropdownButtonFormField<bool>(
-                        value: isActive,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                        ),
-                        items: const [
-                          DropdownMenuItem(value: true, child: Text('Hoạt động')),
-                          DropdownMenuItem(value: false, child: Text('Không hoạt động')),
-                        ],
-                        onChanged: (value) {
-                          setState(() {
-                            isActive = value ?? true;
-                          });
-                        },
                       ),
                     ),
                   ],
@@ -383,18 +293,15 @@ class _UpdateClassDialogState extends State<UpdateClassDialog> {
 
   void _handleUpdateClass() async {
     if (nameController.text.isNotEmpty && 
-        codeController.text.isNotEmpty &&
-        selectedTeacher.isNotEmpty) {
+        codeController.text.isNotEmpty) {
       
       try {
         await widget.controller.updateClass(
           widget.classItem.id,
           name: nameController.text,
           code: codeController.text,
-          homeroomTeacherId: selectedTeacher,
           description: descriptionController.text.isNotEmpty ? descriptionController.text : null,
           maxStudents: maxStudentsController.text.isNotEmpty ? int.tryParse(maxStudentsController.text) : null,
-          isActive: isActive,
         );
         // Only close dialog if successful
         Navigator.pop(context);

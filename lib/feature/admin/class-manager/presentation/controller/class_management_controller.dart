@@ -206,6 +206,47 @@ class ClassManagementController extends GetxController {
     sortOrder.value = 'desc';
   }
 
+  Future<void> loadAllTeachers() async {
+    try {
+      print('Loading all teachers from UserManagementController...');
+      // Clear existing teachers first to show loading state
+      teachers.value = [];
+      
+      // Use UserManagementController to get teachers
+      UserManagementController userController;
+      try {
+        userController = Get.find<UserManagementController>();
+      } catch (e) {
+        print('UserManagementController not found, creating new instance...');
+        userController = Get.put(UserManagementController());
+      }
+      
+      // Set role and load users without triggering setState during build
+      userController.selectedRole.value = 'teacher';
+      await userController.loadUsers();
+      
+      // Convert UserManagementEntity to Map format
+      final teachersList = userController.users.map((user) => {
+        'id': user.id,
+        'name': user.fullName,
+        'email': user.email,
+        'isActive': user.isActive,
+      }).toList();
+      
+      print('Loaded ${teachersList.length} teachers:');
+      for (var teacher in teachersList) {
+        print('- ${teacher['name']} (${teacher['id']})');
+      }
+      teachers.value = teachersList;
+      print('Teachers updated in controller: ${teachers.length}');
+    } catch (e) {
+      print('Error loading all teachers: $e');
+      print('Stack trace: ${StackTrace.current}');
+      // Fallback to empty list
+      teachers.value = [];
+    }
+  }
+
   Future<void> loadTeachers() async {
     try {
       print('Loading unassigned teachers from API...');
