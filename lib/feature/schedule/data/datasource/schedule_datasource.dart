@@ -1,23 +1,20 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:e4uflutter/core/config/api_config.dart';
+import 'package:e4uflutter/core/config/dio_config.dart';
 import 'package:e4uflutter/feature/schedule/data/model/schedule_model.dart';
 
 class ScheduleDataSource {
-  final http.Client _client;
-
-  ScheduleDataSource({http.Client? client}) : _client = client ?? http.Client();
+  final DioClient _dioClient = DioClient();
 
   // Get my schedule for a specific day
   Future<List<ScheduleModel>> getMySchedule(String day, String? token) async {
     try {
-      final response = await _client.get(
-        Uri.parse('${ApiConfig.baseUrl}${ApiConfig.mySchedule(day)}'),
-        headers: ApiConfig.getHeaders(token),
+      final response = await _dioClient.dio.get(
+        '/schedules/my-schedule',
+        queryParameters: {'day': day},
       );
 
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+        final data = response.data;
         if (data['status'] == 'success' && data['data']?['schedules'] != null) {
           final List<dynamic> schedulesJson = data['data']['schedules'];
           return schedulesJson.map((json) => ScheduleModel.fromJson(json)).toList();
@@ -32,13 +29,10 @@ class ScheduleDataSource {
   // Get upcoming schedules
   Future<List<ScheduleModel>> getUpcomingSchedules(String? token) async {
     try {
-      final response = await _client.get(
-        Uri.parse('${ApiConfig.baseUrl}${ApiConfig.upcomingSchedules}'),
-        headers: ApiConfig.getHeaders(token),
-      );
+      final response = await _dioClient.dio.get('/schedules/upcoming');
 
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+        final data = response.data;
         if (data['status'] == 'success' && data['data']?['schedules'] != null) {
           final List<dynamic> schedulesJson = data['data']['schedules'];
           return schedulesJson.map((json) => ScheduleModel.fromJson(json)).toList();
@@ -53,14 +47,13 @@ class ScheduleDataSource {
   // Create new schedule (Admin only)
   Future<ScheduleModel> createSchedule(Map<String, dynamic> scheduleData, String? token) async {
     try {
-      final response = await _client.post(
-        Uri.parse('${ApiConfig.baseUrl}${ApiConfig.schedules}'),
-        headers: ApiConfig.getHeaders(token),
-        body: json.encode(scheduleData),
+      final response = await _dioClient.dio.post(
+        '/schedules',
+        data: scheduleData,
       );
 
       if (response.statusCode == 201) {
-        final data = json.decode(response.body);
+        final data = response.data;
         if (data['status'] == 'success' && data['data']?['schedule'] != null) {
           return ScheduleModel.fromJson(data['data']['schedule']);
         }
@@ -74,14 +67,13 @@ class ScheduleDataSource {
   // Update schedule (Admin only)
   Future<ScheduleModel> updateSchedule(String scheduleId, Map<String, dynamic> updates, String? token) async {
     try {
-      final response = await _client.put(
-        Uri.parse('${ApiConfig.baseUrl}${ApiConfig.scheduleById(scheduleId)}'),
-        headers: ApiConfig.getHeaders(token),
-        body: json.encode(updates),
+      final response = await _dioClient.dio.put(
+        '/schedules/$scheduleId',
+        data: updates,
       );
 
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+        final data = response.data;
         if (data['status'] == 'success' && data['data']?['schedule'] != null) {
           return ScheduleModel.fromJson(data['data']['schedule']);
         }
@@ -95,11 +87,7 @@ class ScheduleDataSource {
   // Delete schedule (Admin only)
   Future<bool> deleteSchedule(String scheduleId, String? token) async {
     try {
-      final response = await _client.delete(
-        Uri.parse('${ApiConfig.baseUrl}${ApiConfig.scheduleById(scheduleId)}'),
-        headers: ApiConfig.getHeaders(token),
-      );
-
+      final response = await _dioClient.dio.delete('/schedules/$scheduleId');
       return response.statusCode == 200;
     } catch (e) {
       throw Exception('Failed to delete schedule: $e');
@@ -109,13 +97,13 @@ class ScheduleDataSource {
   // Get schedules by class ID (Admin only)
   Future<List<ScheduleModel>> getSchedulesByClassId(String classId, String day, String? token) async {
     try {
-      final response = await _client.get(
-        Uri.parse('${ApiConfig.baseUrl}${ApiConfig.scheduleById(classId)}?day=$day'),
-        headers: ApiConfig.getHeaders(token),
+      final response = await _dioClient.dio.get(
+        '/schedules/$classId',
+        queryParameters: {'day': day},
       );
 
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+        final data = response.data;
         if (data['status'] == 'success' && data['data']?['schedules'] != null) {
           final List<dynamic> schedulesJson = data['data']['schedules'];
           return schedulesJson.map((json) => ScheduleModel.fromJson(json)).toList();

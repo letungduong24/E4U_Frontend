@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TokenStorage {
   static const _key = "access_token";
@@ -9,8 +10,9 @@ class TokenStorage {
 
   Future<void> writeToken(String token) async {
     if (kIsWeb) {
-      // For web, use localStorage as fallback
-      return;
+      // For web, use SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_key, token);
     } else {
       await _secureStorage.write(key: _key, value: token);
     }
@@ -18,8 +20,9 @@ class TokenStorage {
 
   Future<String?> readToken() async {
     if (kIsWeb) {
-      // For web, return null for now
-      return null;
+      // For web, use SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString(_key);
     } else {
       return await _secureStorage.read(key: _key);
     }
@@ -27,8 +30,9 @@ class TokenStorage {
 
   Future<void> deleteToken() async {
     if (kIsWeb) {
-      // For web, do nothing for now
-      return;
+      // For web, use SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_key);
     } else {
       await _secureStorage.delete(key: _key);
     }

@@ -1,25 +1,26 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:e4uflutter/core/config/api_config.dart';
+import 'package:e4uflutter/core/config/dio_config.dart';
 import 'package:e4uflutter/feature/schedule/data/model/homework_model.dart';
 
 class HomeworkDataSource {
-  final http.Client _client;
-
-  HomeworkDataSource({http.Client? client}) : _client = client ?? http.Client();
+  final DioClient _dioClient = DioClient();
 
   // Get upcoming assignments
   Future<List<HomeworkModel>> getUpcomingAssignments(String? token) async {
     try {
-      final response = await _client.get(
-        Uri.parse('${ApiConfig.baseUrl}${ApiConfig.upcomingAssignments}'),
-        headers: ApiConfig.getHeaders(token),
-      );
+      final response = await _dioClient.dio.get('/homeworks/upcoming');
 
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+        final data = response.data;
         if (data['status'] == 'success' && data['data'] != null) {
-          final List<dynamic> assignmentsJson = data['data'];
+          // Handle both array and object responses
+          List<dynamic> assignmentsJson;
+          if (data['data'] is List) {
+            assignmentsJson = data['data'];
+          } else if (data['data'] is Map && data['data']['homeworks'] != null) {
+            assignmentsJson = data['data']['homeworks'];
+          } else {
+            assignmentsJson = [];
+          }
           return assignmentsJson.map((json) => HomeworkModel.fromJson(json)).toList();
         }
       }
@@ -32,15 +33,20 @@ class HomeworkDataSource {
   // Get overdue assignments
   Future<List<HomeworkModel>> getOverdueAssignments(String? token) async {
     try {
-      final response = await _client.get(
-        Uri.parse('${ApiConfig.baseUrl}${ApiConfig.overdueAssignments}'),
-        headers: ApiConfig.getHeaders(token),
-      );
+      final response = await _dioClient.dio.get('/homeworks/overdue');
 
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+        final data = response.data;
         if (data['status'] == 'success' && data['data'] != null) {
-          final List<dynamic> assignmentsJson = data['data'];
+          // Handle both array and object responses
+          List<dynamic> assignmentsJson;
+          if (data['data'] is List) {
+            assignmentsJson = data['data'];
+          } else if (data['data'] is Map && data['data']['homeworks'] != null) {
+            assignmentsJson = data['data']['homeworks'];
+          } else {
+            assignmentsJson = [];
+          }
           return assignmentsJson.map((json) => HomeworkModel.fromJson(json)).toList();
         }
       }
@@ -53,15 +59,20 @@ class HomeworkDataSource {
   // Get all homework assignments
   Future<List<HomeworkModel>> getAllHomework(String? token) async {
     try {
-      final response = await _client.get(
-        Uri.parse('${ApiConfig.baseUrl}${ApiConfig.homeworks}'),
-        headers: ApiConfig.getHeaders(token),
-      );
+      final response = await _dioClient.dio.get('/homeworks');
 
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+        final data = response.data;
         if (data['status'] == 'success' && data['data'] != null) {
-          final List<dynamic> assignmentsJson = data['data'];
+          // Handle both array and object responses
+          List<dynamic> assignmentsJson;
+          if (data['data'] is List) {
+            assignmentsJson = data['data'];
+          } else if (data['data'] is Map && data['data']['homeworks'] != null) {
+            assignmentsJson = data['data']['homeworks'];
+          } else {
+            assignmentsJson = [];
+          }
           return assignmentsJson.map((json) => HomeworkModel.fromJson(json)).toList();
         }
       }
@@ -74,13 +85,10 @@ class HomeworkDataSource {
   // Get homework by ID
   Future<HomeworkModel> getHomeworkById(String homeworkId, String? token) async {
     try {
-      final response = await _client.get(
-        Uri.parse('${ApiConfig.baseUrl}${ApiConfig.homeworkById(homeworkId)}'),
-        headers: ApiConfig.getHeaders(token),
-      );
+      final response = await _dioClient.dio.get('/homeworks/$homeworkId');
 
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+        final data = response.data;
         if (data['status'] == 'success' && data['data']?['homework'] != null) {
           return HomeworkModel.fromJson(data['data']['homework']);
         }
@@ -94,14 +102,13 @@ class HomeworkDataSource {
   // Create homework (Teacher only)
   Future<HomeworkModel> createHomework(Map<String, dynamic> homeworkData, String? token) async {
     try {
-      final response = await _client.post(
-        Uri.parse('${ApiConfig.baseUrl}${ApiConfig.homeworks}'),
-        headers: ApiConfig.getHeaders(token),
-        body: json.encode(homeworkData),
+      final response = await _dioClient.dio.post(
+        '/homeworks',
+        data: homeworkData,
       );
 
       if (response.statusCode == 201) {
-        final data = json.decode(response.body);
+        final data = response.data;
         if (data['status'] == 'success' && data['data']?['homework'] != null) {
           return HomeworkModel.fromJson(data['data']['homework']);
         }
@@ -115,14 +122,13 @@ class HomeworkDataSource {
   // Update homework (Teacher only)
   Future<HomeworkModel> updateHomework(String homeworkId, Map<String, dynamic> updates, String? token) async {
     try {
-      final response = await _client.put(
-        Uri.parse('${ApiConfig.baseUrl}${ApiConfig.homeworkById(homeworkId)}'),
-        headers: ApiConfig.getHeaders(token),
-        body: json.encode(updates),
+      final response = await _dioClient.dio.put(
+        '/homeworks/$homeworkId',
+        data: updates,
       );
 
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+        final data = response.data;
         if (data['status'] == 'success' && data['data']?['homework'] != null) {
           return HomeworkModel.fromJson(data['data']['homework']);
         }
@@ -136,11 +142,7 @@ class HomeworkDataSource {
   // Delete homework (Teacher only)
   Future<bool> deleteHomework(String homeworkId, String? token) async {
     try {
-      final response = await _client.delete(
-        Uri.parse('${ApiConfig.baseUrl}${ApiConfig.homeworkById(homeworkId)}'),
-        headers: ApiConfig.getHeaders(token),
-      );
-
+      final response = await _dioClient.dio.delete('/homeworks/$homeworkId');
       return response.statusCode == 200;
     } catch (e) {
       throw Exception('Failed to delete homework: $e');

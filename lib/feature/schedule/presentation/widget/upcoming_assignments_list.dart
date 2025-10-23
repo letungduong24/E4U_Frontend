@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:e4uflutter/core/storage/token_storage.dart';
+import 'package:get/get.dart';
+import 'package:e4uflutter/feature/auth/presentation/controller/auth_controller.dart';
 import 'package:e4uflutter/feature/schedule/data/datasource/homework_datasource.dart';
 import 'package:e4uflutter/feature/schedule/data/model/homework_model.dart';
 
@@ -12,7 +13,6 @@ class UpcomingAssignmentsList extends StatefulWidget {
 
 class _UpcomingAssignmentsListState extends State<UpcomingAssignmentsList> {
   final HomeworkDataSource _homeworkDataSource = HomeworkDataSource();
-  final TokenStorage _tokenStorage = TokenStorage();
   List<HomeworkModel> _assignments = [];
   bool _isLoading = true;
   String? _error;
@@ -30,7 +30,8 @@ class _UpcomingAssignmentsListState extends State<UpcomingAssignmentsList> {
     });
 
     try {
-      final token = await _tokenStorage.readToken();
+      final authController = Get.find<AuthController>();
+      final token = await authController.getToken();
       
       final assignments = await _homeworkDataSource.getUpcomingAssignments(token);
       

@@ -4,19 +4,19 @@ import 'package:e4uflutter/feature/auth/presentation/controller/auth_controller.
 import 'package:e4uflutter/feature/schedule/data/datasource/schedule_datasource.dart';
 import 'package:e4uflutter/feature/schedule/data/model/schedule_model.dart';
 
-class ClassScheduleList extends StatefulWidget {
+class TeacherScheduleList extends StatefulWidget {
   final DateTime selectedDate;
 
-  const ClassScheduleList({
+  const TeacherScheduleList({
     super.key,
     required this.selectedDate,
   });
 
   @override
-  State<ClassScheduleList> createState() => _ClassScheduleListState();
+  State<TeacherScheduleList> createState() => _TeacherScheduleListState();
 }
 
-class _ClassScheduleListState extends State<ClassScheduleList> {
+class _TeacherScheduleListState extends State<TeacherScheduleList> {
   final ScheduleDataSource _scheduleDataSource = ScheduleDataSource();
   List<ScheduleModel> _schedules = [];
   bool _isLoading = true;
@@ -29,7 +29,7 @@ class _ClassScheduleListState extends State<ClassScheduleList> {
   }
 
   @override
-  void didUpdateWidget(ClassScheduleList oldWidget) {
+  void didUpdateWidget(TeacherScheduleList oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.selectedDate != widget.selectedDate) {
       _loadSchedules();
@@ -60,6 +60,7 @@ class _ClassScheduleListState extends State<ClassScheduleList> {
       });
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +112,7 @@ class _ClassScheduleListState extends State<ClassScheduleList> {
         ),
         child: const Center(
           child: Text(
-            'Không có lịch học trong ngày này',
+            'Không có lịch dạy trong ngày này',
             style: TextStyle(
               color: Colors.grey,
               fontSize: 16,
@@ -131,16 +132,8 @@ class _ClassScheduleListState extends State<ClassScheduleList> {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: const Color(0xFFF8F9FA), // Light gray background
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: Row(
         children: [
@@ -176,5 +169,4 @@ class _ClassScheduleListState extends State<ClassScheduleList> {
       ),
     );
   }
-
 }

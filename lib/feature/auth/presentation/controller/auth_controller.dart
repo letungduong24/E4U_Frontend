@@ -3,7 +3,6 @@ import 'package:e4uflutter/feature/auth/data/datasource/auth_datasource.dart';
 import 'package:e4uflutter/feature/auth/data/repository/auth_repo_impl.dart';
 import 'package:e4uflutter/feature/auth/domain/entity/user_entity.dart';
 import 'package:e4uflutter/core/storage/token_storage.dart';
-import 'package:flutter/material.dart';
 
 class AuthController extends GetxController {
   // Observable state - using global GetX state
@@ -21,6 +20,21 @@ class AuthController extends GetxController {
   bool get isAuthenticated => user.value != null;
   String? get userEmail => user.value?.email;
   String? get userRole => user.value?.role;
+  
+  // Get token method
+  Future<String?> getToken() async {
+    try {
+      final token = await _tokenStorage.readToken();
+      print('🔑 AuthController.getToken(): ${token != null ? "Found" : "Not found"}');
+      if (token != null) {
+        print('🔑 Token preview: ${token.substring(0, 20)}...');
+      }
+      return token;
+    } catch (e) {
+      print('❌ Error getting token: $e');
+      return null;
+    }
+  }
 
   @override
   void onInit() {

@@ -3,7 +3,6 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:iconify_flutter/icons/material_symbols.dart';
 import 'package:iconify_flutter/icons/ic.dart';
 import 'package:iconify_flutter/icons/uil.dart';
-import 'package:iconify_flutter/icons/ph.dart';
 import 'package:iconify_flutter/icons/mdi.dart';
 import 'drawer_item.dart';
 import 'package:get/get.dart';
@@ -107,7 +106,7 @@ class TeacherDrawer extends StatelessWidget{
           DrawerItem(
             icon: Uil.schedule,
             title: 'Lịch dạy',
-            onTap: () {},
+            onTap: () => Get.toNamed('/teacher-schedule'),
           ),
 
           SizedBox(height: 15,),

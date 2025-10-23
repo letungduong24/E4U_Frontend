@@ -9,6 +9,7 @@ import 'package:e4uflutter/feature/home/presentation/screen/teacher_home.dart';
 import 'package:e4uflutter/feature/admin/user-manager/presentation/screen/user_list.dart';
 import 'package:e4uflutter/feature/schedule/presentation/screen/student_schedule_screen.dart';
 import 'package:e4uflutter/feature/schedule/presentation/screen/admin_schedule_screen.dart';
+import 'package:e4uflutter/feature/schedule/presentation/screen/teacher_schedule_screen.dart';
 import 'package:e4uflutter/core/middleware/auth_middleware.dart';
 import 'package:e4uflutter/shared/presentation/screen/splash_screen.dart';
 
@@ -78,11 +79,16 @@ class MyApp extends StatelessWidget {
           page: () => const StudentScheduleScreen(),
           middlewares: [AuthMiddleware()],
         ),
-        GetPage(
-          name: '/admin-schedule',
-          page: () => const AdminScheduleScreen(),
-          middlewares: [AuthMiddleware()],
-        ),
+                GetPage(
+                  name: '/admin-schedule',
+                  page: () => const AdminScheduleScreen(),
+                  middlewares: [AuthMiddleware()],
+                ),
+                GetPage(
+                  name: '/teacher-schedule',
+                  page: () => const TeacherScheduleScreen(),
+                  middlewares: [AuthMiddleware()],
+                ),
       ],
       // initialBinding: InitialBinding(), // Removed - AuthController initialized in main()
     );
