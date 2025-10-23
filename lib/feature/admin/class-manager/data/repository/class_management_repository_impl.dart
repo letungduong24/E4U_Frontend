@@ -77,4 +77,19 @@ class ClassManagementRepositoryImpl implements ClassManagementRepository {
   Future<void> toggleClassStatus(String classId, bool isActive) async {
     await _datasource.toggleClassStatus(classId, isActive);
   }
+
+  @override
+  Future<void> setHomeroomTeacher(String classId, String teacherId) async {
+    await _datasource.setHomeroomTeacher(classId, teacherId);
+  }
+
+  @override
+  Future<void> removeHomeroomTeacher(String classId, String teacherId) async {
+    await _datasource.removeHomeroomTeacher(classId, teacherId);
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getUnassignedTeachers() async {
+    return await _datasource.getUnassignedTeachers();
+  }
 }

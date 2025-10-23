@@ -257,7 +257,9 @@ class ClassManagementDatasource {
       final data = <String, dynamic>{};
       if (name != null) data['name'] = name;
       if (code != null) data['code'] = code;
-      if (homeroomTeacherId != null) data['homeroomTeacher'] = homeroomTeacherId;
+      if (homeroomTeacherId != null) {
+        data['homeroomTeacher'] = homeroomTeacherId.isEmpty ? null : homeroomTeacherId;
+      }
       if (description != null) data['description'] = description;
       if (maxStudents != null) data['maxStudents'] = maxStudents;
       if (isActive != null) data['isActive'] = isActive;
@@ -294,6 +296,84 @@ class ClassManagementDatasource {
     } on DioException catch (e) {
       throw Exception(e.response?.data['message'] ?? 'Thay đổi trạng thái lớp học thất bại');
     }
+  }
+
+  Future<void> setHomeroomTeacher(String classId, String teacherId) async {
+    try {
+      await _dio.post('/classes/$classId/teacher', data: {'teacherId': teacherId});
+    } on DioException catch (e) {
+      throw Exception(e.response?.data['message'] ?? 'Gán giáo viên chủ nhiệm thất bại');
+    }
+  }
+
+  Future<void> removeHomeroomTeacher(String classId, String teacherId) async {
+    try {
+      await _dio.delete('/classes/$classId/teacher');
+    } on DioException catch (e) {
+      throw Exception(e.response?.data['message'] ?? 'Xóa giáo viên chủ nhiệm thất bại');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getUnassignedTeachers() async {
+    try {
+      final response = await _dio.get('/classes/teachers/unassigned');
+      
+      print('Unassigned teachers API response: ${response.data}');
+      
+      List<dynamic> teachersJson;
+      if (response.data['data'] != null && response.data['data']['teachers'] != null) {
+        teachersJson = response.data['data']['teachers'];
+      } else if (response.data['data'] is List) {
+        teachersJson = response.data['data'];
+      } else {
+        teachersJson = [];
+      }
+      
+      final teachers = <Map<String, dynamic>>[];
+      for (var teacherJson in teachersJson) {
+        teachers.add({
+          'id': teacherJson['_id'] ?? teacherJson['id'] ?? '',
+          'name': _buildTeacherName(teacherJson),
+          'email': teacherJson['email'] ?? '',
+          'isActive': teacherJson['isActive'] ?? true,
+        });
+      }
+      
+      print('Loaded ${teachers.length} unassigned teachers');
+      return teachers;
+    } on DioException catch (e) {
+      print('Error loading unassigned teachers: ${e.message}');
+      print('Response: ${e.response?.data}');
+      // Fallback to empty list if API fails
+      return [];
+    } catch (e) {
+      print('General error loading unassigned teachers: $e');
+      return [];
+    }
+  }
+
+  static String _buildTeacherName(Map<String, dynamic> teacherData) {
+    // Try different possible formats for teacher name
+    if (teacherData['fullName'] != null) {
+      return teacherData['fullName'];
+    }
+    if (teacherData['name'] != null) {
+      return teacherData['name'];
+    }
+    
+    // Build from firstName and lastName
+    final firstName = teacherData['firstName']?.toString() ?? '';
+    final lastName = teacherData['lastName']?.toString() ?? '';
+    
+    if (firstName.isNotEmpty && lastName.isNotEmpty) {
+      return '$firstName $lastName';
+    } else if (firstName.isNotEmpty) {
+      return firstName;
+    } else if (lastName.isNotEmpty) {
+      return lastName;
+    }
+    
+    return 'Unknown Teacher';
   }
 
 }

@@ -208,36 +208,52 @@ class ClassManagementController extends GetxController {
 
   Future<void> loadTeachers() async {
     try {
-      print('Loading teachers from UserManagementController...');
-      // Load users with teacher role
-      await _userController.loadUsers();
+      print('Loading unassigned teachers from API...');
+      // Clear existing teachers first to show loading state
+      teachers.value = [];
+      final unassignedTeachers = await _repository.getUnassignedTeachers();
       
-      print('UserManagementController has ${_userController.users.length} users');
-      print('Users details:');
-      for (var user in _userController.users) {
-        print('- ${user.fullName} (${user.role})');
-      }
-      
-      // Filter teachers from users
-      final teacherUsers = _userController.users
-          .where((user) => user.role == 'teacher')
-          .map((user) => {
-                'id': user.id,
-                'name': user.fullName,
-                'email': user.email,
-                'isActive': user.isActive,
-              })
-          .toList();
-      
-      print('Loaded ${teacherUsers.length} teachers:');
-      for (var teacher in teacherUsers) {
+      print('Loaded ${unassignedTeachers.length} unassigned teachers:');
+      for (var teacher in unassignedTeachers) {
         print('- ${teacher['name']} (${teacher['id']})');
       }
-      teachers.value = teacherUsers;
+      teachers.value = unassignedTeachers;
       print('Teachers updated in controller: ${teachers.length}');
     } catch (e) {
-      print('Error loading teachers: $e');
+      print('Error loading unassigned teachers: $e');
       print('Stack trace: ${StackTrace.current}');
+      // Fallback to empty list
+      teachers.value = [];
+    }
+  }
+
+  Future<void> setHomeroomTeacher(String classId, String teacherId) async {
+    try {
+      isLoading.value = true;
+      error.value = '';
+      await _repository.setHomeroomTeacher(classId, teacherId);
+      await loadClasses(); // Reload classes to update UI
+      await loadTeachers(); // Reload teachers to update dropdown
+    } catch (e) {
+      error.value = e.toString();
+      print('Error setting homeroom teacher: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> removeHomeroomTeacher(String classId, String teacherId) async {
+    try {
+      isLoading.value = true;
+      error.value = '';
+      await _repository.removeHomeroomTeacher(classId, teacherId);
+      await loadClasses(); // Reload classes to update UI
+      await loadTeachers(); // Reload teachers to update dropdown
+    } catch (e) {
+      error.value = e.toString();
+      print('Error removing homeroom teacher: $e');
+    } finally {
+      isLoading.value = false;
     }
   }
 }

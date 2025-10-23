@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:e4uflutter/feature/admin/class-manager/domain/entity/class_management_entity.dart';
 import 'package:e4uflutter/feature/admin/class-manager/presentation/controller/class_management_controller.dart';
 import 'package:e4uflutter/feature/admin/class-manager/presentation/widget/update_class_dialog.dart';
+import 'package:e4uflutter/feature/admin/class-manager/presentation/widget/assign_teacher_dialog.dart';
+import 'package:e4uflutter/shared/presentation/dialog/delete_confirmation_dialog.dart';
 
 class ClassProfileDialog extends StatelessWidget {
   final ClassManagementEntity classItem;
@@ -211,32 +213,17 @@ class ClassProfileDialog extends StatelessWidget {
       // Remove teacher
       showDialog(
         context: context,
-        builder: (context) => AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          title: const Text("Xóa giáo viên chủ nhiệm"),
-          content: const Text("Bạn có chắc chắn muốn xóa giáo viên chủ nhiệm khỏi lớp học này?"),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("Hủy"),
-            ),
-            TextButton(
-              onPressed: () async {
-                Navigator.pop(context); // Close confirmation dialog
-                Navigator.pop(context); // Close profile dialog
-                await controller.updateClass(
-                  classItem.id,
-                  homeroomTeacherId: '', // Empty string to remove teacher
-                );
-              },
-              child: const Text(
-                "Xóa",
-                style: TextStyle(color: Colors.red),
-              ),
-            ),
-          ],
+        builder: (context) => DeleteConfirmationDialog(
+          objectName: "giáo viên chủ nhiệm",
+          controller: controller,
+          deleteFunction: () async {
+            Navigator.pop(context); // Close confirmation dialog
+            Navigator.pop(context); // Close profile dialog
+            await controller.removeHomeroomTeacher(
+              classItem.id,
+              classItem.homeroomTeacherId,
+            );
+          },
         ),
       );
     } else {
@@ -249,48 +236,9 @@ class ClassProfileDialog extends StatelessWidget {
   void _showTeacherSelectionDialog(BuildContext context, ClassManagementController controller) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        title: const Text("Chọn giáo viên chủ nhiệm"),
-        content: SizedBox(
-          width: double.maxFinite,
-          height: 300,
-          child: Obx(() {
-            if (controller.teachers.isEmpty) {
-              return const Center(
-                child: Text("Không có giáo viên nào"),
-              );
-            }
-            return ListView.builder(
-              itemCount: controller.teachers.length,
-              itemBuilder: (context, index) {
-                final teacher = controller.teachers[index];
-                return ListTile(
-                  title: Text(teacher['name']),
-                  subtitle: Text(teacher['email']),
-                  trailing: teacher['isActive'] == true 
-                    ? const Icon(Icons.check_circle, color: Colors.green)
-                    : const Icon(Icons.cancel, color: Colors.red),
-                  onTap: teacher['isActive'] == true ? () async {
-                    Navigator.pop(context); // Close selection dialog
-                    await controller.updateClass(
-                      classItem.id,
-                      homeroomTeacherId: teacher['id'],
-                    );
-                  } : null,
-                );
-              },
-            );
-          }),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Hủy"),
-          ),
-        ],
+      builder: (context) => AssignTeacherDialog(
+        controller: controller,
+        classItem: classItem,
       ),
     );
   }
@@ -298,29 +246,14 @@ class ClassProfileDialog extends StatelessWidget {
   void _handleDelete(BuildContext context, ClassManagementController controller) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        title: const Text("Xóa lớp học"),
-        content: const Text("Bạn có chắc chắn muốn xóa lớp học này? Hành động này không thể hoàn tác."),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Hủy"),
-          ),
-          TextButton(
-            onPressed: () async {
-              Navigator.pop(context); // Close confirmation dialog
-              Navigator.pop(context); // Close profile dialog
-              await controller.deleteClass(classItem.id);
-            },
-            child: const Text(
-              "Xóa",
-              style: TextStyle(color: Colors.red),
-            ),
-          ),
-        ],
+      builder: (context) => DeleteConfirmationDialog(
+        objectName: "lớp học",
+        deleteFunction: () async {
+          await controller.deleteClass(classItem.id);
+          // Đóng ClassProfileDialog sau khi xóa thành công
+          Navigator.pop(context);
+        },
+        controller: controller,
       ),
     );
   }

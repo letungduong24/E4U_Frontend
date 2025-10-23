@@ -31,4 +31,10 @@ abstract class ClassManagementRepository {
   Future<void> deleteClass(String classId);
 
   Future<void> toggleClassStatus(String classId, bool isActive);
+
+  Future<void> setHomeroomTeacher(String classId, String teacherId);
+
+  Future<void> removeHomeroomTeacher(String classId, String teacherId);
+
+  Future<List<Map<String, dynamic>>> getUnassignedTeachers();
 }

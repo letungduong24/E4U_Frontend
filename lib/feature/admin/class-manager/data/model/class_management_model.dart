@@ -44,7 +44,7 @@ class ClassManagementModel extends ClassManagementEntity {
         code: json['code'] ?? '',
         description: json['description'] ?? '',
         homeroomTeacherId: json['homeroomTeacher'] != null ? json['homeroomTeacher']['_id'] ?? json['homeroomTeacher']['id'] ?? '' : '',
-        homeroomTeacherName: json['homeroomTeacher'] != null ? json['homeroomTeacher']['fullName'] ?? json['homeroomTeacher']['name'] : null,
+        homeroomTeacherName: json['homeroomTeacher'] != null ? _buildTeacherName(json['homeroomTeacher']) : null,
         studentIds: json['students'] != null ? (json['students'] as List).cast<String>() : [],
         enrollmentIds: json['enrollments'] != null ? (json['enrollments'] as List).cast<String>() : [],
         maxStudents: json['maxStudents'] ?? 30,
@@ -73,6 +73,30 @@ class ClassManagementModel extends ClassManagementEntity {
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
     };
+  }
+
+  static String? _buildTeacherName(Map<String, dynamic> teacherData) {
+    // Try different possible formats for teacher name
+    if (teacherData['fullName'] != null) {
+      return teacherData['fullName'];
+    }
+    if (teacherData['name'] != null) {
+      return teacherData['name'];
+    }
+    
+    // Build from firstName and lastName
+    final firstName = teacherData['firstName']?.toString() ?? '';
+    final lastName = teacherData['lastName']?.toString() ?? '';
+    
+    if (firstName.isNotEmpty && lastName.isNotEmpty) {
+      return '$firstName $lastName';
+    } else if (firstName.isNotEmpty) {
+      return firstName;
+    } else if (lastName.isNotEmpty) {
+      return lastName;
+    }
+    
+    return null;
   }
 }
 
