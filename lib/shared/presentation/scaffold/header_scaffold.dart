@@ -44,10 +44,11 @@ class HeaderScaffold extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
                   child: Row(
                     children: [
-                      Container(
+                      Expanded(
                         child: Text(
                           title,
                           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       const Spacer(),

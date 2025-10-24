@@ -8,6 +8,7 @@ import 'package:e4uflutter/feature/home/presentation/screen/admin_home.dart';
 import 'package:e4uflutter/feature/home/presentation/screen/teacher_home.dart';
 import 'package:e4uflutter/feature/admin/user-manager/presentation/screen/user_list.dart';
 import 'package:e4uflutter/feature/admin/class-manager/presentation/screen/class_list.dart';
+import 'package:e4uflutter/feature/admin/class-manager/presentation/screen/class_students_screen.dart';
 import 'package:e4uflutter/core/middleware/auth_middleware.dart';
 import 'package:e4uflutter/shared/presentation/screen/splash_screen.dart';
 
@@ -75,6 +76,11 @@ class MyApp extends StatelessWidget {
         GetPage(
           name: '/class-management',
           page: () => const ClassListScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '/class-students',
+          page: () => const ClassStudentsScreen(),
           middlewares: [AuthMiddleware()],
         ),
       ],

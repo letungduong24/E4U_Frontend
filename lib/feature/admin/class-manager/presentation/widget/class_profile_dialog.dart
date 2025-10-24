@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e4uflutter/feature/admin/class-manager/domain/entity/class_management_entity.dart';
 import 'package:e4uflutter/feature/admin/class-manager/presentation/controller/class_management_controller.dart';
-import 'package:e4uflutter/feature/admin/class-manager/presentation/widget/update_class_dialog.dart';
 import 'package:e4uflutter/feature/admin/class-manager/presentation/widget/assign_teacher_dialog.dart';
 import 'package:e4uflutter/shared/presentation/dialog/delete_confirmation_dialog.dart';
 
@@ -68,75 +67,35 @@ class ClassProfileDialog extends StatelessWidget {
                 _buildInfoRow("Số học viên hiện tại", classItem.studentIds.length.toString()),
 
                 const SizedBox(height: 24),
-
-                // Action buttons
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: Colors.orange,
-                        ),
-                        child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(20),
-                            onTap: () {
-                              Navigator.pop(context);
-                              showDialog(
-                                context: context,
-                                builder: (context) => UpdateClassDialog(
-                                  controller: controller,
-                                  classItem: classItem,
-                                ),
-                              );
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              child: const Text(
-                                "Chỉnh sửa",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
+                const SizedBox(height: 12),
+                // View students button
+                SizedBox(
+                  width: double.infinity,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: Colors.blue,
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(20),
+                        onTap: () => _handleViewStudents(context),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          child: const Text(
+                            "Xem danh sách học sinh",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
                             ),
+                            textAlign: TextAlign.center,
                           ),
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: Colors.red,
-                        ),
-                        child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(20),
-                            onTap: () => _handleDelete(context, controller),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              child: const Text(
-                                "Xóa lớp học",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
                 const SizedBox(height: 12),
                 // Teacher management button
@@ -243,18 +202,12 @@ class ClassProfileDialog extends StatelessWidget {
     );
   }
 
-  void _handleDelete(BuildContext context, ClassManagementController controller) {
-    showDialog(
-      context: context,
-      builder: (context) => DeleteConfirmationDialog(
-        objectName: "lớp học",
-        deleteFunction: () async {
-          await controller.deleteClass(classItem.id);
-          // Đóng ClassProfileDialog sau khi xóa thành công
-          Navigator.pop(context);
-        },
-        controller: controller,
-      ),
-    );
+  void _handleViewStudents(BuildContext context) {
+    Navigator.pop(context); // Close profile dialog
+    Get.toNamed('/class-students', arguments: {
+      'classId': classItem.id,
+      'className': classItem.name,
+      'classCode': classItem.code,
+    });
   }
 }

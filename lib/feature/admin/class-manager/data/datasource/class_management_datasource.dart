@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:e4uflutter/core/config/dio_config.dart';
 import 'package:e4uflutter/feature/admin/class-manager/data/model/class_management_model.dart';
+import 'package:e4uflutter/feature/admin/class-manager/data/model/class_student_model.dart';
 
 class ClassManagementDatasource {
   final Dio _dio = DioClient().dio;
@@ -319,6 +320,107 @@ class ClassManagementDatasource {
     }
     
     return 'Unknown Teacher';
+  }
+
+  Future<ClassStudentsResponseModel> getClassStudents(String classId) async {
+    try {
+      print('Fetching students for class: $classId');
+      final response = await _dio.get('/classes/$classId/students');
+      
+      print('Class students API response: ${response.data}');
+      
+      return ClassStudentsResponseModel.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      print('Error fetching class students: ${e.message}');
+      print('Response: ${e.response?.data}');
+      throw Exception(e.response?.data['message'] ?? 'Lấy danh sách học sinh thất bại');
+    } catch (e) {
+      print('General error fetching class students: $e');
+      throw Exception('Lấy danh sách học sinh thất bại: $e');
+    }
+  }
+
+  Future<ClassStudentsResponseModel> removeStudentFromClass(String classId, String studentId) async {
+    try {
+      print('Removing student $studentId from class $classId');
+      final response = await _dio.delete(
+        '/classes/$classId/students',
+        data: {'studentId': studentId},
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+      
+      print('Remove student API response: ${response.data}');
+      
+      return ClassStudentsResponseModel.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      print('Error removing student from class: ${e.message}');
+      print('Response: ${e.response?.data}');
+      throw Exception(e.response?.data['message'] ?? 'Xóa học sinh khỏi lớp thất bại');
+    } catch (e) {
+      print('General error removing student from class: $e');
+      throw Exception('Xóa học sinh khỏi lớp thất bại: $e');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getUnassignedStudents() async {
+    try {
+      print('Loading unassigned students from API...');
+      final response = await _dio.get('/classes/students/unassigned');
+      
+      print('Unassigned students API response: ${response.data}');
+      
+      final studentsData = response.data['data']['students'] as List<dynamic>;
+      final students = studentsData.map((student) {
+        return {
+          'id': student['_id'],
+          'name': '${student['firstName']} ${student['lastName']}',
+          'email': student['email'],
+          'phone': student['phoneNumber'],
+          'dateOfBirth': student['dateOfBirth'],
+          'address': student['address'],
+        };
+      }).toList();
+      
+      print('Loaded ${students.length} unassigned students');
+      return students;
+    } on DioException catch (e) {
+      print('Error loading unassigned students: ${e.message}');
+      print('Response: ${e.response?.data}');
+      throw Exception(e.response?.data['message'] ?? 'Tải danh sách học sinh chưa có lớp thất bại');
+    } catch (e) {
+      print('General error loading unassigned students: $e');
+      throw Exception('Tải danh sách học sinh chưa có lớp thất bại: $e');
+    }
+  }
+
+  Future<ClassStudentsResponseModel> addStudentToClass(String classId, String studentId) async {
+    try {
+      print('Adding student $studentId to class $classId');
+      final response = await _dio.post(
+        '/classes/$classId/students',
+        data: {'studentId': studentId},
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+      
+      print('Add student API response: ${response.data}');
+      
+      return ClassStudentsResponseModel.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      print('Error adding student to class: ${e.message}');
+      print('Response: ${e.response?.data}');
+      throw Exception(e.response?.data['message'] ?? 'Thêm học sinh vào lớp thất bại');
+    } catch (e) {
+      print('General error adding student to class: $e');
+      throw Exception('Thêm học sinh vào lớp thất bại: $e');
+    }
   }
 
 }

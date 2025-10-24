@@ -1,4 +1,5 @@
 import 'package:e4uflutter/feature/admin/class-manager/domain/entity/class_management_entity.dart';
+import 'package:e4uflutter/feature/admin/class-manager/domain/entity/class_student_entity.dart';
 
 abstract class ClassManagementRepository {
   Future<List<ClassManagementEntity>> getAllClasses({
@@ -37,4 +38,12 @@ abstract class ClassManagementRepository {
   Future<void> removeHomeroomTeacher(String classId, String teacherId);
 
   Future<List<Map<String, dynamic>>> getUnassignedTeachers();
+
+  Future<ClassStudentsResponseEntity> getClassStudents(String classId);
+
+  Future<ClassStudentsResponseEntity> removeStudentFromClass(String classId, String studentId);
+
+  Future<List<Map<String, dynamic>>> getUnassignedStudents();
+
+  Future<ClassStudentsResponseEntity> addStudentToClass(String classId, String studentId);
 }
