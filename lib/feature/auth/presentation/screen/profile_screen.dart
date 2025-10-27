@@ -4,6 +4,7 @@ import 'package:e4uflutter/shared/presentation/button.dart';
 import 'package:e4uflutter/shared/presentation/scaffold/header_scaffold.dart';
 import 'package:e4uflutter/shared/utils/role_util.dart';
 import 'package:e4uflutter/shared/utils/status_util.dart';
+import 'package:e4uflutter/shared/presentation/dialog/success_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -79,15 +80,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
       
       if (mounted) {
         Navigator.pop(context); // Close loading
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Cập nhật avatar thành công')),
+        showDialog(
+          context: context,
+          builder: (context) => const SuccessDialog(
+            title: 'Cập nhật avatar thành công',
+          ),
         );
       }
     } catch (e) {
       if (mounted) {
         Navigator.pop(context); // Close loading
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Lỗi: ${e.toString()}')),
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            title: const Text("Lỗi"),
+            content: Text('Lỗi: ${e.toString()}'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("OK"),
+              ),
+            ],
+          ),
         );
       }
     }
