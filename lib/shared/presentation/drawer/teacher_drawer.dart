@@ -91,7 +91,7 @@ class TeacherDrawer extends StatelessWidget{
           DrawerItem(
             icon: Mdi.file_document_outline,
             title: 'Quản lý tài liệu',
-            onTap: () {},
+            onTap: () => Get.toNamed('/document-management'),
           ),
 
           SizedBox(height: 15,),
