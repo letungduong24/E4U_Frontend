@@ -75,6 +75,8 @@ class DocumentManagementController extends GetxController {
         file: file,
       );
       
+      // Clear search query after creating document
+      searchQuery.value = '';
       await loadDocuments();
     } catch (e) {
       error.value = e.toString();
@@ -101,6 +103,8 @@ class DocumentManagementController extends GetxController {
         file: file,
       );
       
+      // Clear search query after updating document
+      searchQuery.value = '';
       await loadDocuments();
     } catch (e) {
       error.value = e.toString();
@@ -117,6 +121,8 @@ class DocumentManagementController extends GetxController {
       
       await _repository.deleteDocument(documentId);
       
+      // Clear search query after deleting document
+      searchQuery.value = '';
       await loadDocuments();
     } catch (e) {
       error.value = e.toString();

@@ -13,18 +13,17 @@ class DocumentManagementDatasource {
     String? sortOrder,
   }) async {
     try {
-      // Build query parameters
+      // Determine endpoint based on whether search is being used
+      String endpoint = '/documents';
       final queryParams = <String, dynamic>{};
       
       if (searchQuery != null && searchQuery.isNotEmpty) {
+        endpoint = '/documents/search';
         queryParams['q'] = searchQuery;
       }
-      if (classFilter != null && classFilter.isNotEmpty) {
-        queryParams['classId'] = classFilter;
-      }
       
-      print('Making API call to /documents with params: $queryParams');
-      final response = await _dio.get('/documents', queryParameters: queryParams);
+      print('Making API call to $endpoint with params: $queryParams');
+      final response = await _dio.get(endpoint, queryParameters: queryParams);
       
       print('API Response status: ${response.statusCode}');
       print('API Response data: ${response.data}');
@@ -34,6 +33,9 @@ class DocumentManagementDatasource {
       if (response.data['data'] is List) {
         documentsJson = response.data['data'];
         print('Found ${documentsJson.length} documents in data (array)');
+      } else if (response.data['data'] is Map && response.data['data']['documents'] is List) {
+        documentsJson = response.data['data']['documents'];
+        print('Found ${documentsJson.length} documents in data.documents');
       } else {
         documentsJson = [];
         print('No documents found in response');
@@ -52,18 +54,10 @@ class DocumentManagementDatasource {
         }
       }
       
-      // Apply frontend filtering
-      var filteredDocuments = allDocuments;
-      
-      // Filter by search query
-      if (searchQuery != null && searchQuery.isNotEmpty) {
-        filteredDocuments = filteredDocuments.where((doc) => 
-          doc.title.toLowerCase().contains(searchQuery.toLowerCase()) ||
-          doc.description.toLowerCase().contains(searchQuery.toLowerCase())
-        ).toList();
-      }
+      // Note: Backend handles search filtering, so we don't need to filter here
       
       // Filter by active status
+      var filteredDocuments = allDocuments;
       if (isActive != null) {
         filteredDocuments = filteredDocuments.where((doc) => doc.isActive == isActive).toList();
       }
