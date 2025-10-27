@@ -96,6 +96,14 @@ class TeacherDrawer extends StatelessWidget{
           SizedBox(height: 15,),
 
           DrawerItem(
+            icon: Mdi.book_open_variant,
+            title: 'Quản lý bài tập',
+            onTap: () => Get.toNamed('/homework-management'),
+          ),
+
+          SizedBox(height: 15,),
+
+          DrawerItem(
             icon: Mdi.numeric_9_plus_box_outline,
             title: 'Quản lý điểm',
             onTap: () {},
