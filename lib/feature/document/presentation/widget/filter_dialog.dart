@@ -63,47 +63,6 @@ class FilterDialog extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Class filter
-                        const Text(
-                          "Lớp học",
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black87,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: Colors.grey.shade300),
-                          ),
-                          child: DropdownButtonFormField<String>(
-                            value: controller.selectedClass.value.isEmpty ? null : controller.selectedClass.value,
-                            decoration: const InputDecoration(
-                              border: InputBorder.none,
-                              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                            ),
-                            hint: const Text('Tất cả lớp học'),
-                            isExpanded: true,
-                            items: [
-                              const DropdownMenuItem(
-                                value: '',
-                                child: Text('Tất cả lớp học'),
-                              ),
-                              ...controller.classes.map((classItem) => DropdownMenuItem(
-                                value: classItem['id'],
-                                child: Text(classItem['name'] ?? ''),
-                              )),
-                            ],
-                            onChanged: (value) {
-                              controller.setSelectedClass(value ?? '');
-                            },
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-
                         // Sort by
                         const Text(
                           "Sắp xếp theo",

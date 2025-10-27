@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e4uflutter/feature/document/presentation/controller/document_management_controller.dart';
 import 'package:e4uflutter/feature/document/presentation/widget/create_document_dialog.dart';
-import 'package:e4uflutter/feature/document/presentation/widget/filter_dialog.dart';
 import 'package:e4uflutter/feature/document/domain/entity/document_management_entity.dart';
 import 'package:e4uflutter/shared/presentation/scaffold/header_scaffold.dart';
 import 'package:e4uflutter/feature/auth/presentation/controller/auth_controller.dart';
@@ -75,69 +74,35 @@ class DocumentListScreen extends StatelessWidget {
                             topRight: Radius.circular(12),
                           ),
                         ),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                GestureDetector(
-                                  onTap: () => _showFilterDialog(context, controller),
-                                  child: Container(
-                                    height: 40,
-                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(color: Colors.grey[200]!, width: 0.5),
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(Icons.filter_list, size: 16, color: Colors.grey[600]),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          "Lọc",
-                                          style: TextStyle(color: Colors.grey[600]),
-                                        ),
-                                      ],
-                                    ),
+                        child: Container(
+                          height: 40,
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.grey[200]!, width: 0.5),
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Icon(Icons.search, size: 16, color: Colors.grey[600]),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: TextField(
+                                  onChanged: controller.setSearchQuery,
+                                  onSubmitted: (value) => controller.performSearch(),
+                                  style: const TextStyle(fontSize: 14, height: 1.0),
+                                  decoration: const InputDecoration(
+                                    hintText: "Tìm kiếm",
+                                    hintStyle: TextStyle(fontSize: 14, color: Colors.grey, height: 1.0),
+                                    border: InputBorder.none,
+                                    contentPadding: EdgeInsets.zero,
+                                    isDense: true,
                                   ),
                                 ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Container(
-                                    height: 40,
-                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(color: Colors.grey[200]!, width: 0.5),
-                                    ),
-                                    child: Row(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        Icon(Icons.search, size: 16, color: Colors.grey[600]),
-                                        const SizedBox(width: 8),
-                                        Expanded(
-                                          child: TextField(
-                                            onChanged: controller.setSearchQuery,
-                                            onSubmitted: (value) => controller.performSearch(),
-                                            style: const TextStyle(fontSize: 14, height: 1.0),
-                                            decoration: const InputDecoration(
-                                              hintText: "Tìm kiếm",
-                                              hintStyle: TextStyle(fontSize: 14, color: Colors.grey, height: 1.0),
-                                              border: InputBorder.none,
-                                              contentPadding: EdgeInsets.zero,
-                                              isDense: true,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                       Expanded(
@@ -170,17 +135,6 @@ class DocumentListScreen extends StatelessWidget {
                                             ),
                                             const SizedBox(width: 4),
                                             Icon(Icons.keyboard_arrow_up, size: 16),
-                                          ],
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 150,
-                                        child: Row(
-                                          children: [
-                                            const Text(
-                                              "Lớp",
-                                              style: TextStyle(fontWeight: FontWeight.bold),
-                                            ),
                                           ],
                                         ),
                                       ),
@@ -261,16 +215,6 @@ class DocumentListScreen extends StatelessWidget {
                                           ),
                                         ),
                                         SizedBox(
-                                          width: 150,
-                                          child: Text(
-                                            document.classEntity.name,
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.black87,
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(
                                           width: 120,
                                           child: Text(
                                             DateFormat('dd/MM/yyyy').format(document.createdAt),
@@ -332,13 +276,6 @@ class DocumentListScreen extends StatelessWidget {
     Get.toNamed('/document-detail', arguments: {
       'document': document,
     });
-  }
-
-  void _showFilterDialog(BuildContext context, DocumentManagementController controller) {
-    showDialog(
-      context: context,
-      builder: (context) => FilterDialog(controller: controller),
-    );
   }
 }
 
