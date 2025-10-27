@@ -1,5 +1,4 @@
 import 'package:e4uflutter/feature/admin/user-manager/data/datasource/user_management_datasource.dart';
-import 'package:e4uflutter/feature/admin/user-manager/data/model/user_management_model.dart';
 import 'package:e4uflutter/feature/admin/user-manager/domain/entity/user_management_entity.dart';
 import 'package:e4uflutter/feature/admin/user-manager/domain/repository/user_management_repository.dart';
 

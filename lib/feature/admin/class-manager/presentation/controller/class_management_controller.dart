@@ -18,7 +18,6 @@ class ClassManagementController extends GetxController {
 
   // Dependencies
   late final ClassManagementRepositoryImpl _repository;
-  late final UserManagementController _userController;
 
   @override
   void onInit() {
@@ -32,7 +31,6 @@ class ClassManagementController extends GetxController {
   void _initializeDependencies() {
     final datasource = ClassManagementDatasource();
     _repository = ClassManagementRepositoryImpl(datasource);
-    _userController = Get.find<UserManagementController>();
   }
 
   Future<void> loadClasses() async {

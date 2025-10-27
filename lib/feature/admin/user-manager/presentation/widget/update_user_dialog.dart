@@ -386,9 +386,6 @@ class _UpdateUserDialogState extends State<UpdateUserDialog> {
   }
 
   void _handleUpdateUser() async {
-    // Email validation - chỉ kiểm tra format cơ bản @domain
-    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+$');
-    
     if (firstNameController.text.isNotEmpty && 
         lastNameController.text.isNotEmpty && 
         emailController.text.isNotEmpty) {
