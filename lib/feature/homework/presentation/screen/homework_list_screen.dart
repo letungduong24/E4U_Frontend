@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e4uflutter/feature/homework/presentation/controller/homework_controller.dart';
 import 'package:e4uflutter/feature/homework/presentation/widget/create_homework_dialog.dart';
+import 'package:e4uflutter/feature/homework/presentation/widget/homework_options_dialog.dart';
 import 'package:e4uflutter/shared/presentation/scaffold/header_scaffold.dart';
 import 'package:e4uflutter/feature/auth/presentation/controller/auth_controller.dart';
 import 'package:intl/intl.dart';
@@ -229,10 +230,13 @@ class HomeworkListScreen extends StatelessWidget {
                                         SizedBox(
                                           width: 80,
                                           child: IconButton(
-                                            onPressed: () => Get.toNamed('/homework-detail', arguments: {
-                                              'homework': homework,
-                                            }),
-                                            icon: Icon(
+                                            onPressed: () => showDialog(
+                                              context: context,
+                                              builder: (context) => HomeworkOptionsDialog(
+                                                homework: homework,
+                                              ),
+                                            ),
+                                            icon: const Icon(
                                               Icons.visibility,
                                               size: 20,
                                               color: Colors.black87,
