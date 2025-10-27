@@ -47,3 +47,4 @@ class ClassStudentsResponseEntity {
     required this.students,
   });
 }
+
