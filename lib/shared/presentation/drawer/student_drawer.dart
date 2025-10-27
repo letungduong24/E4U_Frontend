@@ -99,6 +99,12 @@ class StudentDrawer extends StatelessWidget {
             ),
             const SizedBox(height: 15),
             DrawerItem(
+              icon: Mdi.book_open_variant,
+              title: 'Xem bài tập',
+              onTap: () => Get.toNamed('/homework-management'),
+            ),
+            const SizedBox(height: 15),
+            DrawerItem(
               icon: Mdi.numeric_9_plus_box_outline,
               title: 'Xem điểm',
               onTap: () => Get.toNamed('/grade-list'),

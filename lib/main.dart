@@ -14,6 +14,8 @@ import 'package:e4uflutter/feature/document/presentation/screen/document_detail_
 import 'package:e4uflutter/feature/schedule/presentation/screen/admin_schedule_screen.dart';
 import 'package:e4uflutter/feature/schedule/presentation/screen/teacher_schedule_screen.dart';
 import 'package:e4uflutter/feature/schedule/presentation/screen/student_schedule_screen.dart';
+import 'package:e4uflutter/feature/homework/presentation/screen/homework_list_screen.dart';
+import 'package:e4uflutter/feature/homework/presentation/screen/homework_detail_screen.dart';
 import 'package:e4uflutter/core/middleware/auth_middleware.dart';
 import 'package:e4uflutter/shared/presentation/screen/splash_screen.dart';
 import 'package:e4uflutter/feature/submission/presentation/screen/grade_list.dart';
@@ -117,6 +119,16 @@ class MyApp extends StatelessWidget {
         GetPage(
           name: '/student-schedule',
           page: () => const StudentScheduleScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '/homework-management',
+          page: () => const HomeworkListScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '/homework-detail',
+          page: () => const HomeworkDetailScreen(),
           middlewares: [AuthMiddleware()],
         ),
       ],
