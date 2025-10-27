@@ -1,4 +1,5 @@
 import 'package:e4uflutter/feature/auth/presentation/controller/auth_controller.dart';
+import 'package:e4uflutter/feature/auth/presentation/widget/update_profile_dialog.dart';
 import 'package:e4uflutter/shared/presentation/button.dart';
 import 'package:e4uflutter/shared/presentation/scaffold/header_scaffold.dart';
 import 'package:e4uflutter/shared/utils/role_util.dart';
@@ -116,6 +117,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _updateProfileAvatar(String avatarUrl) async {
     final controller = Get.find<AuthController>();
     await controller.updateProfile(avatar: avatarUrl);
+  }
+  
+  void _showUpdateProfileDialog(BuildContext context) {
+    final user = AuthController.user.value;
+    if (user == null) return;
+    
+    final controller = Get.find<AuthController>();
+    
+    showDialog(
+      context: context,
+      builder: (context) => UpdateProfileDialog(
+        user: user,
+        controller: controller,
+      ),
+    );
   }
 
   @override
@@ -294,7 +310,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: DefaultButton(
                         text: "Sửa thông tin",
                         borderRadius: 20,
-                        onPressed: () {},
+                        onPressed: () => _showUpdateProfileDialog(context),
                       ),
                     ),
                   ],
