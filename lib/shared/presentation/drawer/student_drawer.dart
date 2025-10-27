@@ -89,7 +89,7 @@ class StudentDrawer extends StatelessWidget {
             DrawerItem(
               icon: Uil.schedule,
               title: 'Lịch học',
-              onTap: () {},
+              onTap: () => Get.toNamed('/student-schedule'),
             ),
             const SizedBox(height: 15),
             DrawerItem(

@@ -3,7 +3,6 @@ import 'package:e4uflutter/feature/auth/data/datasource/auth_datasource.dart';
 import 'package:e4uflutter/feature/auth/data/repository/auth_repo_impl.dart';
 import 'package:e4uflutter/feature/auth/domain/entity/user_entity.dart';
 import 'package:e4uflutter/core/storage/token_storage.dart';
-import 'package:flutter/material.dart';
 
 class AuthController extends GetxController {
   // Observable state - using global GetX state

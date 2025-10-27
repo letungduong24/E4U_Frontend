@@ -2,7 +2,6 @@ import 'package:e4uflutter/shared/presentation/drawer/admin_drawer.dart';
 import 'package:e4uflutter/shared/presentation/drawer/student_drawer.dart';
 import 'package:e4uflutter/shared/presentation/drawer/teacher_drawer.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:e4uflutter/feature/auth/presentation/controller/auth_controller.dart';
 
 

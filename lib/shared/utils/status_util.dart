@@ -1,7 +1,5 @@
 import 'dart:ui';
 
-import 'package:e4uflutter/feature/auth/domain/entity/user_entity.dart';
-
 class StatusUtil {
   static String GetStatusDisplayName(String status) {
     switch (status) {

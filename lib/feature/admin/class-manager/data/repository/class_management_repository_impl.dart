@@ -1,5 +1,4 @@
 import 'package:e4uflutter/feature/admin/class-manager/data/datasource/class_management_datasource.dart';
-import 'package:e4uflutter/feature/admin/class-manager/data/model/class_management_model.dart';
 import 'package:e4uflutter/feature/admin/class-manager/domain/entity/class_management_entity.dart';
 import 'package:e4uflutter/feature/admin/class-manager/domain/entity/class_student_entity.dart';
 import 'package:e4uflutter/feature/admin/class-manager/domain/repository/class_management_repository.dart';
