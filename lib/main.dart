@@ -102,6 +102,9 @@ class MyApp extends StatelessWidget {
         GetPage(
           name: '/grade-list',
           page: () => const GradeListScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
           name: '/admin-schedule',
           page: () => const AdminScheduleScreen(),
           middlewares: [AuthMiddleware()],
