@@ -46,7 +46,6 @@ class HomeworkController extends GetxController {
     required String title,
     required String description,
     required DateTime deadline,
-    String? fileName,
     String? filePath,
   }) async {
     try {
@@ -56,7 +55,6 @@ class HomeworkController extends GetxController {
         title: title,
         description: description,
         deadline: deadline,
-        fileName: fileName,
         filePath: filePath,
       );
       await loadHomeworks();
@@ -73,7 +71,6 @@ class HomeworkController extends GetxController {
     String? title,
     String? description,
     DateTime? deadline,
-    String? fileName,
     String? filePath,
   }) async {
     try {
@@ -84,7 +81,6 @@ class HomeworkController extends GetxController {
         title: title,
         description: description,
         deadline: deadline,
-        fileName: fileName,
         filePath: filePath,
       );
       await loadHomeworks();

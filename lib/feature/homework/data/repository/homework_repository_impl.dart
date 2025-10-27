@@ -27,14 +27,12 @@ class HomeworkRepositoryImpl implements HomeworkRepository {
     required String title,
     required String description,
     required DateTime deadline,
-    String? fileName,
     String? filePath,
   }) async {
     return await _datasource.createHomework(
       title: title,
       description: description,
       deadline: deadline,
-      fileName: fileName,
       filePath: filePath,
     );
   }
@@ -45,7 +43,6 @@ class HomeworkRepositoryImpl implements HomeworkRepository {
     String? title,
     String? description,
     DateTime? deadline,
-    String? fileName,
     String? filePath,
   }) async {
     return await _datasource.updateHomework(
@@ -53,7 +50,6 @@ class HomeworkRepositoryImpl implements HomeworkRepository {
       title: title,
       description: description,
       deadline: deadline,
-      fileName: fileName,
       filePath: filePath,
     );
   }

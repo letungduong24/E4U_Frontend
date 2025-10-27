@@ -46,6 +46,13 @@ class HomeworkModel extends HomeworkEntity {
       ClassEntity classEntity;
       if (json['classId'] is Map) {
         classEntity = ClassModel.fromJson(json['classId']);
+      } else if (json['classId'] is String) {
+        // If classId is just a string ID
+        classEntity = ClassModel(
+          id: json['classId'],
+          name: 'Unknown',
+          code: '',
+        );
       } else {
         classEntity = const ClassModel(
           id: '',
@@ -58,6 +65,12 @@ class HomeworkModel extends HomeworkEntity {
       TeacherEntity teacherEntity;
       if (json['teacherId'] is Map) {
         teacherEntity = TeacherModel.fromJson(json['teacherId']);
+      } else if (json['teacherId'] is String) {
+        // If teacherId is just a string ID
+        teacherEntity = TeacherModel(
+          id: json['teacherId'],
+          name: 'Teacher',
+        );
       } else {
         teacherEntity = const TeacherModel(
           id: '',
