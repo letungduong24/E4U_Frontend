@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e4uflutter/feature/homework/presentation/controller/homework_controller.dart';
 import 'package:e4uflutter/shared/presentation/dialog/success_dialog.dart';
+import 'package:e4uflutter/shared/presentation/dialog/error_dialog.dart';
 
 class CreateHomeworkDialog extends StatefulWidget {
   final HomeworkController controller;
@@ -313,44 +314,30 @@ class _CreateHomeworkDialogState extends State<CreateHomeworkDialog> {
           title: titleController.text,
           description: descriptionController.text,
           deadline: selectedDeadline!,
-          fileName: null,
           filePath: filePathController.text.isEmpty ? null : filePathController.text,
         );
         Navigator.pop(context);
         _showSuccessDialog(context);
       } catch (e) {
+        // Parse error message
+        String errorMessage = "Thông tin không hợp lệ";
+        if (!e.toString().contains("Thông tin không hợp lệ") && 
+            !e.toString().contains("Validation failed")) {
+          errorMessage = "Đã có lỗi xảy ra";
+        }
+        
         showDialog(
           context: context,
-          builder: (context) => AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            title: const Text("Lỗi"),
-            content: Text(e.toString()),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text("OK"),
-              ),
-            ],
+          builder: (context) => ErrorDialog(
+            message: errorMessage,
           ),
         );
       }
     } else {
       showDialog(
         context: context,
-        builder: (context) => AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          title: const Text("Lỗi"),
-          content: const Text("Vui lòng điền đầy đủ thông tin bắt buộc"),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("OK"),
-            ),
-          ],
+        builder: (context) => ErrorDialog(
+          message: "Vui lòng điền đầy đủ thông tin bắt buộc",
         ),
       );
     }

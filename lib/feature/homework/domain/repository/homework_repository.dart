@@ -12,7 +12,6 @@ abstract class HomeworkRepository {
     required String title,
     required String description,
     required DateTime deadline,
-    String? fileName,
     String? filePath,
   });
 
@@ -21,7 +20,6 @@ abstract class HomeworkRepository {
     String? title,
     String? description,
     DateTime? deadline,
-    String? fileName,
     String? filePath,
   });
 

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e4uflutter/feature/homework/presentation/controller/homework_controller.dart';
 import 'package:e4uflutter/feature/homework/presentation/widget/create_homework_dialog.dart';
-import 'package:e4uflutter/feature/homework/presentation/widget/filter_homework_dialog.dart';
 import 'package:e4uflutter/shared/presentation/scaffold/header_scaffold.dart';
 import 'package:e4uflutter/feature/auth/presentation/controller/auth_controller.dart';
 import 'package:intl/intl.dart';
@@ -76,68 +75,35 @@ class HomeworkListScreen extends StatelessWidget {
                         ),
                         child: Column(
                           children: [
-                            Row(
-                              children: [
-                                GestureDetector(
-                                  onTap: () => showDialog(
-                                    context: context,
-                                    builder: (context) => FilterHomeworkDialog(controller: controller),
-                                  ),
-                                  child: Container(
-                                    height: 40,
-                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(color: Colors.grey[200]!, width: 0.5),
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(Icons.filter_list, size: 16, color: Colors.grey[600]),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          "Lọc",
-                                          style: TextStyle(color: Colors.grey[600]),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Container(
-                                    height: 40,
-                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(color: Colors.grey[200]!, width: 0.5),
-                                    ),
-                                    child: Row(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        Icon(Icons.search, size: 16, color: Colors.grey[600]),
-                                        const SizedBox(width: 8),
-                                        Expanded(
-                                          child: TextField(
-                                            onChanged: controller.setSearchQuery,
-                                            onSubmitted: (value) => controller.performSearch(),
-                                            style: const TextStyle(fontSize: 14, height: 1.0),
-                                            decoration: const InputDecoration(
-                                              hintText: "Tìm kiếm",
-                                              hintStyle: TextStyle(fontSize: 14, color: Colors.grey, height: 1.0),
-                                              border: InputBorder.none,
-                                              contentPadding: EdgeInsets.zero,
-                                              isDense: true,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
+                            Container(
+                              height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: Colors.grey[200]!, width: 0.5),
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.search, size: 16, color: Colors.grey[600]),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: TextField(
+                                      onChanged: controller.setSearchQuery,
+                                      onSubmitted: (value) => controller.performSearch(),
+                                      style: const TextStyle(fontSize: 14, height: 1.0),
+                                      decoration: const InputDecoration(
+                                        hintText: "Tìm kiếm",
+                                        hintStyle: TextStyle(fontSize: 14, color: Colors.grey, height: 1.0),
+                                        border: InputBorder.none,
+                                        contentPadding: EdgeInsets.zero,
+                                        isDense: true,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ],
                         ),
@@ -170,14 +136,7 @@ class HomeworkListScreen extends StatelessWidget {
                                         ),
                                       ),
                                       SizedBox(
-                                        width: 150,
-                                        child: const Text(
-                                          "Lớp",
-                                          style: TextStyle(fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 150,
+                                        width: 200,
                                         child: const Text(
                                           "Hạn nộp",
                                           style: TextStyle(
@@ -253,17 +212,7 @@ class HomeworkListScreen extends StatelessWidget {
                                           ),
                                         ),
                                         SizedBox(
-                                          width: 150,
-                                          child: Text(
-                                            homework.classEntity.name,
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.black87,
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          width: 150,
+                                          width: 200,
                                           child: Text(
                                             DateFormat('dd/MM/yyyy HH:mm').format(homework.deadline),
                                             style: TextStyle(
