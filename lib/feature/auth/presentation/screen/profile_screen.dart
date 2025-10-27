@@ -1,14 +1,155 @@
 import 'package:e4uflutter/feature/auth/presentation/controller/auth_controller.dart';
+import 'package:e4uflutter/feature/auth/presentation/widget/update_profile_dialog.dart';
 import 'package:e4uflutter/shared/presentation/button.dart';
 import 'package:e4uflutter/shared/presentation/scaffold/header_scaffold.dart';
 import 'package:e4uflutter/shared/utils/role_util.dart';
 import 'package:e4uflutter/shared/utils/status_util.dart';
+import 'package:e4uflutter/shared/presentation/dialog/success_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  final ImagePicker _imagePicker = ImagePicker();
+  
+  Future<void> _showAvatarDialog(String avatarUrl) async {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: Stack(
+          children: [
+            Center(
+              child: Image.network(
+                avatarUrl,
+                fit: BoxFit.contain,
+              ),
+            ),
+            Positioned(
+              top: 0,
+              right: 0,
+              child: IconButton(
+                icon: const Icon(Icons.close, color: Colors.white),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  
+  Future<void> _pickAndUploadImage() async {
+    try {
+      final XFile? image = await _imagePicker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 800,
+        maxHeight: 800,
+        imageQuality: 80,
+      );
+      
+      if (image == null) return;
+      
+      // Show loading
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+      
+      // Upload to Cloudinary
+      print('Uploading image to Cloudinary...');
+      final imageUrl = await _uploadToCloudinary(File(image.path));
+      print('Image uploaded successfully. URL: $imageUrl');
+      
+      // Update profile with the returned URL
+      await _updateProfileAvatar(imageUrl);
+      
+      if (mounted) {
+        Navigator.pop(context); // Close loading
+        showDialog(
+          context: context,
+          builder: (context) => const SuccessDialog(
+            title: 'Cập nhật avatar thành công',
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        Navigator.pop(context); // Close loading
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            title: const Text("Lỗi"),
+            content: Text('Lỗi: ${e.toString()}'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("OK"),
+              ),
+            ],
+          ),
+        );
+      }
+    }
+  }
+  
+  Future<String> _uploadToCloudinary(File imageFile) async {
+    const cloudinaryUrl = 'https://api.cloudinary.com/v1_1/dfemfoftc/image/upload';
+    const uploadPreset = 'flutter';
+    
+    var request = http.MultipartRequest('POST', Uri.parse(cloudinaryUrl))
+      ..fields['upload_preset'] = uploadPreset
+      ..files.add(await http.MultipartFile.fromPath('file', imageFile.path));
+    
+    var response = await request.send();
+    
+    if (response.statusCode == 200) {
+      var responseData = await response.stream.bytesToString();
+      var jsonResponse = json.decode(responseData);
+      // Get secure_url from Cloudinary response
+      return jsonResponse['secure_url'] as String;
+    } else {
+      var errorData = await response.stream.bytesToString();
+      throw Exception('Upload failed: $errorData');
+    }
+  }
+  
+  Future<void> _updateProfileAvatar(String avatarUrl) async {
+    final controller = Get.find<AuthController>();
+    await controller.updateProfile(avatar: avatarUrl);
+  }
+  
+  void _showUpdateProfileDialog(BuildContext context) {
+    final user = AuthController.user.value;
+    if (user == null) return;
+    
+    final controller = Get.find<AuthController>();
+    
+    showDialog(
+      context: context,
+      builder: (context) => UpdateProfileDialog(
+        user: user,
+        controller: controller,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,19 +173,46 @@ class ProfileScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Container(
-                      width: 120,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(60),
-                        image: DecorationImage(
-                          image: avatarUrl != null && avatarUrl.isNotEmpty
-                              ? NetworkImage(avatarUrl)
-                              : const AssetImage('assets/images/default_avatar.jpg')
-                          as ImageProvider,
-                          fit: BoxFit.cover,
+                    Stack(
+                      alignment: Alignment.bottomRight,
+                      children: [
+                        GestureDetector(
+                          onTap: avatarUrl != null && avatarUrl.isNotEmpty
+                              ? () => _showAvatarDialog(avatarUrl)
+                              : null,
+                          child: Container(
+                            width: 120,
+                            height: 120,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(60),
+                              image: DecorationImage(
+                                image: avatarUrl != null && avatarUrl.isNotEmpty
+                                    ? NetworkImage(avatarUrl)
+                                    : const AssetImage('assets/images/default_avatar.jpg')
+                                as ImageProvider,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Container(
+                            width: 36,
+                            height: 36,
+                            decoration: const BoxDecoration(
+                              color: Colors.blue,
+                              shape: BoxShape.circle,
+                            ),
+                            child: IconButton(
+                              padding: EdgeInsets.zero,
+                              icon: const Icon(Icons.camera_alt, color: Colors.white, size: 20),
+                              onPressed: _pickAndUploadImage,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 15),
                     Column(
@@ -159,58 +327,12 @@ class ProfileScreen extends StatelessWidget {
                       child: DefaultButton(
                         text: "Sửa thông tin",
                         borderRadius: 20,
-                        onPressed: () {},
+                        onPressed: () => _showUpdateProfileDialog(context),
                       ),
                     ),
                   ],
                 )
               ),
-              // enrollment history - chỉ hiển thị cho học sinh
-              if (user?.role == 'student')
-                Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("Lịch sử học tập", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),),
-                      SizedBox(height: 5,),
-                      if (user?.enrollmentHistory != null)
-                        ...?user?.enrollmentHistory?.map((item) =>
-                            Container(
-                              padding: EdgeInsets.all((12)),
-                              decoration: BoxDecoration(
-                                  color: Colors.grey[100],
-                                  borderRadius: BorderRadius.circular(20)
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(item.className, style: TextStyle(fontWeight: FontWeight.bold),),
-                                      Container(
-                                        padding: EdgeInsets.all(5),
-                                        decoration: BoxDecoration(
-                                          color: StatusUtil.GetStatusDisplayColor(item.status),
-                                          borderRadius: BorderRadius.circular(10)
-                                        ),
-                                        child: Text(StatusUtil.GetStatusDisplayName(item.status), style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white),),
-                                      )
-                                    ],
-                                  ),
-                                  Text("Ngày bắt đầu: ${DateFormat('dd/MM/yyyy').format(item.enrolledAt)}"),
-                                  Text("Ngày kết thúc: ${item.completedAt != null ? DateFormat('dd/MM/yyyy').format(item.completedAt!) : 'Chưa kết thúc'}")
-                                ],
-                              ),
-                            )
-                        )
-                      else
-                        Text("Không có lịch sử học"),
-                    ],
-                  ),
-                )
-
             ],
           );
         }),

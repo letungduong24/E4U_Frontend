@@ -4,6 +4,7 @@ import 'package:iconify_flutter/icons/material_symbols.dart';
 import 'package:iconify_flutter/icons/ic.dart';
 import 'package:iconify_flutter/icons/uil.dart';
 import 'package:iconify_flutter/icons/ph.dart';
+import 'package:iconify_flutter/icons/mdi.dart';
 import 'drawer_item.dart';
 import 'package:get/get.dart';
 import 'package:e4uflutter/feature/auth/presentation/controller/auth_controller.dart';
@@ -107,6 +108,14 @@ class AdminDrawer extends StatelessWidget{
             icon: Ph.chalkboard_teacher,
             title: 'Quản lý lớp học',
             onTap: () => Get.toNamed('/class-management'),
+          ),
+
+          SizedBox(height: 15,),
+
+          DrawerItem(
+            icon: Mdi.file_document_outline,
+            title: 'Quản lý tài liệu',
+            onTap: () => Get.toNamed('/document-management'),
           ),
 
           SizedBox(height: 15,),

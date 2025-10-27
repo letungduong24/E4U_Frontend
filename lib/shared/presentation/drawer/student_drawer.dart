@@ -94,14 +94,14 @@ class StudentDrawer extends StatelessWidget {
             const SizedBox(height: 15),
             DrawerItem(
               icon: Mdi.file_document_outline,
-              title: 'Tài liệu',
-              onTap: () {},
+              title: 'Xem tài liệu',
+              onTap: () => Get.toNamed('/document-management'),
             ),
             const SizedBox(height: 15),
             DrawerItem(
               icon: Mdi.numeric_9_plus_box_outline,
               title: 'Xem điểm',
-              onTap: () {},
+              onTap: () => Get.toNamed('/grade-list'),
             ),
             const SizedBox(height: 15),
             DrawerItem(

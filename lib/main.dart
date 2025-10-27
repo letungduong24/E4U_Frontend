@@ -9,8 +9,11 @@ import 'package:e4uflutter/feature/home/presentation/screen/teacher_home.dart';
 import 'package:e4uflutter/feature/admin/user-manager/presentation/screen/user_list.dart';
 import 'package:e4uflutter/feature/admin/class-manager/presentation/screen/class_list.dart';
 import 'package:e4uflutter/feature/admin/class-manager/presentation/screen/class_students_screen.dart';
+import 'package:e4uflutter/feature/document/presentation/screen/document_list.dart';
+import 'package:e4uflutter/feature/document/presentation/screen/document_detail_screen.dart';
 import 'package:e4uflutter/core/middleware/auth_middleware.dart';
 import 'package:e4uflutter/shared/presentation/screen/splash_screen.dart';
+import 'package:e4uflutter/feature/submission/presentation/screen/grade_list.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -81,6 +84,21 @@ class MyApp extends StatelessWidget {
         GetPage(
           name: '/class-students',
           page: () => const ClassStudentsScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '/document-management',
+          page: () => const DocumentListScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '/document-detail',
+          page: () => const DocumentDetailScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '/grade-list',
+          page: () => const GradeListScreen(),
           middlewares: [AuthMiddleware()],
         ),
       ],
