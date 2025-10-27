@@ -6,9 +6,7 @@ import 'package:e4uflutter/feature/admin/user-manager/presentation/widget/user_p
 import 'package:e4uflutter/feature/admin/user-manager/presentation/widget/filter_dialog.dart';
 import 'package:e4uflutter/feature/admin/user-manager/domain/entity/user_management_entity.dart';
 import 'package:e4uflutter/shared/presentation/scaffold/header_scaffold.dart';
-import 'package:e4uflutter/shared/presentation/button.dart';
 import 'package:e4uflutter/shared/utils/role_util.dart';
-import 'package:intl/intl.dart';
 
 class UserListScreen extends StatelessWidget {
   const UserListScreen({super.key});
