@@ -16,8 +16,24 @@ class UserModel extends UserEntity {
 
   // Factory để tạo từ JSON
   factory UserModel.fromJson(Map<String, dynamic> json) {
+    // Parse enrollmentHistory - handle both array of objects and array of strings
+    List<EnrollmentEntity>? enrollmentHistory;
+    if (json['enrollmentHistory'] is List) {
+      final list = json['enrollmentHistory'] as List;
+      if (list.isNotEmpty && list.first is Map) {
+        // If it's an array of objects, parse normally
+        enrollmentHistory = list
+            .where((e) => e is Map<String, dynamic>)
+            .map((e) => EnrollmentModel.fromJson(e as Map<String, dynamic>))
+            .toList();
+      } else if (list.isNotEmpty && list.first is String) {
+        // If it's an array of ObjectId strings, skip it (don't parse)
+        enrollmentHistory = [];
+      }
+    }
+    
     return UserModel(
-      id: json['_id'] ?? '',
+      id: json['_id'] ?? json['id'] ?? '',
       firstName: json['firstName'] ?? '',
       lastName: json['lastName'] ?? '',
       fullName: json['fullName'] ?? '',
@@ -26,11 +42,13 @@ class UserModel extends UserEntity {
       profile: json['profile'] != null
           ? ProfileModel.fromJson(json['profile'])
           : null,
-      currentClass: json['currentClass'] != null ? json['currentClass']['name'] : null,
-      teachingClass: json['teachingClass'] != null ? json['teachingClass']['name'] : null,
-      enrollmentHistory: (json['enrollmentHistory'] as List?)
-          ?.map((e) => EnrollmentModel.fromJson(e))
-          .toList(),
+      currentClass: json['currentClass'] is Map 
+          ? json['currentClass']['name'] 
+          : json['currentClass']?.toString(),
+      teachingClass: json['teachingClass'] is Map
+          ? json['teachingClass']['name']
+          : json['teachingClass']?.toString(),
+      enrollmentHistory: enrollmentHistory,
     );
   }
 
@@ -71,7 +89,7 @@ class ProfileModel extends ProfileEntity {
           : null,
       gender: json['gender']?.toString(),
       address: json['address']?.toString(),
-      notification: json['notification'] ?? false,
+      notification: json['notification'] is bool ? json['notification'] : false,
     );
   }
 
@@ -96,10 +114,20 @@ class EnrollmentModel extends EnrollmentEntity {
   });
 
   factory EnrollmentModel.fromJson(Map<String, dynamic> json) {
+    // Handle both object and string format for class
+    String className;
+    if (json['class'] is Map) {
+      className = json['class']['name']?.toString() ?? '';
+    } else if (json['class'] is String) {
+      className = json['class'] as String;
+    } else {
+      className = json['className']?.toString() ?? '';
+    }
+    
     return EnrollmentModel(
-      className: json['class']['name'].toString(),
+      className: className,
       completedAt: json['completedAt'] != null 
-          ? DateTime.parse(json['completedAt']) 
+          ? DateTime.tryParse(json['completedAt']) 
           : null,
       enrolledAt: DateTime.parse(json['enrolledAt']),
       status: json['status'].toString(),

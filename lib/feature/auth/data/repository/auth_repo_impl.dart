@@ -20,6 +20,30 @@ class AuthRepositoryImpl implements AuthRepository {
     final user = await _dts.getCurrentUser();
     return user;
   }
+  
+  @override
+  Future<UserEntity> updateProfile({
+    String? firstName,
+    String? lastName,
+    String? avatar,
+    String? phone,
+    String? dateOfBirth,
+    String? gender,
+    String? address,
+    bool? notification,
+  }) async {
+    final user = await _dts.updateProfile(
+      firstName: firstName,
+      lastName: lastName,
+      avatar: avatar,
+      phone: phone,
+      dateOfBirth: dateOfBirth,
+      gender: gender,
+      address: address,
+      notification: notification,
+    );
+    return user;
+  }
 
   @override
   Future<void> logout() async {

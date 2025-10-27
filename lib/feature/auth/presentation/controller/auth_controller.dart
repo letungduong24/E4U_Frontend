@@ -84,6 +84,36 @@ class AuthController extends GetxController {
       user.value = null;
     }
   }
+  
+  Future<void> updateProfile({
+    String? firstName,
+    String? lastName,
+    String? avatar,
+    String? phone,
+    String? dateOfBirth,
+    String? gender,
+    String? address,
+    bool? notification,
+  }) async {
+    try {
+      isLoading.value = true;
+      final userData = await _authRepository.updateProfile(
+        firstName: firstName,
+        lastName: lastName,
+        avatar: avatar,
+        phone: phone,
+        dateOfBirth: dateOfBirth,
+        gender: gender,
+        address: address,
+        notification: notification,
+      );
+      user.value = userData;
+      isLoading.value = false;
+    } catch (e) {
+      isLoading.value = false;
+      throw e;
+    }
+  }
 
   Future<void> logout() async {
     isLoading.value = true;
