@@ -16,6 +16,7 @@ import 'package:e4uflutter/feature/schedule/presentation/screen/teacher_schedule
 import 'package:e4uflutter/feature/schedule/presentation/screen/student_schedule_screen.dart';
 import 'package:e4uflutter/core/middleware/auth_middleware.dart';
 import 'package:e4uflutter/shared/presentation/screen/splash_screen.dart';
+import 'package:e4uflutter/feature/submission/presentation/screen/grade_list.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -99,6 +100,8 @@ class MyApp extends StatelessWidget {
           middlewares: [AuthMiddleware()],
         ),
         GetPage(
+          name: '/grade-list',
+          page: () => const GradeListScreen(),
           name: '/admin-schedule',
           page: () => const AdminScheduleScreen(),
           middlewares: [AuthMiddleware()],

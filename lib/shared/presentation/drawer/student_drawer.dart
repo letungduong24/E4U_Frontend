@@ -101,7 +101,7 @@ class StudentDrawer extends StatelessWidget {
             DrawerItem(
               icon: Mdi.numeric_9_plus_box_outline,
               title: 'Xem điểm',
-              onTap: () {},
+              onTap: () => Get.toNamed('/grade-list'),
             ),
             const SizedBox(height: 15),
             DrawerItem(
