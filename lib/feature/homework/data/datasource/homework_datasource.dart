@@ -258,9 +258,33 @@ class HomeworkDatasource {
 
   Future<void> deleteHomework(String homeworkId) async {
     try {
-      await _dio.delete('/homeworks/$homeworkId');
+      print('==========================================');
+      print('DELETE /homeworks/$homeworkId - Deleting homework');
+      print('==========================================');
+      
+      final response = await _dio.delete('/homeworks/$homeworkId');
+      
+      print('==========================================');
+      print('DELETE /homeworks/$homeworkId - Response received');
+      print('Status code: ${response.statusCode}');
+      print('Response data: ${response.data}');
+      print('✓ Successfully deleted homework');
+      print('==========================================');
     } on DioException catch (e) {
+      print('==========================================');
+      print('✗ DELETE /homeworks/$homeworkId - DioException');
+      print('Error message: ${e.message}');
+      print('Response data: ${e.response?.data}');
+      print('Status code: ${e.response?.statusCode}');
+      print('==========================================');
       throw Exception(e.response?.data['message'] ?? 'Xóa bài tập thất bại');
+    } catch (e, stackTrace) {
+      print('==========================================');
+      print('✗ DELETE /homeworks/$homeworkId - General exception');
+      print('Error: $e');
+      print('Stack trace: $stackTrace');
+      print('==========================================');
+      throw Exception('Xóa bài tập thất bại: $e');
     }
   }
 
