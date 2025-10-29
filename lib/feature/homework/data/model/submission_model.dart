@@ -1,4 +1,4 @@
-import 'package:e4uflutter/feature/submission/domain/entity/submission_entity.dart';
+import 'package:e4uflutter/feature/homework/domain/entity/submission_entity.dart';
 import 'package:e4uflutter/feature/homework/domain/entity/homework_entity.dart' as homework_entity;
 
 class SubmissionModel extends SubmissionEntity {
@@ -47,7 +47,12 @@ class SubmissionModel extends SubmissionEntity {
       // Parse homework
       homework_entity.HomeworkEntity homework;
       if (json['homeworkId'] is Map) {
-        homework = HomeworkModel.fromJson(json['homeworkId']);
+        print('Parsing homeworkId as Map');
+        final homeworkMap = json['homeworkId'] as Map<String, dynamic>;
+        print('homeworkId map keys: ${homeworkMap.keys.toList()}');
+        print('title: ${homeworkMap['title']}');
+        homework = HomeworkModel.fromJson(homeworkMap);
+        print('Parsed homework - Title: ${homework.title}');
       } else if (json['homeworkId'] is String) {
         // If homeworkId is just an ID string, create a dummy entity
         homework = HomeworkModel(
@@ -174,23 +179,35 @@ class HomeworkModel extends homework_entity.HomeworkEntity {
     if (json['classId'] is Map) {
       classEntity = ClassModel.fromJson(json['classId']);
     } else if (json['classId'] is String) {
-      classEntity = ClassModel(id: json['classId'], name: 'Unknown', code: '');
+      // API returns classId as just a string ID
+      final classIdStr = json['classId'] as String;
+      classEntity = ClassModel(id: classIdStr, name: 'Unknown', code: 'Unknown');
     } else {
-      classEntity = const ClassModel(id: '', name: 'Unknown', code: '');
+      classEntity = const ClassModel(id: '', name: 'Unknown', code: 'Unknown');
     }
 
     homework_entity.TeacherEntity teacherEntity;
-    if (json['teacherId'] is Map) {
-      teacherEntity = TeacherModel.fromJson(json['teacherId']);
-    } else if (json['teacherId'] is String) {
-      teacherEntity = TeacherModel(id: json['teacherId'], name: 'Unknown');
+    if (json.containsKey('teacherId')) {
+      if (json['teacherId'] is Map) {
+        teacherEntity = TeacherModel.fromJson(json['teacherId']);
+      } else if (json['teacherId'] is String) {
+        teacherEntity = TeacherModel(id: json['teacherId'], name: 'Unknown');
+      } else {
+        teacherEntity = const TeacherModel(id: '', name: 'Unknown');
+      }
     } else {
+      // API might not return teacherId, use default
       teacherEntity = const TeacherModel(id: '', name: 'Unknown');
     }
 
+    final homeworkId = json['_id'] ?? json['id'] ?? '';
+    final title = json['title'] ?? 'No title';
+    
+    print('HomeworkModel.fromJson - id: $homeworkId, title: $title');
+    
     return HomeworkModel(
-      id: json['_id'] ?? json['id'] ?? '',
-      title: json['title'] ?? 'No title',
+      id: homeworkId,
+      title: title,
       description: json['description'] ?? '',
       classEntity: classEntity,
       teacherEntity: teacherEntity,

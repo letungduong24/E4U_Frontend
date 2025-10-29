@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:e4uflutter/feature/submission/presentation/controller/submission_controller.dart';
+import 'package:e4uflutter/feature/homework/presentation/controller/submission_controller.dart';
 import 'package:e4uflutter/shared/presentation/scaffold/header_scaffold.dart';
 import 'package:e4uflutter/feature/auth/presentation/controller/auth_controller.dart';
 import 'package:intl/intl.dart';
@@ -10,13 +10,20 @@ class GradeListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(SubmissionController());
+    final controller = Get.put(SubmissionController(), tag: 'graded');
+    
+    // Always load graded submissions on first build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!controller.isLoading.value && controller.submissions.isEmpty) {
+        controller.loadGradedSubmissions();
+      }
+    });
     
     return HeaderScaffold(
       title: "Xem điểm",
       body: RefreshIndicator(
         onRefresh: () async {
-          await controller.loadSubmissions();
+          await controller.loadGradedSubmissions();
         },
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
@@ -46,7 +53,7 @@ class GradeListScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 16),
                         ElevatedButton(
-                          onPressed: controller.loadSubmissions,
+                          onPressed: controller.loadGradedSubmissions,
                           child: const Text("Thử lại"),
                         ),
                       ],
@@ -140,7 +147,7 @@ class GradeListScreen extends StatelessWidget {
                                           Icon(Icons.assignment_outlined, size: 48, color: Colors.grey),
                                           SizedBox(height: 16),
                                           Text(
-                                            "Chưa có bài nộp nào",
+                                            "Chưa có điểm nào",
                                             style: TextStyle(color: Colors.grey),
                                           ),
                                         ],
@@ -167,8 +174,9 @@ class GradeListScreen extends StatelessWidget {
 
   Widget _buildSubmissionRow(BuildContext context, dynamic submission) {
     final homework = submission.homework;
+    print('Building submission row - Homework title: ${homework.title}');
     final isGraded = submission.status == 'graded';
-    final submissionController = Get.find<SubmissionController>();
+    final submissionController = Get.find<SubmissionController>(tag: 'graded');
     final gradeColor = submissionController.getGradeColor(submission.grade);
 
     return Container(
@@ -268,10 +276,6 @@ class GradeListScreen extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 16),
-                Text(
-                  'Lớp: ${submission.homework.classEntity.name}',
-                  style: TextStyle(color: Colors.grey[600]),
-                ),
                 const SizedBox(height: 8),
                 if (submission.status == 'graded' && submission.grade != null)
                   Column(
@@ -286,7 +290,7 @@ class GradeListScreen extends StatelessWidget {
                             height: 60,
                             decoration: BoxDecoration(
                               color: Color(int.parse(
-                                Get.find<SubmissionController>()
+                                Get.find<SubmissionController>(tag: 'graded')
                                     .getGradeColor(submission.grade)!
                                     .replaceFirst('#', '0xFF')
                               )),

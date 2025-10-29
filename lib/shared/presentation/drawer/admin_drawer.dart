@@ -113,22 +113,6 @@ class AdminDrawer extends StatelessWidget{
           SizedBox(height: 15,),
 
           DrawerItem(
-            icon: Mdi.file_document_outline,
-            title: 'Quản lý tài liệu',
-            onTap: () => Get.toNamed('/document-management'),
-          ),
-
-          SizedBox(height: 15,),
-
-          DrawerItem(
-            icon: Mdi.book_open_variant,
-            title: 'Quản lý bài tập',
-            onTap: () => Get.toNamed('/homework-management'),
-          ),
-
-          SizedBox(height: 15,),
-
-          DrawerItem(
             icon: Ic.outline_settings,
             title: 'Cài đặt',
             onTap: () {},

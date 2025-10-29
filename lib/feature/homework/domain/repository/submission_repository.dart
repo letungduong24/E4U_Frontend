@@ -1,4 +1,4 @@
-import 'package:e4uflutter/feature/submission/domain/entity/submission_entity.dart';
+import 'package:e4uflutter/feature/homework/domain/entity/submission_entity.dart';
 
 abstract class SubmissionRepository {
   Future<List<SubmissionEntity>> getStudentSubmissions({String? status});
@@ -21,5 +21,7 @@ abstract class SubmissionRepository {
     required int grade,
     String? feedback,
   });
+
+  Future<List<SubmissionEntity>> getGradedSubmissions();
 }
 

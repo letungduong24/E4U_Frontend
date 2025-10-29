@@ -1,7 +1,7 @@
-import 'package:e4uflutter/feature/submission/data/datasource/submission_datasource.dart';
-import 'package:e4uflutter/feature/submission/data/model/submission_model.dart';
-import 'package:e4uflutter/feature/submission/domain/entity/submission_entity.dart';
-import 'package:e4uflutter/feature/submission/domain/repository/submission_repository.dart';
+import 'package:e4uflutter/feature/homework/data/datasource/submission_datasource.dart';
+import 'package:e4uflutter/feature/homework/data/model/submission_model.dart';
+import 'package:e4uflutter/feature/homework/domain/entity/submission_entity.dart';
+import 'package:e4uflutter/feature/homework/domain/repository/submission_repository.dart';
 
 class SubmissionRepositoryImpl implements SubmissionRepository {
   final SubmissionDatasource _datasource;
@@ -101,6 +101,16 @@ class SubmissionRepositoryImpl implements SubmissionRepository {
         grade: grade,
         feedback: feedback,
       );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<SubmissionEntity>> getGradedSubmissions() async {
+    try {
+      final submissions = await _datasource.getGradedSubmissions();
+      return submissions;
     } catch (e) {
       rethrow;
     }

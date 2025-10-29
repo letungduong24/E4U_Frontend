@@ -350,7 +350,7 @@ class _UpdateClassDialogState extends State<UpdateClassDialog> {
     showDialog(
       context: context,
       builder: (context) => SuccessDialog(
-        title: "Cập nhật lớp học thành công",
+        title: "Cập nhật thành công",
       ),
     );
   }
