@@ -56,6 +56,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.13.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -97,3 +98,14 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+# Cấu hình icon app
+flutter_launcher_icons:
+  android: true
+  ios: false  # Set true nếu bạn có iOS
+  image_path: "assets/images/logo.png"  # Đường dẫn đến icon của bạn (1024x1024px PNG)
+  # Có thể chỉ định icon riêng cho từng platform:
+  # adaptive_icon_background: "#FFFFFF"  # Màu nền cho adaptive icon Android
+  # adaptive_icon_foreground: "assets/images/logo.png"
+  # web:
+  #   generate: true
