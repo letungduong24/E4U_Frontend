@@ -31,10 +31,13 @@ class SubmissionDatasource {
       final submissions = <SubmissionModel>[];
       for (var json in submissionsJson) {
         try {
+          print('Parsing submission JSON: $json');
           final submission = SubmissionModel.fromJson(json);
+          print('Parsed submission - Student name: ${submission.student.name}');
           submissions.add(submission);
         } catch (e) {
           print('Error parsing submission: $e');
+          print('JSON data: $json');
         }
       }
 
@@ -98,10 +101,13 @@ class SubmissionDatasource {
       final submissions = <SubmissionModel>[];
       for (var json in submissionsJson) {
         try {
+          print('Parsing submission JSON: $json');
           final submission = SubmissionModel.fromJson(json);
+          print('Parsed submission - Student name: ${submission.student.name}');
           submissions.add(submission);
         } catch (e) {
           print('Error parsing submission: $e');
+          print('JSON data: $json');
         }
       }
 
@@ -220,6 +226,29 @@ class SubmissionDatasource {
     } catch (e) {
       print('General error: $e');
       throw Exception('Xóa bài nộp thất bại');
+    }
+  }
+
+  Future<void> gradeSubmission({
+    required String submissionId,
+    required int grade,
+    String? feedback,
+  }) async {
+    try {
+      print('Making API call to POST /submissions/$submissionId/grade');
+      final response = await _dio.post('/submissions/$submissionId/grade', data: {
+        'grade': grade,
+        'feedback': feedback,
+      });
+
+      print('API Response status: ${response.statusCode}');
+    } on DioException catch (e) {
+      print('DioException: ${e.message}');
+      print('Response: ${e.response?.data}');
+      throw Exception('Chấm bài thất bại');
+    } catch (e) {
+      print('General error: $e');
+      throw Exception('Chấm bài thất bại');
     }
   }
 }

@@ -64,16 +64,27 @@ class SubmissionModel extends SubmissionEntity {
         throw Exception('homeworkId must be populated');
       }
 
-      // Parse student - make it optional since we might not have user details
+      // Parse student - API returns studentId as object with {_id, name, email}
       StudentEntity student;
+      String studentIdStr;
       if (json['studentId'] is Map) {
-        student = StudentModel.fromJson(json['studentId']);
-      } else {
+        final studentIdObj = json['studentId'] as Map<String, dynamic>;
+        studentIdStr = studentIdObj['_id'] ?? studentIdObj['id'] ?? '';
+        student = StudentModel.fromJson(studentIdObj);
+      } else if (json['studentId'] is String) {
         // If studentId is just a string, create minimal entity
-        final studentIdStr = json['studentId'] is String ? json['studentId'] : '';
+        studentIdStr = json['studentId'];
         student = StudentModel(
           id: studentIdStr,
           name: 'Student',
+          email: '',
+        );
+      } else {
+        // Fallback for null or unexpected types
+        studentIdStr = '';
+        student = StudentModel(
+          id: '',
+          name: 'Unknown Student',
           email: '',
         );
       }
@@ -82,13 +93,17 @@ class SubmissionModel extends SubmissionEntity {
       String? fileStr;
       if (json['file'] is String) {
         fileStr = json['file'];
+      } else if (json['file'] is Map) {
+        // If file is an object, extract the filePath
+        final fileObj = json['file'] as Map<String, dynamic>;
+        fileStr = fileObj['filePath'] ?? fileObj['fileName'];
       }
 
       return SubmissionModel(
         id: json['_id'] ?? json['id'] ?? '',
         homeworkId: json['homeworkId'] is String ? json['homeworkId'] : homework.id,
         homework: homework,
-        studentId: json['studentId'] is String ? json['studentId'] : student.id,
+        studentId: studentIdStr,
         student: student,
         file: fileStr,
         status: json['status'] ?? 'submitted',
@@ -110,7 +125,7 @@ class SubmissionModel extends SubmissionEntity {
       '_id': id,
       'homeworkId': homeworkId,
       'studentId': studentId,
-      'file': file != null ? (file as FileModel).toJson() : null,
+      'file': file,
       'status': status,
       'grade': grade,
       'feedback': feedback,
@@ -206,7 +221,7 @@ class StudentModel extends StudentEntity {
   factory StudentModel.fromJson(Map<String, dynamic> json) {
     return StudentModel(
       id: json['_id'] ?? json['id'] ?? '',
-      name: json['name'] ?? '',
+      name: json['fullName'] ?? json['name'] ?? '',
       email: json['email'] ?? '',
     );
   }

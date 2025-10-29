@@ -15,5 +15,11 @@ abstract class SubmissionRepository {
   });
 
   Future<void> deleteSubmission(String submissionId);
+
+  Future<void> gradeSubmission({
+    required String submissionId,
+    required int grade,
+    String? feedback,
+  });
 }
 
