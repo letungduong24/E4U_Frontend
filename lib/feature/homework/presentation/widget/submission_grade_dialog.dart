@@ -291,7 +291,7 @@ class _SubmissionGradeDialogState extends State<SubmissionGradeDialog> {
               controller: gradeController,
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(
-                hintText: "Nhập điểm (0-10)",
+                hintText: "Nhập điểm (1-100)",
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
               ),
@@ -404,8 +404,8 @@ class _SubmissionGradeDialogState extends State<SubmissionGradeDialog> {
     }
 
     final grade = int.tryParse(gradeController.text);
-    if (grade == null || grade < 0 || grade > 10) {
-      _showErrorDialog(context, 'Điểm phải là số từ 0 đến 10');
+    if (grade == null || grade < 1 || grade > 100) {
+      _showErrorDialog(context, 'Điểm phải là số từ 1 đến 100');
       return;
     }
 
