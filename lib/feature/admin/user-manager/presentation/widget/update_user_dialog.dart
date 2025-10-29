@@ -487,7 +487,7 @@ class _UpdateUserDialogState extends State<UpdateUserDialog> {
     showDialog(
       context: context,
       builder: (context) => SuccessDialog(
-        title: "Cập nhật người dùng thành công",
+        title: "Cập nhật thành công",
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e4uflutter/feature/auth/presentation/controller/auth_controller.dart';
+import 'package:e4uflutter/shared/presentation/dialog/error_dialog.dart';
 
 class LoginForm extends StatelessWidget {
   const LoginForm({super.key});
@@ -19,18 +20,8 @@ class LoginForm extends StatelessWidget {
       if (email.isEmpty || password.isEmpty) {
         showDialog(
           context: context,
-          builder: (context) => AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            title: const Text("Lỗi"),
-            content: const Text("Vui lòng nhập đầy đủ thông tin"),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text("OK"),
-              ),
-            ],
+          builder: (context) => ErrorDialog(
+            message: "Vui lòng nhập đầy đủ thông tin",
           ),
         );
         return;
@@ -43,29 +34,18 @@ class LoginForm extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 24.0),
       child: Column(
         children: [
-          // Error message - hiển thị AlertDialog khi có lỗi
+          // Error message - hiển thị ErrorDialog khi có lỗi
           Obx(() {
             if (AuthController.error.value.isNotEmpty) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 showDialog(
                   context: context,
-                  builder: (context) => AlertDialog(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    title: const Text("Lỗi"),
-                    content: Text(AuthController.error.value),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          Get.find<AuthController>().clearError();
-                        },
-                        child: const Text("OK"),
-                      ),
-                    ],
+                  builder: (context) => ErrorDialog(
+                    message: AuthController.error.value,
                   ),
-                );
+                ).then((_) {
+                  Get.find<AuthController>().clearError();
+                });
               });
             }
             return const SizedBox.shrink();

@@ -13,9 +13,13 @@ class HomeworkListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(HomeworkController());
     
-    return HeaderScaffold(
-      title: "Quản lý bài tập",
-      body: RefreshIndicator(
+    return Obx(() {
+      final userRole = AuthController.user.value?.role;
+      final title = (userRole == 'student') ? "Bài tập" : "Quản lý bài tập";
+      
+      return HeaderScaffold(
+        title: title,
+        body: RefreshIndicator(
         onRefresh: () async {
           controller.resetFilters();
           await controller.loadHomeworks();
@@ -282,6 +286,7 @@ class HomeworkListScreen extends StatelessWidget {
           child: const Icon(Icons.add, color: Colors.white),
         );
       }),
-    );
+      );
+    });
   }
 }
