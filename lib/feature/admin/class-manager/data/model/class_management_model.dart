@@ -18,15 +18,11 @@ class ClassManagementModel extends ClassManagementEntity {
 
   factory ClassManagementModel.fromJson(Map<String, dynamic> json) {
     try {
-      print('Parsing class: ${json['name']} (${json['code']})');
-      print('Full JSON data: $json');
-      
       // Parse timestamps with fallback
       DateTime createdAt;
       try {
         createdAt = DateTime.parse(json['createdAt']);
       } catch (e) {
-        print('Error parsing createdAt: $e, using current time');
         createdAt = DateTime.now();
       }
       
@@ -34,7 +30,6 @@ class ClassManagementModel extends ClassManagementEntity {
       try {
         updatedAt = DateTime.parse(json['updatedAt']);
       } catch (e) {
-        print('Error parsing updatedAt: $e, using current time');
         updatedAt = DateTime.now();
       }
       
@@ -53,8 +48,6 @@ class ClassManagementModel extends ClassManagementEntity {
         updatedAt: updatedAt,
       );
     } catch (e) {
-      print('Error parsing class JSON: $e');
-      print('JSON data: $json');
       rethrow;
     }
   }
@@ -117,7 +110,6 @@ class StudentClassModel extends StudentClassEntity {
       try {
         enrolledAt = DateTime.parse(json['enrolledAt']);
       } catch (e) {
-        print('Error parsing enrolledAt: $e, using current time');
         enrolledAt = DateTime.now();
       }
       
@@ -131,8 +123,6 @@ class StudentClassModel extends StudentClassEntity {
         isActive: json['isActive'] ?? true,
       );
     } catch (e) {
-      print('Error parsing student class JSON: $e');
-      print('JSON data: $json');
       rethrow;
     }
   }

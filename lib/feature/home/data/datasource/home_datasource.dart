@@ -30,15 +30,9 @@ class HomeDatasource {
     try {
       final response = await _dio.get('/schedules/upcoming');
       
-      print('API Response: ${response.data}');
-      
       // API trả về: { "status": "success", "data": { "schedules": [...] } }
       if (response.data['data'] != null && response.data['data']['schedules'] != null) {
         final List<dynamic> schedulesJson = response.data['data']['schedules'];
-        print('Found ${schedulesJson.length} schedules');
-        if (schedulesJson.isNotEmpty) {
-          print('First schedule raw data: ${schedulesJson[0]}');
-        }
         return schedulesJson
             .map((json) => UpcomingScheduleModel.fromJson(json))
             .toList();

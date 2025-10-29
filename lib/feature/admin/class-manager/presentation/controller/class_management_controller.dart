@@ -38,12 +38,6 @@ class ClassManagementController extends GetxController {
       isLoading.value = true;
       error.value = '';
       
-      print('Loading classes with filters:');
-      print('- teacher: ${selectedTeacher.value}');
-      print('- searchQuery: ${searchQuery.value}');
-      print('- sortBy: ${sortBy.value}');
-      print('- sortOrder: ${sortOrder.value}');
-      
       final result = await _repository.getAllClasses(
         teacher: selectedTeacher.value.isEmpty ? null : selectedTeacher.value,
         searchQuery: searchQuery.value.isEmpty ? null : searchQuery.value,
@@ -52,14 +46,8 @@ class ClassManagementController extends GetxController {
         sortOrder: sortOrder.value,
       );
       
-      print('Received ${result.length} classes from API');
-      print('Classes details:');
-      for (var classItem in result) {
-        print('- ${classItem.name} (${classItem.code}) - Teacher: ${classItem.homeroomTeacherName}');
-      }
       classes.value = result;
     } catch (e) {
-      print('Error loading classes: $e');
       error.value = e.toString();
     } finally {
       isLoading.value = false;
@@ -121,7 +109,6 @@ class ClassManagementController extends GetxController {
         await loadClasses();
       } catch (loadError) {
         // Log load error but don't fail the update
-        print('Error reloading classes: $loadError');
       }
     } catch (e) {
       error.value = e.toString();
@@ -172,7 +159,6 @@ class ClassManagementController extends GetxController {
 
   void setSelectedTeacher(String teacherId) {
     selectedTeacher.value = teacherId;
-    print('Selected teacher ID: $teacherId');
     loadClasses();
   }
 
@@ -206,7 +192,6 @@ class ClassManagementController extends GetxController {
 
   Future<void> loadAllTeachers() async {
     try {
-      print('Loading all teachers from UserManagementController...');
       // Clear existing teachers first to show loading state
       teachers.value = [];
       
@@ -215,7 +200,6 @@ class ClassManagementController extends GetxController {
       try {
         userController = Get.find<UserManagementController>();
       } catch (e) {
-        print('UserManagementController not found, creating new instance...');
         userController = Get.put(UserManagementController());
       }
       
@@ -231,15 +215,8 @@ class ClassManagementController extends GetxController {
         'isActive': user.isActive,
       }).toList();
       
-      print('Loaded ${teachersList.length} teachers:');
-      for (var teacher in teachersList) {
-        print('- ${teacher['name']} (${teacher['id']})');
-      }
       teachers.value = teachersList;
-      print('Teachers updated in controller: ${teachers.length}');
     } catch (e) {
-      print('Error loading all teachers: $e');
-      print('Stack trace: ${StackTrace.current}');
       // Fallback to empty list
       teachers.value = [];
     }
@@ -247,20 +224,12 @@ class ClassManagementController extends GetxController {
 
   Future<void> loadTeachers() async {
     try {
-      print('Loading unassigned teachers from API...');
       // Clear existing teachers first to show loading state
       teachers.value = [];
       final unassignedTeachers = await _repository.getUnassignedTeachers();
       
-      print('Loaded ${unassignedTeachers.length} unassigned teachers:');
-      for (var teacher in unassignedTeachers) {
-        print('- ${teacher['name']} (${teacher['id']})');
-      }
       teachers.value = unassignedTeachers;
-      print('Teachers updated in controller: ${teachers.length}');
     } catch (e) {
-      print('Error loading unassigned teachers: $e');
-      print('Stack trace: ${StackTrace.current}');
       // Fallback to empty list
       teachers.value = [];
     }
@@ -275,7 +244,6 @@ class ClassManagementController extends GetxController {
       await loadTeachers(); // Reload teachers to update dropdown
     } catch (e) {
       error.value = e.toString();
-      print('Error setting homeroom teacher: $e');
     } finally {
       isLoading.value = false;
     }
@@ -290,7 +258,6 @@ class ClassManagementController extends GetxController {
       await loadTeachers(); // Reload teachers to update dropdown
     } catch (e) {
       error.value = e.toString();
-      print('Error removing homeroom teacher: $e');
     } finally {
       isLoading.value = false;
     }

@@ -22,35 +22,25 @@ class DocumentManagementDatasource {
         queryParams['q'] = searchQuery;
       }
       
-      print('Making API call to $endpoint with params: $queryParams');
       final response = await _dio.get(endpoint, queryParameters: queryParams);
-      
-      print('API Response status: ${response.statusCode}');
-      print('API Response data: ${response.data}');
       
       // Handle API response structure
       List<dynamic> documentsJson;
       if (response.data['data'] is List) {
         documentsJson = response.data['data'];
-        print('Found ${documentsJson.length} documents in data (array)');
       } else if (response.data['data'] is Map && response.data['data']['documents'] is List) {
         documentsJson = response.data['data']['documents'];
-        print('Found ${documentsJson.length} documents in data.documents');
       } else {
         documentsJson = [];
-        print('No documents found in response');
       }
       
       final allDocuments = <DocumentManagementModel>[];
       for (int i = 0; i < documentsJson.length; i++) {
         try {
-          print('Parsing document $i: ${documentsJson[i]}');
           final document = DocumentManagementModel.fromJson(documentsJson[i]);
           allDocuments.add(document);
-          print('Successfully parsed document: ${document.title}');
         } catch (e) {
-          print('Error parsing document $i: $e');
-          print('Document data: ${documentsJson[i]}');
+          // Skip invalid documents
         }
       }
       
@@ -79,14 +69,10 @@ class DocumentManagementDatasource {
         }
       }
       
-      print('Final result: ${filteredDocuments.length} documents');
       return filteredDocuments;
     } on DioException catch (e) {
-      print('DioException: ${e.message}');
-      print('Response: ${e.response?.data}');
       throw Exception('Lấy danh sách tài liệu thất bại');
     } catch (e) {
-      print('General error: $e');
       throw Exception('Lấy danh sách tài liệu thất bại');
     }
   }
@@ -112,14 +98,10 @@ class DocumentManagementDatasource {
         'file': file,
       };
 
-      print('Creating document with data: $requestData');
       final response = await _dio.post('/documents', data: requestData);
       
-      print('Create document response: ${response.data}');
       return DocumentManagementModel.fromJson(response.data['data']['document']);
     } on DioException catch (e) {
-      print('Error creating document: ${e.message}');
-      print('Response: ${e.response?.data}');
       throw Exception(e.response?.data['message'] ?? 'Tạo tài liệu thất bại');
     }
   }
@@ -136,29 +118,21 @@ class DocumentManagementDatasource {
       if (description != null) data['description'] = description;
       if (file != null) data['file'] = file;
 
-      print('Updating document $documentId with data: $data');
       final response = await _dio.put(
         '/documents/$documentId',
         data: data,
       );
       
-      print('Update document response: ${response.data}');
       return DocumentManagementModel.fromJson(response.data['data']['document']);
     } on DioException catch (e) {
-      print('Error updating document: ${e.message}');
-      print('Response: ${e.response?.data}');
       throw Exception(e.response?.data['message'] ?? 'Cập nhật tài liệu thất bại');
     }
   }
 
   Future<void> deleteDocument(String documentId) async {
     try {
-      print('Deleting document with ID: $documentId');
-      final response = await _dio.delete('/documents/$documentId');
-      print('Delete document response: ${response.data}');
+      await _dio.delete('/documents/$documentId');
     } on DioException catch (e) {
-      print('Error deleting document: ${e.message}');
-      print('Response: ${e.response?.data}');
       throw Exception(e.response?.data['message'] ?? 'Xóa tài liệu thất bại');
     }
   }
@@ -173,10 +147,7 @@ class DocumentManagementDatasource {
 
   Future<List<Map<String, dynamic>>> getClasses() async {
     try {
-      print('Making API call to /classes');
       final response = await _dio.get('/classes');
-      
-      print('Classes API Response status: ${response.statusCode}');
       
       List<dynamic> classesJson;
       if (response.data['data'] != null && response.data['data']['classes'] != null) {
@@ -195,10 +166,8 @@ class DocumentManagementDatasource {
       
       return classes;
     } on DioException catch (e) {
-      print('DioException getting classes: ${e.message}');
       return _getMockClasses();
     } catch (e) {
-      print('Error getting classes: $e');
       return _getMockClasses();
     }
   }

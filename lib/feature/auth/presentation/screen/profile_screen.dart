@@ -71,9 +71,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
       
       // Upload to Cloudinary
-      print('Uploading image to Cloudinary...');
       final imageUrl = await _uploadToCloudinary(File(image.path));
-      print('Image uploaded successfully. URL: $imageUrl');
       
       // Update profile with the returned URL
       await _updateProfileAvatar(imageUrl);

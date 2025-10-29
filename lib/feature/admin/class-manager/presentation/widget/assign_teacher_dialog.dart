@@ -48,7 +48,7 @@ class _AssignTeacherDialogState extends State<AssignTeacherDialog> {
         });
       }
     } catch (e) {
-      print('Error loading teachers: $e');
+      // Error handled silently
     }
   }
 
@@ -110,8 +110,6 @@ class _AssignTeacherDialogState extends State<AssignTeacherDialog> {
                             border: Border.all(color: Colors.grey.shade300),
                           ),
                           child: Obx(() {
-                            print('AssignTeacherDialog: teachers.length = ${widget.controller.teachers.length}');
-                            
                             if (widget.controller.isLoading.value) {
                               return Container(
                                 width: double.infinity,
@@ -175,7 +173,6 @@ class _AssignTeacherDialogState extends State<AssignTeacherDialog> {
                               items: [
                                 const DropdownMenuItem(value: '', child: Text('Chưa chọn giáo viên')),
                                 ...widget.controller.teachers.map((teacher) {
-                                  print('Adding teacher item: ${teacher['name']} (${teacher['id']})');
                                   return DropdownMenuItem(
                                     value: teacher['id'],
                                     child: Text(teacher['name']),

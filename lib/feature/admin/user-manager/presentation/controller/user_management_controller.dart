@@ -39,13 +39,6 @@ class UserManagementController extends GetxController {
       isLoading.value = true;
       error.value = '';
       
-      print('Loading users with filters:');
-      print('- role: ${selectedRole.value}');
-      print('- searchQuery: ${searchQuery.value}');
-      print('- classFilter: ${selectedClass.value}');
-      print('- sortBy: ${sortBy.value}');
-      print('- sortOrder: ${sortOrder.value}');
-      
       final result = await _repository.getAllUsers(
         role: selectedRole.value.isEmpty ? null : selectedRole.value,
         searchQuery: searchQuery.value.isEmpty ? null : searchQuery.value,
@@ -55,14 +48,8 @@ class UserManagementController extends GetxController {
         sortOrder: sortOrder.value,
       );
       
-      print('Received ${result.length} users from API');
-      print('Users details:');
-      for (var user in result) {
-        print('- ${user.fullName} (${user.email}) - ${user.role}');
-      }
       users.value = result;
     } catch (e) {
-      print('Error loading users: $e');
       error.value = e.toString();
     } finally {
       isLoading.value = false;
@@ -142,7 +129,6 @@ class UserManagementController extends GetxController {
         await loadUsers();
       } catch (loadError) {
         // Log load error but don't fail the update
-        print('Error reloading users: $loadError');
       }
     } catch (e) {
       error.value = e.toString();
@@ -213,7 +199,6 @@ class UserManagementController extends GetxController {
 
   void setSelectedClass(String classId) {
     selectedClass.value = classId;
-    print('Selected class ID: $classId');
     loadUsers();
   }
 

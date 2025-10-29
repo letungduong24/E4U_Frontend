@@ -16,10 +16,6 @@ class UserManagementDatasource {
     try {
       // Build query parameters
       final queryParams = <String, dynamic>{};
-      print('Filter parameters received:');
-      print('- role: $role');
-      print('- searchQuery: $searchQuery');
-      print('- classFilter: $classFilter');
       
       if (role != null && role.isNotEmpty) {
         queryParams['role'] = role;
@@ -29,50 +25,30 @@ class UserManagementDatasource {
       }
       if (classFilter != null && classFilter.isNotEmpty) {
         queryParams['classId'] = classFilter;
-        print('Added classId to query: $classFilter');
       }
       
-      print('Making API call to /admin/users with params: $queryParams');
       final response = await _dio.get('/admin/users', queryParameters: queryParams);
-      
-      // Debug logging
-      print('API Response status: ${response.statusCode}');
-      print('API Response data: ${response.data}');
       
       // Handle API response structure: data.users
       List<dynamic> usersJson;
       if (response.data['data'] != null && response.data['data']['users'] != null) {
         usersJson = response.data['data']['users'];
-        print('Found ${usersJson.length} users in data.users');
       } else if (response.data['data'] != null && response.data['data']['items'] != null) {
         usersJson = response.data['data']['items'];
-        print('Found ${usersJson.length} users in data.items');
       } else if (response.data['data'] is List) {
         usersJson = response.data['data'];
-        print('Found ${usersJson.length} users in data (array)');
       } else {
         usersJson = [];
-        print('No users found in response');
-        print('Response structure: ${response.data.keys}');
       }
       
       final allUsers = <UserManagementModel>[];
       for (int i = 0; i < usersJson.length; i++) {
         try {
-          print('Parsing user $i: ${usersJson[i]}');
           final user = UserManagementModel.fromJson(usersJson[i]);
           allUsers.add(user);
-          print('Successfully parsed user: ${user.fullName}');
         } catch (e) {
-          print('Error parsing user $i: $e');
-          print('User data: ${usersJson[i]}');
           // Skip this user and continue with others
         }
-      }
-      print('Successfully parsed ${allUsers.length} users from API');
-      print('Users before filtering:');
-      for (var user in allUsers) {
-        print('- ${user.fullName} (${user.role}) - currentClass: ${user.currentClass}, teachingClass: ${user.teachingClass}');
       }
       
       // Apply frontend filtering and sorting
@@ -81,7 +57,6 @@ class UserManagementDatasource {
       // Filter by role
       if (role != null && role.isNotEmpty) {
         filteredUsers = filteredUsers.where((user) => user.role == role).toList();
-        print('Filtered by role $role: ${filteredUsers.length} users');
       }
       
       // Filter by search query
@@ -90,18 +65,11 @@ class UserManagementDatasource {
           user.fullName.toLowerCase().contains(searchQuery.toLowerCase()) ||
           user.email.toLowerCase().contains(searchQuery.toLowerCase())
         ).toList();
-        print('Filtered by search "$searchQuery": ${filteredUsers.length} users');
-      }
-      
-      // Note: Class filtering is handled by API backend
-      if (classFilter != null && classFilter.isNotEmpty) {
-        print('Class filtering handled by API backend with classId: $classFilter');
       }
       
       // Filter by active status
       if (isActive != null) {
         filteredUsers = filteredUsers.where((user) => user.isActive == isActive).toList();
-        print('Filtered by isActive $isActive: ${filteredUsers.length} users');
       }
       
       // Sort users
@@ -125,31 +93,14 @@ class UserManagementDatasource {
             filteredUsers.sort((a, b) => a.email.compareTo(b.email));
           }
         }
-        print('Sorted by $sortBy $sortOrder');
       }
       
-      print('Final result: ${filteredUsers.length} users');
-      print('Final users:');
-      for (var user in filteredUsers) {
-        print('- ${user.fullName} (${user.role})');
-      }
-      print('Returning ${filteredUsers.length} users from API (not mock)');
       return filteredUsers;
     } on DioException catch (e) {
-      print('DioException: ${e.message}');
-      print('Response: ${e.response?.data}');
-      print('Status code: ${e.response?.statusCode}');
-      print('Request URL: ${e.requestOptions.uri}');
-      print('Request method: ${e.requestOptions.method}');
-      
       // Fallback to mock data if API fails
-      print('API failed, using mock data');
       return _getMockUsers();
     } catch (e) {
-      print('General error: $e');
-      print('Stack trace: ${StackTrace.current}');
       // Fallback to mock data if any error
-      print('Error occurred, using mock data');
       return _getMockUsers();
     }
   }
@@ -278,14 +229,10 @@ class UserManagementDatasource {
         },
       };
 
-      print('Creating user with data: $requestData');
       final response = await _dio.post('/admin/users', data: requestData);
       
-      print('Create user response: ${response.data}');
       return UserManagementModel.fromJson(response.data['data']['user']);
     } on DioException catch (e) {
-      print('Error creating user: ${e.message}');
-      print('Response: ${e.response?.data}');
       throw Exception(e.response?.data['message'] ?? 'Tạo người dùng thất bại');
     }
   }
@@ -342,7 +289,6 @@ class UserManagementDatasource {
     } on DioException catch (e) {
       throw Exception(e.response?.data['message'] ?? 'Cập nhật người dùng thất bại');
     } catch (e) {
-      print('General error in updateUser: $e');
       throw Exception('Cập nhật người dùng thất bại: $e');
     }
   }
@@ -373,21 +319,14 @@ class UserManagementDatasource {
 
   Future<List<Map<String, dynamic>>> getClasses() async {
     try {
-      print('Making API call to /classes');
       final response = await _dio.get('/classes');
-      
-      print('Classes API Response status: ${response.statusCode}');
-      print('Classes API Response data: ${response.data}');
       
       // Handle API response structure: data.classes
       List<dynamic> classesJson;
       if (response.data['data'] != null && response.data['data']['classes'] != null) {
         classesJson = response.data['data']['classes'];
-        print('Found ${classesJson.length} classes in data.classes');
       } else {
         classesJson = [];
-        print('No classes found in response');
-        print('Response structure: ${response.data.keys}');
       }
       
       final classes = classesJson.map((json) => {
@@ -404,21 +343,12 @@ class UserManagementDatasource {
         uniqueClasses[classItem['id']] = classItem;
       }
       
-      print('Removed duplicates, final classes: ${uniqueClasses.length}');
       return uniqueClasses.values.toList();
     } on DioException catch (e) {
-      print('DioException getting classes: ${e.message}');
-      print('Response: ${e.response?.data}');
-      print('Status code: ${e.response?.statusCode}');
-      
       // Fallback to mock data if API fails
-      print('Classes API failed, using mock data');
       return _getMockClasses();
     } catch (e) {
-      print('General error getting classes: $e');
-      print('Stack trace: ${StackTrace.current}');
       // Fallback to mock data if any error
-      print('Error occurred getting classes, using mock data');
       return _getMockClasses();
     }
   }

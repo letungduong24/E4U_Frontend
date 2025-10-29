@@ -48,7 +48,7 @@ class _AssignStudentDialogState extends State<AssignStudentDialog> {
         });
       }
     } catch (e) {
-      print('Error loading students: $e');
+      // Error handled silently
     }
   }
 
@@ -110,8 +110,6 @@ class _AssignStudentDialogState extends State<AssignStudentDialog> {
                             border: Border.all(color: Colors.grey.shade300),
                           ),
                           child: Obx(() {
-                            print('AssignStudentDialog: students.length = ${widget.controller.unassignedStudents.length}');
-                            
                             if (widget.controller.isLoading.value) {
                               return Container(
                                 width: double.infinity,
@@ -175,7 +173,6 @@ class _AssignStudentDialogState extends State<AssignStudentDialog> {
                               items: [
                                 const DropdownMenuItem(value: '', child: Text('Chưa chọn học sinh')),
                                 ...widget.controller.unassignedStudents.map((student) {
-                                  print('Adding student item: ${student['name']} (${student['id']})');
                                   return DropdownMenuItem(
                                     value: student['id'],
                                     child: Text(student['name']),
