@@ -88,5 +88,22 @@ class SubmissionRepositoryImpl implements SubmissionRepository {
       rethrow;
     }
   }
+
+  @override
+  Future<void> gradeSubmission({
+    required String submissionId,
+    required int grade,
+    String? feedback,
+  }) async {
+    try {
+      await _datasource.gradeSubmission(
+        submissionId: submissionId,
+        grade: grade,
+        feedback: feedback,
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
 

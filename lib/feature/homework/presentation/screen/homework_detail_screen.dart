@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e4uflutter/feature/homework/domain/entity/homework_entity.dart';
 import 'package:e4uflutter/feature/homework/presentation/controller/homework_controller.dart';
+import 'package:e4uflutter/feature/homework/presentation/widget/submission_grade_dialog.dart';
 import 'package:e4uflutter/feature/homework/presentation/widget/update_homework_dialog.dart';
 import 'package:e4uflutter/shared/presentation/dialog/delete_confirmation_dialog.dart';
 import 'package:e4uflutter/shared/presentation/scaffold/header_scaffold.dart';
@@ -483,7 +484,7 @@ class _HomeworkDetailScreenState extends State<HomeworkDetailScreen> {
                                 width: 100,
                                 child: IconButton(
                                   onPressed: () {
-                                    // Grading functionality will be added later
+                                    _showGradeDialog(context, submission);
                                   },
                                   icon: Icon(
                                     Icons.edit,
@@ -503,6 +504,15 @@ class _HomeworkDetailScreenState extends State<HomeworkDetailScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  void _showGradeDialog(BuildContext context, submission) {
+    showDialog(
+      context: context,
+      builder: (context) => SubmissionGradeDialog(
+        submission: submission,
       ),
     );
   }

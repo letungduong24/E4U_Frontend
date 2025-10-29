@@ -228,4 +228,26 @@ class HomeworkController extends GetxController {
       isLoadingStudentSubmission.value = false;
     }
   }
+
+  Future<void> gradeSubmission({
+    required String submissionId,
+    required int grade,
+    String? feedback,
+  }) async {
+    try {
+      isLoadingSubmissions.value = true;
+      error.value = '';
+      await _submissionRepository.gradeSubmission(
+        submissionId: submissionId,
+        grade: grade,
+        feedback: feedback,
+      );
+      // Reload submissions to get updated data
+      await loadSubmissionsByHomework(submissions.first.homeworkId);
+    } catch (e) {
+      error.value = e.toString();
+    } finally {
+      isLoadingSubmissions.value = false;
+    }
+  }
 }
