@@ -1,10 +1,12 @@
+import 'package:e4uflutter/feature/homework/domain/entity/homework_entity.dart' as homework_entity;
+
 class SubmissionEntity {
   final String id;
   final String homeworkId;
-  final HomeworkEntity homework;
+  final homework_entity.HomeworkEntity homework;
   final String studentId;
   final StudentEntity student;
-  final FileEntity? file;
+  final String? file; // Changed from FileEntity to String
   final String status; // 'submitted', 'graded'
   final int? grade;
   final String? feedback;
@@ -28,22 +30,6 @@ class SubmissionEntity {
   });
 }
 
-class HomeworkEntity {
-  final String id;
-  final String title;
-  final String description;
-  final ClassEntity classEntity;
-  final DateTime deadline;
-
-  const HomeworkEntity({
-    required this.id,
-    required this.title,
-    required this.description,
-    required this.classEntity,
-    required this.deadline,
-  });
-}
-
 class StudentEntity {
   final String id;
   final String name;
@@ -53,34 +39,6 @@ class StudentEntity {
     required this.id,
     required this.name,
     required this.email,
-  });
-}
-
-class ClassEntity {
-  final String id;
-  final String name;
-  final String code;
-
-  const ClassEntity({
-    required this.id,
-    required this.name,
-    required this.code,
-  });
-}
-
-class FileEntity {
-  final String fileName;
-  final String filePath;
-  final String? originalName;
-  final int? fileSize;
-  final String? mimeType;
-
-  const FileEntity({
-    required this.fileName,
-    required this.filePath,
-    this.originalName,
-    this.fileSize,
-    this.mimeType,
   });
 }
 

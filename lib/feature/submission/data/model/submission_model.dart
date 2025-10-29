@@ -1,4 +1,5 @@
 import 'package:e4uflutter/feature/submission/domain/entity/submission_entity.dart';
+import 'package:e4uflutter/feature/homework/domain/entity/homework_entity.dart' as homework_entity;
 
 class SubmissionModel extends SubmissionEntity {
   const SubmissionModel({
@@ -44,7 +45,7 @@ class SubmissionModel extends SubmissionEntity {
       }
 
       // Parse homework
-      HomeworkEntity homework;
+      homework_entity.HomeworkEntity homework;
       if (json['homeworkId'] is Map) {
         homework = HomeworkModel.fromJson(json['homeworkId']);
       } else if (json['homeworkId'] is String) {
@@ -54,7 +55,10 @@ class SubmissionModel extends SubmissionEntity {
           title: 'Unknown',
           description: 'Unknown',
           classEntity: const ClassModel(id: '', name: 'Unknown', code: ''),
+          teacherEntity: const TeacherModel(id: '', name: 'Unknown'),
           deadline: DateTime.now(),
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
         );
       } else {
         throw Exception('homeworkId must be populated');
@@ -74,10 +78,10 @@ class SubmissionModel extends SubmissionEntity {
         );
       }
 
-      // Parse file
-      FileEntity? fileEntity;
-      if (json['file'] is Map && json['file'] != null) {
-        fileEntity = FileModel.fromJson(json['file']);
+      // Parse file - now it's just a string
+      String? fileStr;
+      if (json['file'] is String) {
+        fileStr = json['file'];
       }
 
       return SubmissionModel(
@@ -86,7 +90,7 @@ class SubmissionModel extends SubmissionEntity {
         homework: homework,
         studentId: json['studentId'] is String ? json['studentId'] : student.id,
         student: student,
-        file: fileEntity,
+        file: fileStr,
         status: json['status'] ?? 'submitted',
         grade: json['grade'],
         feedback: json['feedback'],
@@ -117,13 +121,16 @@ class SubmissionModel extends SubmissionEntity {
   }
 }
 
-class HomeworkModel extends HomeworkEntity {
+class HomeworkModel extends homework_entity.HomeworkEntity {
   const HomeworkModel({
     required super.id,
     required super.title,
     required super.description,
     required super.classEntity,
+    required super.teacherEntity,
     required super.deadline,
+    required super.createdAt,
+    required super.updatedAt,
   });
 
   factory HomeworkModel.fromJson(Map<String, dynamic> json) {
@@ -134,26 +141,47 @@ class HomeworkModel extends HomeworkEntity {
       deadline = DateTime.now();
     }
 
-    ClassEntity classEntity;
+    DateTime createdAt;
+    DateTime updatedAt;
+    try {
+      createdAt = json['createdAt'] != null ? DateTime.parse(json['createdAt']) : DateTime.now();
+    } catch (e) {
+      createdAt = DateTime.now();
+    }
+    
+    try {
+      updatedAt = json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : DateTime.now();
+    } catch (e) {
+      updatedAt = DateTime.now();
+    }
+
+    homework_entity.ClassEntity classEntity;
     if (json['classId'] is Map) {
       classEntity = ClassModel.fromJson(json['classId']);
     } else if (json['classId'] is String) {
-      // If classId is just a string, create a class with that ID
-      classEntity = ClassModel(
-        id: json['classId'],
-        name: 'Unknown',
-        code: '',
-      );
+      classEntity = ClassModel(id: json['classId'], name: 'Unknown', code: '');
     } else {
       classEntity = const ClassModel(id: '', name: 'Unknown', code: '');
     }
 
+    homework_entity.TeacherEntity teacherEntity;
+    if (json['teacherId'] is Map) {
+      teacherEntity = TeacherModel.fromJson(json['teacherId']);
+    } else if (json['teacherId'] is String) {
+      teacherEntity = TeacherModel(id: json['teacherId'], name: 'Unknown');
+    } else {
+      teacherEntity = const TeacherModel(id: '', name: 'Unknown');
+    }
+
     return HomeworkModel(
       id: json['_id'] ?? json['id'] ?? '',
-      title: json['title'] ?? json['description'] ?? 'No title',
+      title: json['title'] ?? 'No title',
       description: json['description'] ?? '',
       classEntity: classEntity,
+      teacherEntity: teacherEntity,
       deadline: deadline,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
     );
   }
 
@@ -192,7 +220,17 @@ class StudentModel extends StudentEntity {
   }
 }
 
-class ClassModel extends ClassEntity {
+class TeacherModel extends homework_entity.TeacherEntity {
+  const TeacherModel({required super.id, required super.name});
+
+  factory TeacherModel.fromJson(Map<String, dynamic> json) {
+    return TeacherModel(id: json['_id'] ?? json['id'] ?? '', name: json['name'] ?? '');
+  }
+
+  Map<String, dynamic> toJson() => {'_id': id, 'name': name};
+}
+
+class ClassModel extends homework_entity.ClassEntity {
   const ClassModel({
     required super.id,
     required super.name,
@@ -216,22 +254,16 @@ class ClassModel extends ClassEntity {
   }
 }
 
-class FileModel extends FileEntity {
+class FileModel extends homework_entity.FileEntity {
   const FileModel({
-    required super.fileName,
-    required super.filePath,
-    super.originalName,
-    super.fileSize,
-    super.mimeType,
+    super.fileName,
+    super.filePath,
   });
 
   factory FileModel.fromJson(Map<String, dynamic> json) {
     return FileModel(
-      fileName: json['fileName'] ?? '',
-      filePath: json['filePath'] ?? '',
-      originalName: json['originalName'],
-      fileSize: json['fileSize'],
-      mimeType: json['mimeType'],
+      fileName: json['fileName'],
+      filePath: json['filePath'],
     );
   }
 
@@ -239,9 +271,6 @@ class FileModel extends FileEntity {
     return {
       'fileName': fileName,
       'filePath': filePath,
-      'originalName': originalName,
-      'fileSize': fileSize,
-      'mimeType': mimeType,
     };
   }
 }

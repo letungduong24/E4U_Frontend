@@ -354,7 +354,7 @@ class _UpdateHomeworkDialogState extends State<UpdateHomeworkDialog> {
     showDialog(
       context: context,
       builder: (context) => SuccessDialog(
-        title: "Cập nhật bài tập thành công",
+        title: "Cập nhật thành công",
       ),
     );
   }

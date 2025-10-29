@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e4uflutter/feature/homework/presentation/controller/homework_controller.dart';
 import 'package:e4uflutter/feature/homework/presentation/widget/create_homework_dialog.dart';
-import 'package:e4uflutter/feature/homework/presentation/widget/homework_options_dialog.dart';
 import 'package:e4uflutter/shared/presentation/scaffold/header_scaffold.dart';
 import 'package:e4uflutter/feature/auth/presentation/controller/auth_controller.dart';
 import 'package:intl/intl.dart';
@@ -230,12 +229,18 @@ class HomeworkListScreen extends StatelessWidget {
                                         SizedBox(
                                           width: 80,
                                           child: IconButton(
-                                            onPressed: () => showDialog(
-                                              context: context,
-                                              builder: (context) => HomeworkOptionsDialog(
-                                                homework: homework,
-                                              ),
-                                            ),
+                                            onPressed: () {
+                                              final userRole = AuthController.user.value?.role;
+                                              if (userRole == 'student') {
+                                                Get.toNamed('/homework-submission', arguments: {
+                                                  'homework': homework,
+                                                });
+                                              } else {
+                                                Get.toNamed('/homework-detail', arguments: {
+                                                  'homework': homework,
+                                                });
+                                              }
+                                            },
                                             icon: const Icon(
                                               Icons.visibility,
                                               size: 20,

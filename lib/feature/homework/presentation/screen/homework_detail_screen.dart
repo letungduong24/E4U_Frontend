@@ -27,6 +27,10 @@ class _HomeworkDetailScreenState extends State<HomeworkDetailScreen> {
     if (arguments != null) {
       homework = arguments['homework'] as HomeworkEntity;
       titleController = TextEditingController(text: homework.title);
+      
+      // Load submissions for this homework
+      final controller = Get.find<HomeworkController>();
+      controller.loadSubmissionsByHomework(homework.id);
     } else {
       throw Exception('No homework provided');
     }
@@ -44,10 +48,15 @@ class _HomeworkDetailScreenState extends State<HomeworkDetailScreen> {
     
     return HeaderScaffold(
       title: "Xem chi tiết bài tập",
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await controller.loadSubmissionsByHomework(homework.id);
+        },
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
             Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -72,7 +81,16 @@ class _HomeworkDetailScreenState extends State<HomeworkDetailScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: _buildAttachmentSection(),
               ),
+            
+            const SizedBox(height: 16),
+            
+            // Student Submissions Table Section
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: _buildStudentSubmissionsTable(),
+            ),
           ],
+        ),
         ),
       ),
     );
@@ -329,5 +347,163 @@ class _HomeworkDetailScreenState extends State<HomeworkDetailScreen> {
         }
       });
     }
+  }
+
+  Widget _buildStudentSubmissionsTable() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 0),
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        children: [
+          Container(
+            height: 400,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Column(
+                  children: [
+                    // Table Header
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(12),
+                          topRight: Radius.circular(12),
+                        ),
+                        border: Border(
+                          bottom: BorderSide(
+                            color: Colors.grey[300]!,
+                            width: 1.0,
+                          ),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            width: 200,
+                            child: Row(
+                              children: [
+                                const Text(
+                                  "Tên",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                const SizedBox(width: 4),
+                                Icon(Icons.keyboard_arrow_up, size: 16, color: Colors.grey[600]),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            width: 150,
+                            child: Row(
+                              children: [
+                                const Text(
+                                  "Điểm",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                const SizedBox(width: 4),
+                                Icon(Icons.keyboard_arrow_up, size: 16, color: Colors.grey[600]),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            width: 100,
+                            child: Text(
+                              "Chấm bài",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Table Rows
+                    Obx(() {
+                      final submissions = Get.find<HomeworkController>().submissions;
+                      if (submissions.isEmpty) {
+                        return Container(
+                          padding: const EdgeInsets.all(40),
+                          child: const Center(
+                            child: Column(
+                              children: [
+                                Icon(Icons.assignment_outlined, size: 48, color: Colors.grey),
+                                SizedBox(height: 16),
+                                Text(
+                                  "Không có bài nộp nào",
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+                      return Column(
+                        children: submissions.map((submission) => Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
+                                color: Colors.grey[200]!,
+                                width: 0.5,
+                              ),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 200,
+                                child: Text(
+                                  submission.student.name,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 150,
+                                child: Text(
+                                  submission.status == 'graded' 
+                                    ? submission.grade?.toString() ?? 'Chưa chấm'
+                                    : 'Chưa chấm',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: submission.status == 'graded' ? Colors.black87 : Colors.grey[600],
+                                    fontWeight: submission.status == 'graded' ? FontWeight.w500 : FontWeight.normal,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 100,
+                                child: IconButton(
+                                  onPressed: () {
+                                    // Grading functionality will be added later
+                                  },
+                                  icon: Icon(
+                                    Icons.edit,
+                                    size: 20,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )).toList(),
+                      );
+                    }),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
