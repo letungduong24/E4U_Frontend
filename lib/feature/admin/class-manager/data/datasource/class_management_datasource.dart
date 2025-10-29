@@ -16,9 +16,6 @@ class ClassManagementDatasource {
     try {
       // Build query parameters
       final queryParams = <String, dynamic>{};
-      print('Filter parameters received:');
-      print('- teacher: $teacher');
-      print('- searchQuery: $searchQuery');
       
       if (teacher != null && teacher.isNotEmpty) {
         queryParams['teacher'] = teacher;
@@ -27,67 +24,37 @@ class ClassManagementDatasource {
         queryParams['q'] = searchQuery;
       }
       
-      print('Making API call to /classes with params: $queryParams');
       final response = await _dio.get('/classes', queryParameters: queryParams);
-      
-      // Debug logging
-      print('API Response status: ${response.statusCode}');
-      print('API Response data: ${response.data}');
       
       // Handle API response structure: data.classes
       List<dynamic> classesJson;
       if (response.data['data'] != null && response.data['data']['classes'] != null) {
         classesJson = response.data['data']['classes'];
-        print('Found ${classesJson.length} classes in data.classes');
       } else if (response.data['data'] != null && response.data['data']['items'] != null) {
         classesJson = response.data['data']['items'];
-        print('Found ${classesJson.length} classes in data.items');
       } else if (response.data['data'] is List) {
         classesJson = response.data['data'];
-        print('Found ${classesJson.length} classes in data (array)');
       } else {
         classesJson = [];
-        print('No classes found in response');
-        print('Response structure: ${response.data.keys}');
       }
       
       final allClasses = <ClassManagementModel>[];
       for (int i = 0; i < classesJson.length; i++) {
         try {
-          print('Parsing class $i: ${classesJson[i]}');
           final classItem = ClassManagementModel.fromJson(classesJson[i]);
           allClasses.add(classItem);
-          print('Successfully parsed class: ${classItem.name}');
         } catch (e) {
-          print('Error parsing class $i: $e');
-          print('Class data: ${classesJson[i]}');
           // Skip this class and continue with others
         }
       }
-      print('Successfully parsed ${allClasses.length} classes from API');
-      print('Classes from API:');
-      for (var classItem in allClasses) {
-        print('- ${classItem.name} (${classItem.code}) - Teacher: ${classItem.homeroomTeacherName}');
-      }
       
       // Backend already handles filtering, just return the classes
-      print('Returning ${allClasses.length} classes from API');
       return allClasses;
     } on DioException catch (e) {
-      print('DioException: ${e.message}');
-      print('Response: ${e.response?.data}');
-      print('Status code: ${e.response?.statusCode}');
-      print('Request URL: ${e.requestOptions.uri}');
-      print('Request method: ${e.requestOptions.method}');
-      
       // Fallback to mock data if API fails
-      print('API failed, using mock data');
       return _getMockClasses();
     } catch (e) {
-      print('General error: $e');
-      print('Stack trace: ${StackTrace.current}');
       // Fallback to mock data if any error
-      print('Error occurred, using mock data');
       return _getMockClasses();
     }
   }
@@ -178,14 +145,10 @@ class ClassManagementDatasource {
         'maxStudents': maxStudents ?? 30,
       };
 
-      print('Creating class with data: $requestData');
       final response = await _dio.post('/classes', data: requestData);
       
-      print('Create class response: ${response.data}');
       return ClassManagementModel.fromJson(response.data['data']['class']);
     } on DioException catch (e) {
-      print('Error creating class: ${e.message}');
-      print('Response: ${e.response?.data}');
       throw Exception(e.response?.data['message'] ?? 'Tạo lớp học thất bại');
     }
   }
@@ -222,7 +185,6 @@ class ClassManagementDatasource {
     } on DioException catch (e) {
       throw Exception(e.response?.data['message'] ?? 'Cập nhật lớp học thất bại');
     } catch (e) {
-      print('General error in updateClass: $e');
       throw Exception('Cập nhật lớp học thất bại: $e');
     }
   }
@@ -264,8 +226,6 @@ class ClassManagementDatasource {
     try {
       final response = await _dio.get('/classes/teachers/unassigned');
       
-      print('Unassigned teachers API response: ${response.data}');
-      
       List<dynamic> teachersJson;
       if (response.data['data'] != null && response.data['data']['teachers'] != null) {
         teachersJson = response.data['data']['teachers'];
@@ -285,15 +245,11 @@ class ClassManagementDatasource {
         });
       }
       
-      print('Loaded ${teachers.length} unassigned teachers');
       return teachers;
     } on DioException catch (e) {
-      print('Error loading unassigned teachers: ${e.message}');
-      print('Response: ${e.response?.data}');
       // Fallback to empty list if API fails
       return [];
     } catch (e) {
-      print('General error loading unassigned teachers: $e');
       return [];
     }
   }
@@ -324,25 +280,18 @@ class ClassManagementDatasource {
 
   Future<ClassStudentsResponseModel> getClassStudents(String classId) async {
     try {
-      print('Fetching students for class: $classId');
       final response = await _dio.get('/classes/$classId/students');
-      
-      print('Class students API response: ${response.data}');
       
       return ClassStudentsResponseModel.fromJson(response.data['data']);
     } on DioException catch (e) {
-      print('Error fetching class students: ${e.message}');
-      print('Response: ${e.response?.data}');
       throw Exception(e.response?.data['message'] ?? 'Lấy danh sách học sinh thất bại');
     } catch (e) {
-      print('General error fetching class students: $e');
       throw Exception('Lấy danh sách học sinh thất bại: $e');
     }
   }
 
   Future<ClassStudentsResponseModel> removeStudentFromClass(String classId, String studentId) async {
     try {
-      print('Removing student $studentId from class $classId');
       final response = await _dio.delete(
         '/classes/$classId/students',
         data: {'studentId': studentId},
@@ -353,25 +302,17 @@ class ClassManagementDatasource {
         ),
       );
       
-      print('Remove student API response: ${response.data}');
-      
       return ClassStudentsResponseModel.fromJson(response.data['data']);
     } on DioException catch (e) {
-      print('Error removing student from class: ${e.message}');
-      print('Response: ${e.response?.data}');
       throw Exception(e.response?.data['message'] ?? 'Xóa học sinh khỏi lớp thất bại');
     } catch (e) {
-      print('General error removing student from class: $e');
       throw Exception('Xóa học sinh khỏi lớp thất bại: $e');
     }
   }
 
   Future<List<Map<String, dynamic>>> getUnassignedStudents() async {
     try {
-      print('Loading unassigned students from API...');
       final response = await _dio.get('/classes/students/unassigned');
-      
-      print('Unassigned students API response: ${response.data}');
       
       final studentsData = response.data['data']['students'] as List<dynamic>;
       final students = studentsData.map((student) {
@@ -385,21 +326,16 @@ class ClassManagementDatasource {
         };
       }).toList();
       
-      print('Loaded ${students.length} unassigned students');
       return students;
     } on DioException catch (e) {
-      print('Error loading unassigned students: ${e.message}');
-      print('Response: ${e.response?.data}');
       throw Exception(e.response?.data['message'] ?? 'Tải danh sách học sinh chưa có lớp thất bại');
     } catch (e) {
-      print('General error loading unassigned students: $e');
       throw Exception('Tải danh sách học sinh chưa có lớp thất bại: $e');
     }
   }
 
   Future<ClassStudentsResponseModel> addStudentToClass(String classId, String studentId) async {
     try {
-      print('Adding student $studentId to class $classId');
       final response = await _dio.post(
         '/classes/$classId/students',
         data: {'studentId': studentId},
@@ -410,15 +346,10 @@ class ClassManagementDatasource {
         ),
       );
       
-      print('Add student API response: ${response.data}');
-      
       return ClassStudentsResponseModel.fromJson(response.data['data']);
     } on DioException catch (e) {
-      print('Error adding student to class: ${e.message}');
-      print('Response: ${e.response?.data}');
       throw Exception(e.response?.data['message'] ?? 'Thêm học sinh vào lớp thất bại');
     } catch (e) {
-      print('General error adding student to class: $e');
       throw Exception('Thêm học sinh vào lớp thất bại: $e');
     }
   }

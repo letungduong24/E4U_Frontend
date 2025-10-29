@@ -12,10 +12,6 @@ class UpcomingScheduleModel extends UpcomingScheduleEntity {
   });
 
   factory UpcomingScheduleModel.fromJson(Map<String, dynamic> json) {
-    // Debug: In toàn bộ JSON để kiểm tra
-    print('Parsing schedule - Full JSON: $json');
-    print('Available keys: ${json.keys.toList()}');
-    
     DateTime day;
     try {
       day = DateTime.parse(json['day']);
@@ -43,12 +39,7 @@ class UpcomingScheduleModel extends UpcomingScheduleEntity {
     // Thử các key khác nhau
     if (json.containsKey('class') && json['class'] != null) {
       classData = json['class'] is Map ? Map<String, dynamic>.from(json['class']) : null;
-    } else if (json.containsKey('classId') || json.containsKey('class_id')) {
-      // Nếu chỉ có classId, có thể cần fetch thêm thông tin
-      print('Warning: Only classId found, class object is missing');
     }
-    
-    print('Parsing schedule - classData: $classData');
     
     // Xử lý trường hợp class có thể là null hoặc không có dữ liệu
     String className = '';
@@ -65,8 +56,6 @@ class UpcomingScheduleModel extends UpcomingScheduleEntity {
     if (className.isEmpty && classCode.isNotEmpty) {
       className = classCode;
     }
-    
-    print('Parsed class info: id=$classId, name=$className, code=$classCode');
     
     return UpcomingScheduleModel(
       id: json['_id'] ?? json['id'] ?? '',

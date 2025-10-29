@@ -61,7 +61,6 @@ class ClassStudentsController extends GetxController {
         classCode.value = response.classCode;
       }
     } catch (e) {
-      print('Error loading class students: $e');
       error.value = e.toString();
     } finally {
       isLoading.value = false;
@@ -102,7 +101,6 @@ class ClassStudentsController extends GetxController {
       final students = await _repository.getUnassignedStudents();
       unassignedStudents.value = students;
     } catch (e) {
-      print('Error loading unassigned students: $e');
       error.value = e.toString();
     } finally {
       isLoading.value = false;
@@ -121,7 +119,6 @@ class ClassStudentsController extends GetxController {
       // Reload students after successful removal
       await loadClassStudents();
     } catch (e) {
-      print('Error removing student from class: $e');
       error.value = e.toString();
       rethrow; // Re-throw để dialog có thể catch
     } finally {
@@ -141,7 +138,6 @@ class ClassStudentsController extends GetxController {
       // Reload students after successful addition
       await loadClassStudents();
     } catch (e) {
-      print('Error adding student to class: $e');
       error.value = e.toString();
       rethrow; // Re-throw để dialog có thể catch
     } finally {

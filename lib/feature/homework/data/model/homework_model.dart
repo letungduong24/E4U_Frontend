@@ -20,7 +20,6 @@ class HomeworkModel extends HomeworkEntity {
       try {
         deadline = DateTime.parse(json['deadline']);
       } catch (e) {
-        print('Error parsing deadline: $e, using current time');
         deadline = DateTime.now();
       }
 
@@ -29,7 +28,6 @@ class HomeworkModel extends HomeworkEntity {
       try {
         createdAt = DateTime.parse(json['createdAt']);
       } catch (e) {
-        print('Error parsing createdAt: $e, using current time');
         createdAt = DateTime.now();
       }
 
@@ -38,7 +36,6 @@ class HomeworkModel extends HomeworkEntity {
       try {
         updatedAt = DateTime.parse(json['updatedAt']);
       } catch (e) {
-        print('Error parsing updatedAt: $e, using current time');
         updatedAt = DateTime.now();
       }
 
@@ -96,8 +93,6 @@ class HomeworkModel extends HomeworkEntity {
         teacherEntity: teacherEntity,
       );
     } catch (e) {
-      print('Error parsing homework JSON: $e');
-      print('JSON data: $json');
       rethrow;
     }
   }

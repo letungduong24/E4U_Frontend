@@ -174,7 +174,6 @@ class GradeListScreen extends StatelessWidget {
 
   Widget _buildSubmissionRow(BuildContext context, dynamic submission) {
     final homework = submission.homework;
-    print('Building submission row - Homework title: ${homework.title}');
     final isGraded = submission.status == 'graded';
     final submissionController = Get.find<SubmissionController>(tag: 'graded');
     final gradeColor = submissionController.getGradeColor(submission.grade);

@@ -36,12 +36,6 @@ class DocumentManagementController extends GetxController {
       isLoading.value = true;
       error.value = '';
       
-      print('Loading documents with filters:');
-      print('- searchQuery: ${searchQuery.value}');
-      print('- classFilter: ${selectedClass.value}');
-      print('- sortBy: ${sortBy.value}');
-      print('- sortOrder: ${sortOrder.value}');
-      
       final result = await _repository.getAllDocuments(
         searchQuery: searchQuery.value.isEmpty ? null : searchQuery.value,
         classFilter: selectedClass.value.isEmpty ? null : selectedClass.value,
@@ -50,10 +44,8 @@ class DocumentManagementController extends GetxController {
         sortOrder: sortOrder.value,
       );
       
-      print('Received ${result.length} documents from API');
       documents.value = result;
     } catch (e) {
-      print('Error loading documents: $e');
       error.value = e.toString();
     } finally {
       isLoading.value = false;
@@ -142,7 +134,6 @@ class DocumentManagementController extends GetxController {
 
   void setSelectedClass(String classId) {
     selectedClass.value = classId;
-    print('Selected class ID: $classId');
     loadDocuments();
   }
 
@@ -169,12 +160,10 @@ class DocumentManagementController extends GetxController {
 
   Future<void> loadClasses() async {
     try {
-      print('Loading classes...');
       final classesList = await _repository.getClasses();
-      print('Loaded ${classesList.length} classes');
       classes.value = classesList;
     } catch (e) {
-      print('Error loading classes: $e');
+      // Error handled silently
     }
   }
 }

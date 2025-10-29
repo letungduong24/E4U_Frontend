@@ -21,57 +21,30 @@ class HomeworkDatasource {
         queryParams['classId'] = classFilter;
       }
       
-      print('==========================================');
-      print('GET /homeworks - Starting request');
-      print('Query params: $queryParams');
-      print('==========================================');
-      
       final response = await _dio.get('/homeworks', queryParameters: queryParams);
-      
-      print('==========================================');
-      print('GET /homeworks - Response received');
-      print('Status code: ${response.statusCode}');
-      print('Response data: ${response.data}');
-      print('==========================================');
       
       List<dynamic> homeworksJson;
       // Check if response has data.homeworks (new structure)
       if (response.data['data'] is Map && response.data['data']['homeworks'] is List) {
         homeworksJson = response.data['data']['homeworks'];
-        print('✓ Found ${homeworksJson.length} homeworks in data.homeworks');
-        
-        // Log pagination if available
-        if (response.data['data']['pagination'] != null) {
-          final pagination = response.data['data']['pagination'];
-          print('Pagination: page ${pagination['page']}/${pagination['pages']}, total: ${pagination['total']}');
-        }
       } else if (response.data['data'] is List) {
         // Fallback for old structure (direct array)
         homeworksJson = response.data['data'];
-        print('✓ Found ${homeworksJson.length} homeworks in data array (old structure)');
       } else {
         homeworksJson = [];
-        print('✗ No homeworks found in response');
       }
       
       final allHomeworks = <HomeworkModel>[];
       for (int i = 0; i < homeworksJson.length; i++) {
         try {
-          print('--- Parsing homework $i ---');
-          print('Raw data: ${homeworksJson[i]}');
           final homework = HomeworkModel.fromJson(homeworksJson[i]);
           allHomeworks.add(homework);
-          print('✓ Successfully parsed: ${homework.title}');
         } catch (e, stackTrace) {
-          print('✗ Error parsing homework $i');
-          print('Error: $e');
-          print('Stack trace: $stackTrace');
-          print('Data: ${homeworksJson[i]}');
+          // Skip invalid homeworks
         }
       }
       
       if (sortBy != null && sortBy.isNotEmpty) {
-        print('Sorting homeworks by $sortBy ($sortOrder)');
         if (sortBy == 'deadline') {
           if (sortOrder == 'desc') {
             allHomeworks.sort((a, b) => b.deadline.compareTo(a.deadline));
@@ -81,23 +54,10 @@ class HomeworkDatasource {
         }
       }
       
-      print('✓ Returning ${allHomeworks.length} homeworks');
-      print('==========================================');
       return allHomeworks;
     } on DioException catch (e) {
-      print('==========================================');
-      print('✗ GET /homeworks - DioException');
-      print('Error: ${e.message}');
-      print('Response: ${e.response?.data}');
-      print('Status code: ${e.response?.statusCode}');
-      print('==========================================');
       throw Exception(e.response?.data['message'] ?? 'Lấy danh sách bài tập thất bại');
     } catch (e, stackTrace) {
-      print('==========================================');
-      print('✗ GET /homeworks - General exception');
-      print('Error: $e');
-      print('Stack trace: $stackTrace');
-      print('==========================================');
       throw Exception('Lấy danh sách bài tập thất bại: $e');
     }
   }
@@ -124,57 +84,26 @@ class HomeworkDatasource {
         };
       }
 
-      print('==========================================');
-      print('POST /homeworks - Creating homework');
-      print('Request data: $requestData');
-      print('Title: $title');
-      print('Description: $description');
-      print('Deadline: ${deadline.toIso8601String()}');
-      print('File path: ${filePath ?? "N/A"}');
-      print('==========================================');
-      
       final response = await _dio.post('/homeworks', data: requestData);
-      
-      print('==========================================');
-      print('POST /homeworks - Response received');
-      print('Status code: ${response.statusCode}');
-      print('Response data: ${response.data}');
-      print('==========================================');
       
       // Check response structure
       if (response.data['data'] == null) {
-        print('✗ ERROR: response.data is null');
         throw Exception('Invalid response structure');
       }
       
       if (response.data['data']['homework'] == null) {
-        print('✗ ERROR: response.data.homework is null');
         throw Exception('Invalid response structure: homework data is null');
       }
       
-      print('✓ Parsing homework from response...');
       final homework = HomeworkModel.fromJson(response.data['data']['homework']);
-      print('✓ Successfully created homework: ${homework.title}');
-      print('==========================================');
       
       return homework;
     } on DioException catch (e) {
-      print('==========================================');
-      print('✗ POST /homeworks - DioException');
-      print('Error message: ${e.message}');
-      print('Response data: ${e.response?.data}');
-      print('Status code: ${e.response?.statusCode}');
-      print('Headers: ${e.response?.headers}');
-      print('==========================================');
-      
       // Check if it's a validation error
       if (e.response?.statusCode == 400) {
-        print('✗ Validation error detected');
         final errorData = e.response?.data;
         if (errorData != null) {
-          print('Error details: $errorData');
           if (errorData['errors'] != null) {
-            print('Validation errors: ${errorData['errors']}');
             throw Exception('Thông tin không hợp lệ');
           }
         }
@@ -183,11 +112,6 @@ class HomeworkDatasource {
       final message = e.response?.data['message'] ?? e.message ?? 'Tạo bài tập thất bại';
       throw Exception(message);
     } catch (e, stackTrace) {
-      print('==========================================');
-      print('✗ POST /homeworks - General exception');
-      print('Error: $e');
-      print('Stack trace: $stackTrace');
-      print('==========================================');
       throw Exception('Tạo bài tập thất bại: $e');
     }
   }
@@ -209,36 +133,15 @@ class HomeworkDatasource {
         data['file'] = {'fileName': fileName, 'filePath': filePath};
       }
 
-      print('==========================================');
-      print('PUT /homeworks/$homeworkId - Updating homework');
-      print('Request data: $data');
-      print('==========================================');
-      
       final response = await _dio.put('/homeworks/$homeworkId', data: data);
-      
-      print('==========================================');
-      print('PUT /homeworks/$homeworkId - Response received');
-      print('Status code: ${response.statusCode}');
-      print('Response data: ${response.data}');
-      print('==========================================');
       
       return HomeworkModel.fromJson(response.data['data']['homework']);
     } on DioException catch (e) {
-      print('==========================================');
-      print('✗ PUT /homeworks/$homeworkId - DioException');
-      print('Error message: ${e.message}');
-      print('Response data: ${e.response?.data}');
-      print('Status code: ${e.response?.statusCode}');
-      print('==========================================');
-      
       // Check if it's a validation error
       if (e.response?.statusCode == 400) {
-        print('✗ Validation error detected');
         final errorData = e.response?.data;
         if (errorData != null) {
-          print('Error details: $errorData');
           if (errorData['errors'] != null) {
-            print('Validation errors: ${errorData['errors']}');
             throw Exception('Thông tin không hợp lệ');
           }
         }
@@ -247,43 +150,16 @@ class HomeworkDatasource {
       final message = e.response?.data['message'] ?? e.message ?? 'Cập nhật bài tập thất bại';
       throw Exception(message);
     } catch (e, stackTrace) {
-      print('==========================================');
-      print('✗ PUT /homeworks/$homeworkId - General exception');
-      print('Error: $e');
-      print('Stack trace: $stackTrace');
-      print('==========================================');
       throw Exception('Cập nhật bài tập thất bại: $e');
     }
   }
 
   Future<void> deleteHomework(String homeworkId) async {
     try {
-      print('==========================================');
-      print('DELETE /homeworks/$homeworkId - Deleting homework');
-      print('==========================================');
-      
-      final response = await _dio.delete('/homeworks/$homeworkId');
-      
-      print('==========================================');
-      print('DELETE /homeworks/$homeworkId - Response received');
-      print('Status code: ${response.statusCode}');
-      print('Response data: ${response.data}');
-      print('✓ Successfully deleted homework');
-      print('==========================================');
+      await _dio.delete('/homeworks/$homeworkId');
     } on DioException catch (e) {
-      print('==========================================');
-      print('✗ DELETE /homeworks/$homeworkId - DioException');
-      print('Error message: ${e.message}');
-      print('Response data: ${e.response?.data}');
-      print('Status code: ${e.response?.statusCode}');
-      print('==========================================');
       throw Exception(e.response?.data['message'] ?? 'Xóa bài tập thất bại');
     } catch (e, stackTrace) {
-      print('==========================================');
-      print('✗ DELETE /homeworks/$homeworkId - General exception');
-      print('Error: $e');
-      print('Stack trace: $stackTrace');
-      print('==========================================');
       throw Exception('Xóa bài tập thất bại: $e');
     }
   }

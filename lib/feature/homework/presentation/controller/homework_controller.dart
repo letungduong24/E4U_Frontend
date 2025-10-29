@@ -161,7 +161,7 @@ class HomeworkController extends GetxController {
       final classesList = await _repository.getClasses();
       classes.value = classesList;
     } catch (e) {
-      print('Error loading classes: $e');
+      // Error handled silently
     }
   }
 

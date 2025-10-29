@@ -12,10 +12,7 @@ class SubmissionDatasource {
         queryParams['status'] = status;
       }
 
-      print('Making API call to /submissions/student with params: $queryParams');
       final response = await _dio.get('/submissions/student', queryParameters: queryParams);
-
-      print('API Response status: ${response.statusCode}');
 
       List<dynamic> submissionsJson;
       if (response.data['data'] is Map && response.data['data']['submissions'] is List) {
@@ -26,28 +23,20 @@ class SubmissionDatasource {
         submissionsJson = [];
       }
 
-      print('Found ${submissionsJson.length} submissions');
-
       final submissions = <SubmissionModel>[];
       for (var json in submissionsJson) {
         try {
-          print('Parsing submission JSON: $json');
           final submission = SubmissionModel.fromJson(json);
-          print('Parsed submission - Student name: ${submission.student.name}');
           submissions.add(submission);
         } catch (e) {
-          print('Error parsing submission: $e');
-          print('JSON data: $json');
+          // Skip invalid submissions
         }
       }
 
       return submissions;
     } on DioException catch (e) {
-      print('DioException: ${e.message}');
-      print('Response: ${e.response?.data}');
       throw Exception('Lấy danh sách bài nộp thất bại');
     } catch (e) {
-      print('General error: $e');
       throw Exception('Lấy danh sách bài nộp thất bại');
     }
   }
@@ -55,8 +44,6 @@ class SubmissionDatasource {
   Future<SubmissionModel> getSubmissionById(String submissionId) async {
     try {
       final response = await _dio.get('/submissions/$submissionId');
-      
-      print('API Response status: ${response.statusCode}');
 
       Map<String, dynamic> submissionJson;
       if (response.data['data'] is Map) {
@@ -73,21 +60,15 @@ class SubmissionDatasource {
 
       return SubmissionModel.fromJson(submissionJson);
     } on DioException catch (e) {
-      print('DioException: ${e.message}');
-      print('Response: ${e.response?.data}');
       throw Exception('Lấy thông tin bài nộp thất bại');
     } catch (e) {
-      print('General error: $e');
       throw Exception('Lấy thông tin bài nộp thất bại');
     }
   }
 
   Future<List<SubmissionModel>> getSubmissionsByHomeworkId(String homeworkId) async {
     try {
-      print('Making API call to /submissions/homework/$homeworkId/teacher');
       final response = await _dio.get('/submissions/homework/$homeworkId/teacher');
-
-      print('API Response status: ${response.statusCode}');
 
       List<dynamic> submissionsJson = [];
       if (response.data['data'] is Map && response.data['data']['submissions'] is List) {
@@ -96,38 +77,27 @@ class SubmissionDatasource {
         submissionsJson = response.data['submissions'];
       }
 
-      print('Found ${submissionsJson.length} submissions');
-
       final submissions = <SubmissionModel>[];
       for (var json in submissionsJson) {
         try {
-          print('Parsing submission JSON: $json');
           final submission = SubmissionModel.fromJson(json);
-          print('Parsed submission - Student name: ${submission.student.name}');
           submissions.add(submission);
         } catch (e) {
-          print('Error parsing submission: $e');
-          print('JSON data: $json');
+          // Skip invalid submissions
         }
       }
 
       return submissions;
     } on DioException catch (e) {
-      print('DioException: ${e.message}');
-      print('Response: ${e.response?.data}');
       throw Exception('Lấy danh sách bài nộp thất bại');
     } catch (e) {
-      print('General error: $e');
       throw Exception('Lấy danh sách bài nộp thất bại');
     }
   }
 
   Future<SubmissionModel?> getStudentSubmissionByHomeworkId(String homeworkId) async {
     try {
-      print('Making API call to /submissions/homework/$homeworkId/student');
       final response = await _dio.get('/submissions/homework/$homeworkId/student');
-
-      print('API Response status: ${response.statusCode}');
 
       Map<String, dynamic>? submissionJson;
       if (response.data['data'] is Map && response.data['data']['submission'] != null) {
@@ -143,11 +113,8 @@ class SubmissionDatasource {
         // No submission found
         return null;
       }
-      print('DioException: ${e.message}');
-      print('Response: ${e.response?.data}');
       throw Exception('Lấy thông tin bài nộp thất bại');
     } catch (e) {
-      print('General error: $e');
       throw Exception('Lấy thông tin bài nộp thất bại');
     }
   }
@@ -157,13 +124,10 @@ class SubmissionDatasource {
     required String file,
   }) async {
     try {
-      print('Making API call to POST /submissions');
       final response = await _dio.post('/submissions', data: {
         'homeworkId': homeworkId,
         'file': file,
       });
-
-      print('API Response status: ${response.statusCode}');
 
       Map<String, dynamic> submissionJson;
       if (response.data['data'] is Map && response.data['data']['submission'] != null) {
@@ -174,11 +138,8 @@ class SubmissionDatasource {
 
       return SubmissionModel.fromJson(submissionJson);
     } on DioException catch (e) {
-      print('DioException: ${e.message}');
-      print('Response: ${e.response?.data}');
       throw Exception('Nộp bài thất bại');
     } catch (e) {
-      print('General error: $e');
       throw Exception('Nộp bài thất bại');
     }
   }
@@ -188,12 +149,9 @@ class SubmissionDatasource {
     required String file,
   }) async {
     try {
-      print('Making API call to PUT /submissions/$submissionId');
       final response = await _dio.put('/submissions/$submissionId', data: {
         'file': file,
       });
-
-      print('API Response status: ${response.statusCode}');
 
       Map<String, dynamic> submissionJson;
       if (response.data['data'] is Map && response.data['data']['submission'] != null) {
@@ -204,27 +162,18 @@ class SubmissionDatasource {
 
       return SubmissionModel.fromJson(submissionJson);
     } on DioException catch (e) {
-      print('DioException: ${e.message}');
-      print('Response: ${e.response?.data}');
       throw Exception('Cập nhật bài nộp thất bại');
     } catch (e) {
-      print('General error: $e');
       throw Exception('Cập nhật bài nộp thất bại');
     }
   }
 
   Future<void> deleteSubmission(String submissionId) async {
     try {
-      print('Making API call to DELETE /submissions/$submissionId');
-      final response = await _dio.delete('/submissions/$submissionId');
-
-      print('API Response status: ${response.statusCode}');
+      await _dio.delete('/submissions/$submissionId');
     } on DioException catch (e) {
-      print('DioException: ${e.message}');
-      print('Response: ${e.response?.data}');
       throw Exception('Xóa bài nộp thất bại');
     } catch (e) {
-      print('General error: $e');
       throw Exception('Xóa bài nộp thất bại');
     }
   }
@@ -235,29 +184,20 @@ class SubmissionDatasource {
     String? feedback,
   }) async {
     try {
-      print('Making API call to POST /submissions/$submissionId/grade');
-      final response = await _dio.post('/submissions/$submissionId/grade', data: {
+      await _dio.post('/submissions/$submissionId/grade', data: {
         'grade': grade,
         'feedback': feedback,
       });
-
-      print('API Response status: ${response.statusCode}');
     } on DioException catch (e) {
-      print('DioException: ${e.message}');
-      print('Response: ${e.response?.data}');
       throw Exception('Chấm bài thất bại');
     } catch (e) {
-      print('General error: $e');
       throw Exception('Chấm bài thất bại');
     }
   }
 
   Future<List<SubmissionModel>> getGradedSubmissions() async {
     try {
-      print('Making API call to GET /submissions/student/graded');
       final response = await _dio.get('/submissions/student/graded');
-
-      print('API Response status: ${response.statusCode}');
 
       List<dynamic> submissionsJson = [];
       if (response.data['data'] is Map && response.data['data']['submissions'] is List) {
@@ -266,28 +206,20 @@ class SubmissionDatasource {
         submissionsJson = response.data['submissions'];
       }
 
-      print('Found ${submissionsJson.length} graded submissions');
-
       final submissions = <SubmissionModel>[];
       for (var json in submissionsJson) {
         try {
-          print('Parsing submission JSON: $json');
           final submission = SubmissionModel.fromJson(json);
-          print('Parsed submission - Student name: ${submission.student.name}');
           submissions.add(submission);
         } catch (e) {
-          print('Error parsing submission: $e');
-          print('JSON data: $json');
+          // Skip invalid submissions
         }
       }
 
       return submissions;
     } on DioException catch (e) {
-      print('DioException: ${e.message}');
-      print('Response: ${e.response?.data}');
       throw Exception('Lấy danh sách bài đã chấm thất bại');
     } catch (e) {
-      print('General error: $e');
       throw Exception('Lấy danh sách bài đã chấm thất bại');
     }
   }

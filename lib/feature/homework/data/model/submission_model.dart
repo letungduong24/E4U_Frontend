@@ -47,12 +47,8 @@ class SubmissionModel extends SubmissionEntity {
       // Parse homework
       homework_entity.HomeworkEntity homework;
       if (json['homeworkId'] is Map) {
-        print('Parsing homeworkId as Map');
         final homeworkMap = json['homeworkId'] as Map<String, dynamic>;
-        print('homeworkId map keys: ${homeworkMap.keys.toList()}');
-        print('title: ${homeworkMap['title']}');
         homework = HomeworkModel.fromJson(homeworkMap);
-        print('Parsed homework - Title: ${homework.title}');
       } else if (json['homeworkId'] is String) {
         // If homeworkId is just an ID string, create a dummy entity
         homework = HomeworkModel(
@@ -119,8 +115,6 @@ class SubmissionModel extends SubmissionEntity {
         updatedAt: updatedAt,
       );
     } catch (e) {
-      print('Error parsing submission JSON: $e');
-      print('JSON data: $json');
       rethrow;
     }
   }
@@ -202,8 +196,6 @@ class HomeworkModel extends homework_entity.HomeworkEntity {
 
     final homeworkId = json['_id'] ?? json['id'] ?? '';
     final title = json['title'] ?? 'No title';
-    
-    print('HomeworkModel.fromJson - id: $homeworkId, title: $title');
     
     return HomeworkModel(
       id: homeworkId,
