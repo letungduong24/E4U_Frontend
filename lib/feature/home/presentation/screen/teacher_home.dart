@@ -39,6 +39,13 @@ class TeacherHome extends StatelessWidget {
                 children: [
                   Expanded(
                     child: NavButton(
+                      title: 'Xem lịch dạy',
+                      onTap: () => Get.toNamed('/teacher-schedule'),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: NavButton(
                       title: 'Quản lý bài tập',
                       onTap: () => Get.toNamed('/homework-management'),
                     ),
@@ -48,13 +55,6 @@ class TeacherHome extends StatelessWidget {
                     child: NavButton(
                       title: 'Quản lý tài liệu',
                       onTap: () => Get.toNamed('/document-management'),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: NavButton(
-                      title: 'Quản lý điểm',
-                      onTap: () => Get.toNamed('/grade-list'),
                     ),
                   ),
                 ],
