@@ -27,5 +27,66 @@ class SubmissionRepositoryImpl implements SubmissionRepository {
       rethrow;
     }
   }
+
+  @override
+  Future<List<SubmissionEntity>> getSubmissionsByHomeworkId(String homeworkId) async {
+    try {
+      final submissions = await _datasource.getSubmissionsByHomeworkId(homeworkId);
+      return submissions;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<SubmissionEntity?> getStudentSubmissionByHomeworkId(String homeworkId) async {
+    try {
+      final submission = await _datasource.getStudentSubmissionByHomeworkId(homeworkId);
+      return submission;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<SubmissionEntity> submitHomework({
+    required String homeworkId,
+    required String file,
+  }) async {
+    try {
+      final submission = await _datasource.submitHomework(
+        homeworkId: homeworkId,
+        file: file,
+      );
+      return submission;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<SubmissionEntity> updateSubmission({
+    required String submissionId,
+    required String file,
+  }) async {
+    try {
+      final submission = await _datasource.updateSubmission(
+        submissionId: submissionId,
+        file: file,
+      );
+      return submission;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> deleteSubmission(String submissionId) async {
+    try {
+      await _datasource.deleteSubmission(submissionId);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
 

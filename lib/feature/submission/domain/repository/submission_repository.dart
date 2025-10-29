@@ -3,5 +3,17 @@ import 'package:e4uflutter/feature/submission/domain/entity/submission_entity.da
 abstract class SubmissionRepository {
   Future<List<SubmissionEntity>> getStudentSubmissions({String? status});
   Future<SubmissionEntity> getSubmissionById(String submissionId);
+  Future<List<SubmissionEntity>> getSubmissionsByHomeworkId(String homeworkId);
+  Future<SubmissionEntity?> getStudentSubmissionByHomeworkId(String homeworkId);
+  Future<SubmissionEntity> submitHomework({
+    required String homeworkId,
+    required String file,
+  });
+  Future<SubmissionEntity> updateSubmission({
+    required String submissionId,
+    required String file,
+  });
+
+  Future<void> deleteSubmission(String submissionId);
 }
 

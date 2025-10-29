@@ -2,6 +2,9 @@ import 'package:get/get.dart';
 import 'package:e4uflutter/feature/homework/data/datasource/homework_datasource.dart';
 import 'package:e4uflutter/feature/homework/data/repository/homework_repository_impl.dart';
 import 'package:e4uflutter/feature/homework/domain/entity/homework_entity.dart';
+import 'package:e4uflutter/feature/submission/data/datasource/submission_datasource.dart';
+import 'package:e4uflutter/feature/submission/data/repository/submission_repository_impl.dart';
+import 'package:e4uflutter/feature/submission/domain/entity/submission_entity.dart';
 
 class HomeworkController extends GetxController {
   final RxList<HomeworkEntity> homeworks = <HomeworkEntity>[].obs;
@@ -12,14 +15,25 @@ class HomeworkController extends GetxController {
   final RxString sortBy = 'deadline'.obs;
   final RxString sortOrder = 'asc'.obs;
   final RxList<Map<String, dynamic>> classes = <Map<String, dynamic>>[].obs;
+  
+  // Submissions for homework detail
+        final RxList<SubmissionEntity> submissions = <SubmissionEntity>[].obs;
+        final RxBool isLoadingSubmissions = false.obs;
+        final Rx<SubmissionEntity?> studentSubmission = Rx<SubmissionEntity?>(null);
+        final RxBool isLoadingStudentSubmission = false.obs;
 
   late final HomeworkRepositoryImpl _repository;
+  late final SubmissionRepositoryImpl _submissionRepository;
 
   @override
   void onInit() {
     super.onInit();
     final datasource = HomeworkDatasource();
     _repository = HomeworkRepositoryImpl(datasource);
+    
+    final submissionDatasource = SubmissionDatasource();
+    _submissionRepository = SubmissionRepositoryImpl(submissionDatasource);
+    
     loadHomeworks();
     loadClasses();
   }
@@ -39,6 +53,19 @@ class HomeworkController extends GetxController {
       error.value = e.toString();
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<void> loadSubmissionsByHomework(String homeworkId) async {
+    try {
+      isLoadingSubmissions.value = true;
+      error.value = '';
+      final result = await _submissionRepository.getSubmissionsByHomeworkId(homeworkId);
+      submissions.value = result;
+    } catch (e) {
+      error.value = e.toString();
+    } finally {
+      isLoadingSubmissions.value = false;
     }
   }
 
@@ -137,5 +164,68 @@ class HomeworkController extends GetxController {
       print('Error loading classes: $e');
     }
   }
-}
 
+  Future<void> loadStudentSubmissionByHomework(String homeworkId) async {
+    try {
+      isLoadingStudentSubmission.value = true;
+      error.value = '';
+      final result = await _submissionRepository.getStudentSubmissionByHomeworkId(homeworkId);
+      studentSubmission.value = result;
+    } catch (e) {
+      error.value = e.toString();
+    } finally {
+      isLoadingStudentSubmission.value = false;
+    }
+  }
+
+  Future<void> submitHomework({
+    required String homeworkId,
+    required String file,
+  }) async {
+    try {
+      isLoadingStudentSubmission.value = true;
+      error.value = '';
+      final result = await _submissionRepository.submitHomework(
+        homeworkId: homeworkId,
+        file: file,
+      );
+      studentSubmission.value = result;
+    } catch (e) {
+      error.value = e.toString();
+    } finally {
+      isLoadingStudentSubmission.value = false;
+    }
+  }
+
+  Future<void> updateSubmission({
+    required String submissionId,
+    required String file,
+  }) async {
+    try {
+      isLoadingStudentSubmission.value = true;
+      error.value = '';
+      final result = await _submissionRepository.updateSubmission(
+        submissionId: submissionId,
+        file: file,
+      );
+      studentSubmission.value = result;
+    } catch (e) {
+      error.value = e.toString();
+    } finally {
+      isLoadingStudentSubmission.value = false;
+    }
+  }
+
+  Future<void> deleteSubmission(String submissionId) async {
+    try {
+      isLoadingStudentSubmission.value = true;
+      error.value = '';
+      await _submissionRepository.deleteSubmission(submissionId);
+      studentSubmission.value = null;
+    } catch (e) {
+      error.value = e.toString();
+    } finally {
+      isLoadingStudentSubmission.value = false;
+    }
+  }
+}

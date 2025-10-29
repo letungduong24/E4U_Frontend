@@ -104,14 +104,6 @@ class TeacherDrawer extends StatelessWidget{
           SizedBox(height: 15,),
 
           DrawerItem(
-            icon: Mdi.numeric_9_plus_box_outline,
-            title: 'Quản lý điểm',
-            onTap: () {},
-          ),
-
-          SizedBox(height: 15,),
-
-          DrawerItem(
             icon: Uil.schedule,
             title: 'Lịch dạy',
             onTap: () => Get.toNamed('/teacher-schedule'),
