@@ -19,7 +19,7 @@ import 'package:e4uflutter/feature/homework/presentation/screen/homework_detail_
 import 'package:e4uflutter/feature/homework/presentation/screen/homework_submission_screen.dart';
 import 'package:e4uflutter/core/middleware/auth_middleware.dart';
 import 'package:e4uflutter/shared/presentation/screen/splash_screen.dart';
-import 'package:e4uflutter/feature/submission/presentation/screen/grade_list.dart';
+import 'package:e4uflutter/feature/homework/presentation/screen/grade_list.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

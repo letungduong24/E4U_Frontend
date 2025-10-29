@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:e4uflutter/core/config/dio_config.dart';
-import 'package:e4uflutter/feature/submission/data/model/submission_model.dart';
+import 'package:e4uflutter/feature/homework/data/model/submission_model.dart';
 
 class SubmissionDatasource {
   final Dio _dio = DioClient().dio;
@@ -249,6 +249,46 @@ class SubmissionDatasource {
     } catch (e) {
       print('General error: $e');
       throw Exception('Chấm bài thất bại');
+    }
+  }
+
+  Future<List<SubmissionModel>> getGradedSubmissions() async {
+    try {
+      print('Making API call to GET /submissions/student/graded');
+      final response = await _dio.get('/submissions/student/graded');
+
+      print('API Response status: ${response.statusCode}');
+
+      List<dynamic> submissionsJson = [];
+      if (response.data['data'] is Map && response.data['data']['submissions'] is List) {
+        submissionsJson = response.data['data']['submissions'];
+      } else if (response.data['submissions'] is List) {
+        submissionsJson = response.data['submissions'];
+      }
+
+      print('Found ${submissionsJson.length} graded submissions');
+
+      final submissions = <SubmissionModel>[];
+      for (var json in submissionsJson) {
+        try {
+          print('Parsing submission JSON: $json');
+          final submission = SubmissionModel.fromJson(json);
+          print('Parsed submission - Student name: ${submission.student.name}');
+          submissions.add(submission);
+        } catch (e) {
+          print('Error parsing submission: $e');
+          print('JSON data: $json');
+        }
+      }
+
+      return submissions;
+    } on DioException catch (e) {
+      print('DioException: ${e.message}');
+      print('Response: ${e.response?.data}');
+      throw Exception('Lấy danh sách bài đã chấm thất bại');
+    } catch (e) {
+      print('General error: $e');
+      throw Exception('Lấy danh sách bài đã chấm thất bại');
     }
   }
 }

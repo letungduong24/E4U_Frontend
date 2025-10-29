@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
-import 'package:e4uflutter/feature/submission/data/datasource/submission_datasource.dart';
-import 'package:e4uflutter/feature/submission/data/repository/submission_repository_impl.dart';
-import 'package:e4uflutter/feature/submission/domain/entity/submission_entity.dart';
+import 'package:e4uflutter/feature/homework/data/datasource/submission_datasource.dart';
+import 'package:e4uflutter/feature/homework/data/repository/submission_repository_impl.dart';
+import 'package:e4uflutter/feature/homework/domain/entity/submission_entity.dart';
 
 class SubmissionController extends GetxController {
   // Observable state
@@ -17,7 +17,7 @@ class SubmissionController extends GetxController {
   void onInit() {
     super.onInit();
     _initializeDependencies();
-    loadSubmissions();
+    // Don't auto-load - let the screen decide which data to load
   }
 
   void _initializeDependencies() {
@@ -42,8 +42,23 @@ class SubmissionController extends GetxController {
     }
   }
 
+  Future<void> loadGradedSubmissions() async {
+    try {
+      isLoading.value = true;
+      error.value = '';
+
+      final result = await _repository.getGradedSubmissions();
+
+      submissions.value = result;
+    } catch (e) {
+      error.value = e.toString().replaceFirst('Exception: ', '');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   Future<void> refreshSubmissions() async {
-    await loadSubmissions();
+    await loadGradedSubmissions();
   }
 
   Future<void> filterByStatus(String status) async {

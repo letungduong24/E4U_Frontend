@@ -2,9 +2,9 @@ import 'package:get/get.dart';
 import 'package:e4uflutter/feature/homework/data/datasource/homework_datasource.dart';
 import 'package:e4uflutter/feature/homework/data/repository/homework_repository_impl.dart';
 import 'package:e4uflutter/feature/homework/domain/entity/homework_entity.dart';
-import 'package:e4uflutter/feature/submission/data/datasource/submission_datasource.dart';
-import 'package:e4uflutter/feature/submission/data/repository/submission_repository_impl.dart';
-import 'package:e4uflutter/feature/submission/domain/entity/submission_entity.dart';
+import 'package:e4uflutter/feature/homework/data/datasource/submission_datasource.dart';
+import 'package:e4uflutter/feature/homework/data/repository/submission_repository_impl.dart';
+import 'package:e4uflutter/feature/homework/domain/entity/submission_entity.dart';
 
 class HomeworkController extends GetxController {
   final RxList<HomeworkEntity> homeworks = <HomeworkEntity>[].obs;

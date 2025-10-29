@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:e4uflutter/feature/submission/domain/entity/submission_entity.dart';
+import 'package:e4uflutter/feature/homework/domain/entity/submission_entity.dart';
 import 'package:e4uflutter/feature/homework/presentation/controller/homework_controller.dart';
 import 'package:e4uflutter/shared/presentation/dialog/success_dialog.dart';
 import 'package:e4uflutter/shared/presentation/dialog/error_dialog.dart';
