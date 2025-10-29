@@ -83,7 +83,7 @@ class AdminDrawer extends StatelessWidget{
             iconColor: Colors.white,
             backgroundColor: const Color(0xFF002055),
             textColor: Colors.white,
-            onTap: () => Get.toNamed('/home'),
+            onTap: () => Get.toNamed('/admin-home'),
           ),
 
           SizedBox(height: 15,),

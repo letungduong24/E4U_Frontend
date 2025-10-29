@@ -82,7 +82,7 @@ class TeacherDrawer extends StatelessWidget{
             iconColor: Colors.white,
             backgroundColor: const Color(0xFF002055),
             textColor: Colors.white,
-            onTap: () => Get.toNamed('/home'),
+            onTap: () => Get.toNamed('/teacher-home'),
           ),
 
           SizedBox(height: 15,),

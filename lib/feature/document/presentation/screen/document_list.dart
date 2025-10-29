@@ -14,9 +14,13 @@ class DocumentListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(DocumentManagementController());
     
-    return HeaderScaffold(
-      title: "Quản lý tài liệu",
-      body: RefreshIndicator(
+    return Obx(() {
+      final userRole = AuthController.user.value?.role;
+      final title = (userRole == 'student') ? "Tài liệu" : "Quản lý tài liệu";
+      
+      return HeaderScaffold(
+        title: title,
+        body: RefreshIndicator(
         onRefresh: () async {
           controller.resetFilters();
           await controller.loadDocuments();
@@ -269,7 +273,8 @@ class DocumentListScreen extends StatelessWidget {
           child: const Icon(Icons.add, color: Colors.white),
         );
       }),
-    );
+      );
+    });
   }
 
   void _showDocumentDetails(BuildContext context, DocumentManagementEntity document) {
