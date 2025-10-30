@@ -228,37 +228,7 @@ class ClassStudentProfileDialog extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    color: Colors.blue,
-                                  ),
-                                  child: Material(
-                                    color: Colors.transparent,
-                                    child: InkWell(
-                                      borderRadius: BorderRadius.circular(20),
-                                      onTap: () {
-                                        Navigator.pop(context); // Đóng dialog hiện tại
-                                        _showTransferClassDialog(context);
-                                      },
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(vertical: 12),
-                                        child: const Text(
-                                          "Chuyển lớp",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
+
                             ],
                           ),
                         ],
