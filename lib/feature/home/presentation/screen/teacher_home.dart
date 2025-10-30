@@ -47,7 +47,7 @@ class TeacherHome extends StatelessWidget {
                   Expanded(
                     child: NavButton(
                       title: 'Quản lý bài tập',
-                      onTap: () => Get.toNamed('/homework-management'),
+                      onTap : () => Get.toNamed('/homework-management'),
                     ),
                   ),
                   const SizedBox(width: 10),
