@@ -47,16 +47,10 @@ class TeacherEntity {
 class FileEntity {
   final String fileName;
   final String filePath;
-  final String? originalName;
-  final int? fileSize;
-  final String? mimeType;
 
   const FileEntity({
     required this.fileName,
     required this.filePath,
-    this.originalName,
-    this.fileSize,
-    this.mimeType,
   });
 }
 
