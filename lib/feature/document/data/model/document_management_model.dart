@@ -155,18 +155,12 @@ class FileModel extends FileEntity {
   const FileModel({
     required super.fileName,
     required super.filePath,
-    super.originalName,
-    super.fileSize,
-    super.mimeType,
   });
 
   factory FileModel.fromJson(Map<String, dynamic> json) {
     return FileModel(
       fileName: json['fileName'] ?? '',
       filePath: json['filePath'] ?? '',
-      originalName: json['originalName'],
-      fileSize: json['fileSize'],
-      mimeType: json['mimeType'],
     );
   }
 
@@ -174,9 +168,6 @@ class FileModel extends FileEntity {
     return {
       'fileName': fileName,
       'filePath': filePath,
-      'originalName': originalName,
-      'fileSize': fileSize,
-      'mimeType': mimeType,
     };
   }
 }
