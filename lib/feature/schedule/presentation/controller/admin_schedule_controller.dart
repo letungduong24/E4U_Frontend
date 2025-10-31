@@ -2,7 +2,6 @@ import 'package:get/get.dart';
 import 'package:e4uflutter/feature/schedule/domain/entity/schedule_entity.dart';
 import 'package:e4uflutter/feature/schedule/data/repository/schedule_repository_impl.dart';
 import 'package:e4uflutter/feature/schedule/data/datasource/schedule_datasource.dart';
-import 'package:e4uflutter/core/storage/token_storage.dart';
 
 class AdminScheduleController extends GetxController {
   final RxList<ScheduleEntity> schedules = <ScheduleEntity>[].obs;
@@ -10,7 +9,6 @@ class AdminScheduleController extends GetxController {
   final RxString error = ''.obs;
   
   late final ScheduleRepositoryImpl _repository;
-  late final TokenStorage _tokenStorage;
   DateTime? _currentDate;
 
   @override
@@ -22,7 +20,6 @@ class AdminScheduleController extends GetxController {
   void _initializeDependencies() {
     final datasource = ScheduleDataSource();
     _repository = ScheduleRepositoryImpl(datasource);
-    _tokenStorage = TokenStorage();
   }
 
   Future<void> loadSchedules([DateTime? date]) async {
@@ -33,10 +30,9 @@ class AdminScheduleController extends GetxController {
       final targetDate = date ?? DateTime.now();
       _currentDate = targetDate;
       final day = _formatDate(targetDate);
-      final token = await _tokenStorage.readToken();
       
       // Get schedules by date for admin
-      final fetchedSchedules = await _repository.getSchedulesByDate(day, token);
+      final fetchedSchedules = await _repository.getSchedulesByDate(day);
       
       schedules.value = fetchedSchedules;
       isLoading.value = false;
@@ -55,8 +51,7 @@ class AdminScheduleController extends GetxController {
       isLoading.value = true;
       error.value = '';
       
-      final token = await _tokenStorage.readToken();
-      await _repository.createSchedule(scheduleData, token);
+      await _repository.createSchedule(scheduleData);
       
       // Reload schedules after creating - reload current date
       await loadSchedules(_currentDate);
@@ -69,16 +64,14 @@ class AdminScheduleController extends GetxController {
   }
 
   Future<void> updateSchedule(String scheduleId, Map<String, dynamic> updates) async {
-    final token = await _tokenStorage.readToken();
-    await _repository.updateSchedule(scheduleId, updates, token);
+    await _repository.updateSchedule(scheduleId, updates);
     
     // Reload schedules after updating - reload current date
     await loadSchedules(_currentDate);
   }
 
   Future<void> deleteSchedule(String scheduleId) async {
-    final token = await _tokenStorage.readToken();
-    await _repository.deleteSchedule(scheduleId, token);
+    await _repository.deleteSchedule(scheduleId);
     
     // Remove from local list
     schedules.removeWhere((schedule) => schedule.id == scheduleId);
