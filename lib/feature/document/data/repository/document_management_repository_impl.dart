@@ -33,12 +33,12 @@ class DocumentManagementRepositoryImpl implements DocumentManagementRepository {
   Future<DocumentManagementEntity> createDocument({
     required String title,
     required String description,
-    required String file,
+    required String link,
   }) async {
     return await _datasource.createDocument(
       title: title,
       description: description,
-      file: file,
+      link: link,
     );
   }
 

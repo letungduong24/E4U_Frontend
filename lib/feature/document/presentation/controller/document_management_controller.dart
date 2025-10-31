@@ -55,7 +55,7 @@ class DocumentManagementController extends GetxController {
   Future<void> createDocument({
     required String title,
     required String description,
-    required String file,
+    required String link,
   }) async {
     try {
       isLoading.value = true;
@@ -64,7 +64,7 @@ class DocumentManagementController extends GetxController {
       await _repository.createDocument(
         title: title,
         description: description,
-        file: file,
+        link: link,
       );
       
       // Clear search query after creating document

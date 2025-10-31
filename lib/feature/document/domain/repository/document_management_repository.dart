@@ -14,7 +14,7 @@ abstract class DocumentManagementRepository {
   Future<DocumentManagementEntity> createDocument({
     required String title,
     required String description,
-    required String file,
+    required String link,
   });
 
   Future<DocumentManagementEntity> updateDocument(

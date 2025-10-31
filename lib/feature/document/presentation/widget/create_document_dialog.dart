@@ -252,7 +252,7 @@ class _CreateDocumentDialogState extends State<CreateDocumentDialog> {
         await widget.controller.createDocument(
           title: titleController.text,
           description: descriptionController.text,
-          file: fileController.text,
+          link: fileController.text,
         );
         Navigator.pop(context);
         _showSuccessDialog(context);

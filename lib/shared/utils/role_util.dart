@@ -23,9 +23,9 @@ class RoleUtil{
       case 'admin':
         return 'Quản trị viên';
       case 'teacher':
-        return 'Giáo viên lớp: $teachingClass';
+        return teachingClass != null ? 'Giáo viên lớp: $teachingClass' : 'Giáo viên (Chưa có lớp)';
       case 'student':
-        return 'Học viên lớp: $className';
+        return className != null ? 'Học viên lớp: $className' : 'Học viên (Chưa có lớp)';
       default:
         return 'Người dùng';
     }

@@ -8,12 +8,16 @@ class DeleteConfirmationDialog extends StatelessWidget {
   final String objectName;
   final Future<void> Function() deleteFunction;
   final GetxController controller;
+  final VoidCallback? onSuccess;
+  final BuildContext? successDialogContext;
 
   const DeleteConfirmationDialog({
     super.key,
     required this.objectName,
     required this.deleteFunction,
     required this.controller,
+    this.onSuccess,
+    this.successDialogContext,
   });
 
   @override
@@ -182,8 +186,17 @@ class DeleteConfirmationDialog extends StatelessWidget {
       // Đóng dialog xác nhận
       Navigator.pop(context);
       
+      // Gọi callback onSuccess nếu có (trước khi hiển thị success dialog)
+      onSuccess?.call();
+      
       // Hiển thị thông báo thành công
-      _showSuccessDialog(context);
+      // Sử dụng successDialogContext nếu có, nếu không thì dùng Get.context
+      Future.delayed(const Duration(milliseconds: 100), () {
+        final dialogContext = successDialogContext ?? Get.context;
+        if (dialogContext != null && dialogContext.mounted) {
+          _showSuccessDialog(dialogContext);
+        }
+      });
       
     } catch (e) {
       // Hiển thị thông báo lỗi

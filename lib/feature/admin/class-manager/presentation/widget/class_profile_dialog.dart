@@ -84,7 +84,7 @@ class ClassProfileDialog extends StatelessWidget {
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           child: const Text(
-                            "Xem danh sách học sinh",
+                            "Xem chi tiết",
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 16,
@@ -170,19 +170,24 @@ class ClassProfileDialog extends StatelessWidget {
   void _handleTeacherManagement(BuildContext context, ClassManagementController controller) {
     if (classItem.homeroomTeacherName != null) {
       // Remove teacher
+      final profileDialogContext = context;
+      final screenContext = Get.context;
       showDialog(
         context: context,
         builder: (context) => DeleteConfirmationDialog(
           objectName: "giáo viên chủ nhiệm",
           controller: controller,
           deleteFunction: () async {
-            Navigator.pop(context); // Close confirmation dialog
-            Navigator.pop(context); // Close profile dialog
             await controller.removeHomeroomTeacher(
               classItem.id,
               classItem.homeroomTeacherId,
             );
           },
+          onSuccess: () {
+            // Đóng profile dialog sau khi xóa thành công
+            Navigator.pop(profileDialogContext);
+          },
+          successDialogContext: screenContext,
         ),
       );
     } else {

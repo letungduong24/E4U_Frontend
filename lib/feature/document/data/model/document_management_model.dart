@@ -49,6 +49,12 @@ class DocumentManagementModel extends DocumentManagementEntity {
       TeacherEntity teacherEntity;
       if (json['teacherId'] is Map) {
         teacherEntity = TeacherModel.fromJson(json['teacherId']);
+      } else if (json['teacherId'] is String && (json['teacherId'] as String).isNotEmpty) {
+        // teacherId is just a string ID
+        teacherEntity = TeacherModel(
+          id: json['teacherId'] as String,
+          name: 'Unknown',
+        );
       } else {
         teacherEntity = const TeacherModel(
           id: '',

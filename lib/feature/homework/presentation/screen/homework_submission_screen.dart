@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e4uflutter/feature/homework/domain/entity/homework_entity.dart';
 import 'package:e4uflutter/shared/presentation/scaffold/header_scaffold.dart';
-import 'package:e4uflutter/feature/homework/presentation/widget/upload_file_dialog.dart';
+import 'package:e4uflutter/feature/homework/presentation/widget/create_submission_dialog.dart';
 import 'package:e4uflutter/feature/homework/presentation/widget/update_submission_dialog.dart';
 import 'package:e4uflutter/feature/homework/presentation/controller/homework_controller.dart';
 import 'package:e4uflutter/shared/presentation/dialog/delete_confirmation_dialog.dart';
@@ -466,7 +466,7 @@ class _HomeworkSubmissionScreenState extends State<HomeworkSubmissionScreen> {
   void _showUploadFileDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => UploadFileDialog(
+      builder: (context) => CreateSubmissionDialog(
         homeworkId: homework.id,
       ),
     );
