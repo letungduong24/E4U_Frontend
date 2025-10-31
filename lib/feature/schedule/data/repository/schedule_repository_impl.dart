@@ -9,54 +9,54 @@ class ScheduleRepositoryImpl implements ScheduleRepository {
   ScheduleRepositoryImpl(this._dataSource);
 
   @override
-  Future<List<ScheduleEntity>> getMySchedule(String day, String? token) async {
-    final models = await _dataSource.getMySchedule(day, token);
+  Future<List<ScheduleEntity>> getMySchedule(String day) async {
+    final models = await _dataSource.getMySchedule(day);
     return models.map((model) => _mapModelToEntity(model)).toList();
   }
 
   @override
-  Future<List<ScheduleEntity>> getAllSchedules(String? token) async {
-    final models = await _dataSource.getAllSchedules(token);
+  Future<List<ScheduleEntity>> getAllSchedules() async {
+    final models = await _dataSource.getAllSchedules();
     return models.map((model) => _mapModelToEntity(model)).toList();
   }
 
   @override
-  Future<ScheduleEntity> getScheduleById(String scheduleId, String? token) async {
-    final model = await _dataSource.getScheduleById(scheduleId, token);
+  Future<ScheduleEntity> getScheduleById(String scheduleId) async {
+    final model = await _dataSource.getScheduleById(scheduleId);
     return _mapModelToEntity(model);
   }
 
   @override
-  Future<ScheduleEntity> createSchedule(Map<String, dynamic> scheduleData, String? token) async {
-    final model = await _dataSource.createSchedule(scheduleData, token);
+  Future<ScheduleEntity> createSchedule(Map<String, dynamic> scheduleData) async {
+    final model = await _dataSource.createSchedule(scheduleData);
     return _mapModelToEntity(model);
   }
 
   @override
-  Future<ScheduleEntity> updateSchedule(String scheduleId, Map<String, dynamic> updates, String? token) async {
-    final model = await _dataSource.updateSchedule(scheduleId, updates, token);
+  Future<ScheduleEntity> updateSchedule(String scheduleId, Map<String, dynamic> updates) async {
+    final model = await _dataSource.updateSchedule(scheduleId, updates);
     return _mapModelToEntity(model);
   }
 
   @override
-  Future<bool> deleteSchedule(String scheduleId, String? token) async {
-    return await _dataSource.deleteSchedule(scheduleId, token);
+  Future<bool> deleteSchedule(String scheduleId) async {
+    return await _dataSource.deleteSchedule(scheduleId);
   }
 
   @override
-  Future<List<ScheduleEntity>> getSchedulesByClass(String classCode, String? token) async {
-    final models = await _dataSource.getSchedulesByClass(classCode, token);
+  Future<List<ScheduleEntity>> getSchedulesByClass(String classCode) async {
+    final models = await _dataSource.getSchedulesByClass(classCode);
     return models.map((model) => _mapModelToEntity(model)).toList();
   }
 
   @override
-  Future<List<ScheduleEntity>> getSchedulesByTeacher(String teacherId, String? token) async {
-    final models = await _dataSource.getSchedulesByTeacher(teacherId, token);
+  Future<List<ScheduleEntity>> getSchedulesByTeacher(String teacherId) async {
+    final models = await _dataSource.getSchedulesByTeacher(teacherId);
     return models.map((model) => _mapModelToEntity(model)).toList();
   }
 
-  Future<List<ScheduleEntity>> getSchedulesByDate(String day, String? token) async {
-    final models = await _dataSource.getSchedulesByDate(day, token);
+  Future<List<ScheduleEntity>> getSchedulesByDate(String day) async {
+    final models = await _dataSource.getSchedulesByDate(day);
     return models.map((model) => _mapModelToEntity(model)).toList();
   }
 

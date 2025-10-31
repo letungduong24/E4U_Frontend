@@ -5,7 +5,7 @@ class ScheduleDataSource {
   final DioClient _dioClient = DioClient();
 
   // Get my schedule for a specific day
-  Future<List<ScheduleModel>> getMySchedule(String day, String? token) async {
+  Future<List<ScheduleModel>> getMySchedule(String day) async {
     try {
       final response = await _dioClient.dio.get(
         '/schedules/my-schedule',
@@ -26,7 +26,7 @@ class ScheduleDataSource {
   }
 
   // Get upcoming schedules
-  Future<List<ScheduleModel>> getUpcomingSchedules(String? token) async {
+  Future<List<ScheduleModel>> getUpcomingSchedules() async {
     try {
       final response = await _dioClient.dio.get('/schedules/upcoming');
 
@@ -44,7 +44,7 @@ class ScheduleDataSource {
   }
 
   // Create new schedule (Admin only)
-  Future<ScheduleModel> createSchedule(Map<String, dynamic> scheduleData, String? token) async {
+  Future<ScheduleModel> createSchedule(Map<String, dynamic> scheduleData) async {
     try {
       final response = await _dioClient.dio.post(
         '/schedules',
@@ -64,7 +64,7 @@ class ScheduleDataSource {
   }
 
   // Update schedule (Admin only)
-  Future<ScheduleModel> updateSchedule(String scheduleId, Map<String, dynamic> updates, String? token) async {
+  Future<ScheduleModel> updateSchedule(String scheduleId, Map<String, dynamic> updates) async {
     try {
       final response = await _dioClient.dio.put(
         '/schedules/$scheduleId',
@@ -84,7 +84,7 @@ class ScheduleDataSource {
   }
 
   // Delete schedule (Admin only)
-  Future<bool> deleteSchedule(String scheduleId, String? token) async {
+  Future<bool> deleteSchedule(String scheduleId) async {
     try {
       final response = await _dioClient.dio.delete('/schedules/$scheduleId');
       return response.statusCode == 200;
@@ -94,7 +94,7 @@ class ScheduleDataSource {
   }
 
   // Get schedules by class ID (Admin only)
-  Future<List<ScheduleModel>> getSchedulesByClassId(String classId, String day, String? token) async {
+  Future<List<ScheduleModel>> getSchedulesByClassId(String classId, String day) async {
     try {
       final response = await _dioClient.dio.get(
         '/schedules/$classId',
@@ -115,7 +115,7 @@ class ScheduleDataSource {
   }
 
   // Get all schedules
-  Future<List<ScheduleModel>> getAllSchedules(String? token) async {
+  Future<List<ScheduleModel>> getAllSchedules() async {
     try {
       final response = await _dioClient.dio.get('/schedules');
 
@@ -133,7 +133,7 @@ class ScheduleDataSource {
   }
 
   // Get schedule by ID
-  Future<ScheduleModel> getScheduleById(String scheduleId, String? token) async {
+  Future<ScheduleModel> getScheduleById(String scheduleId) async {
     try {
       final response = await _dioClient.dio.get('/schedules/$scheduleId');
 
@@ -151,7 +151,7 @@ class ScheduleDataSource {
 
 
   // Get schedules by class
-  Future<List<ScheduleModel>> getSchedulesByClass(String classCode, String? token) async {
+  Future<List<ScheduleModel>> getSchedulesByClass(String classCode) async {
     try {
       final response = await _dioClient.dio.get(
         '/schedules/class/$classCode',
@@ -171,7 +171,7 @@ class ScheduleDataSource {
   }
 
   // Get schedules by teacher
-  Future<List<ScheduleModel>> getSchedulesByTeacher(String teacherId, String? token) async {
+  Future<List<ScheduleModel>> getSchedulesByTeacher(String teacherId) async {
     try {
       final response = await _dioClient.dio.get(
         '/schedules/teacher/$teacherId',
@@ -191,7 +191,7 @@ class ScheduleDataSource {
   }
 
   // Get schedules by date (Admin only)
-  Future<List<ScheduleModel>> getSchedulesByDate(String day, String? token) async {
+  Future<List<ScheduleModel>> getSchedulesByDate(String day) async {
     try {
       final response = await _dioClient.dio.get(
         '/schedules/by-date',
