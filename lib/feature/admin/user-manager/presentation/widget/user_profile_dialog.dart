@@ -156,7 +156,7 @@ class UserProfileDialog extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 5),
                                 Text(
-                                  user.teachingClass ?? "Chưa cập nhật",
+                                  user.teachingClass ?? "Chưa có lớp",
                                   style: const TextStyle(fontSize: 15),
                                 ),
                               ],

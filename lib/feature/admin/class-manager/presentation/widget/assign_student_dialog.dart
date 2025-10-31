@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e4uflutter/feature/admin/class-manager/presentation/controller/class_students_controller.dart';
 import 'package:e4uflutter/feature/admin/class-manager/domain/entity/class_management_entity.dart';
+import 'package:e4uflutter/shared/presentation/dialog/success_dialog.dart';
 
 class AssignStudentDialog extends StatefulWidget {
   final ClassStudentsController controller;
@@ -254,7 +255,8 @@ class _AssignStudentDialogState extends State<AssignStudentDialog> {
     if (selectedStudentId.isNotEmpty) {
       try {
         await widget.controller.addStudentToClass(selectedStudentId);
-        Navigator.pop(context);
+        Navigator.pop(context); // Close assign dialog
+        _showSuccessDialog(context);
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -265,4 +267,16 @@ class _AssignStudentDialogState extends State<AssignStudentDialog> {
       }
     }
   }
+
+  void _showSuccessDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => SuccessDialog(
+        title: "Thêm thành công",
+      ),
+    );
+  }
 }
+
+
+

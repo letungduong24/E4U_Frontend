@@ -11,27 +11,10 @@ class UserModel extends UserEntity {
     super.profile,
     super.currentClass,
     super.teachingClass,
-    super.enrollmentHistory,
   });
 
   // Factory để tạo từ JSON
   factory UserModel.fromJson(Map<String, dynamic> json) {
-    // Parse enrollmentHistory - handle both array of objects and array of strings
-    List<EnrollmentEntity>? enrollmentHistory;
-    if (json['enrollmentHistory'] is List) {
-      final list = json['enrollmentHistory'] as List;
-      if (list.isNotEmpty && list.first is Map) {
-        // If it's an array of objects, parse normally
-        enrollmentHistory = list
-            .where((e) => e is Map<String, dynamic>)
-            .map((e) => EnrollmentModel.fromJson(e as Map<String, dynamic>))
-            .toList();
-      } else if (list.isNotEmpty && list.first is String) {
-        // If it's an array of ObjectId strings, skip it (don't parse)
-        enrollmentHistory = [];
-      }
-    }
-    
     return UserModel(
       id: json['_id'] ?? json['id'] ?? '',
       firstName: json['firstName'] ?? '',
@@ -42,13 +25,12 @@ class UserModel extends UserEntity {
       profile: json['profile'] != null
           ? ProfileModel.fromJson(json['profile'])
           : null,
-      currentClass: json['currentClass'] is Map 
-          ? json['currentClass']['name'] 
-          : json['currentClass']?.toString(),
-      teachingClass: json['teachingClass'] is Map
-          ? json['teachingClass']['name']
-          : json['teachingClass']?.toString(),
-      enrollmentHistory: enrollmentHistory,
+      currentClass: json['currentClass'] != null
+          ? (json['currentClass'] is Map ? json['currentClass']['name'] : json['currentClass'].toString())
+          : null,
+      teachingClass: json['teachingClass'] != null
+          ? (json['teachingClass'] is Map ? json['teachingClass']['name'] : json['teachingClass'].toString())
+          : null,
     );
   }
 
@@ -65,7 +47,6 @@ class UserModel extends UserEntity {
           : null,
       'currentClass': currentClass,
       'teachingClass': teachingClass,
-      'enrollmentHistory': enrollmentHistory,
     };
   }
 }
@@ -105,33 +86,3 @@ class ProfileModel extends ProfileEntity {
   }
 }
 
-class EnrollmentModel extends EnrollmentEntity {
-  const EnrollmentModel({
-    required super.className,
-    super.completedAt,
-    required super.enrolledAt,
-    required super.status,
-  });
-
-  factory EnrollmentModel.fromJson(Map<String, dynamic> json) {
-    // Handle both object and string format for class
-    String className;
-    if (json['class'] is Map) {
-      className = json['class']['name']?.toString() ?? '';
-    } else if (json['class'] is String) {
-      className = json['class'] as String;
-    } else {
-      className = json['className']?.toString() ?? '';
-    }
-    
-    return EnrollmentModel(
-      className: className,
-      completedAt: json['completedAt'] != null 
-          ? DateTime.tryParse(json['completedAt']) 
-          : null,
-      enrolledAt: DateTime.parse(json['enrolledAt']),
-      status: json['status'].toString(),
-    );
-  }
-
-}

@@ -65,13 +65,13 @@ class ClassStudentsScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "Giáo viên: Nguyễn Thị C", // TODO: Get actual teacher name
+                    Obx(() => Text(
+                      "Giáo viên: ${controller.homeroomTeacherName.value}",
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey[700],
                       ),
-                    ),
+                    )),
                     const SizedBox(height: 8),
                     Text(
                       "Mã lớp: ${controller.classCode.value}",
@@ -189,8 +189,6 @@ class ClassStudentsScreen extends StatelessWidget {
             }
             
             return SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: SingleChildScrollView(
                 scrollDirection: Axis.vertical,
                 child: Column(
                   children: [
@@ -206,8 +204,7 @@ class ClassStudentsScreen extends StatelessWidget {
                       ),
                       child: Row(
                         children: [
-                          SizedBox(
-                            width: 200,
+                        Expanded(
                             child: Row(
                               children: [
                                 const Text(
@@ -220,26 +217,14 @@ class ClassStudentsScreen extends StatelessWidget {
                             ),
                           ),
                           SizedBox(
-                            width: 150,
-                            child: Row(
-                              children: [
-                                const Text(
-                                  "Điểm trung bình",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                const SizedBox(width: 4),
-                                Icon(Icons.keyboard_arrow_up, size: 16),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            width: 100,
+                          width: 120,
                             child: Text(
                               "Xem chi tiết",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black87,
                               ),
+                            textAlign: TextAlign.center,
                             ),
                           ),
                         ],
@@ -276,25 +261,14 @@ class ClassStudentsScreen extends StatelessWidget {
                         ),
                         child: Row(
                           children: [
-                            SizedBox(
-                              width: 200,
+                            Expanded(
                               child: Text(
                                 student.fullName,
                                 style: const TextStyle(fontWeight: FontWeight.w500),
                               ),
                             ),
                             SizedBox(
-                              width: 150,
-                              child: Text(
-                                "8.5", // TODO: Get actual average score
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 100,
+                              width: 120,
                               child: IconButton(
                                 onPressed: () => _showStudentDetails(context, student),
                                 icon: Icon(
@@ -308,7 +282,6 @@ class ClassStudentsScreen extends StatelessWidget {
                         ),
                       )).toList(),
                   ],
-                ),
               ),
             );
           }),
@@ -363,10 +336,12 @@ class ClassStudentsScreen extends StatelessWidget {
         objectName: "lớp học",
         deleteFunction: () async {
           await classController.deleteClass(classItem.id);
-          Navigator.pop(context); // Close confirmation dialog
-          Navigator.pop(context); // Go back to class list
         },
         controller: classController,
+        onSuccess: () {
+          // Navigate back to class list after successful deletion
+          Get.offNamed('/class-management');
+        },
       ),
     );
   }

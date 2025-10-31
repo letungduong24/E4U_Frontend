@@ -89,13 +89,13 @@ class DocumentManagementDatasource {
   Future<DocumentManagementModel> createDocument({
     required String title,
     required String description,
-    required String file,
+    required String link,
   }) async {
     try {
       final requestData = {
         'title': title,
         'description': description,
-        'file': file,
+        'link': link,
       };
 
       final response = await _dio.post('/documents', data: requestData);

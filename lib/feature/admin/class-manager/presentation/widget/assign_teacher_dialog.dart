@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:e4uflutter/shared/presentation/dialog/success_dialog.dart';
 import 'package:e4uflutter/feature/admin/class-manager/presentation/controller/class_management_controller.dart';
 import 'package:e4uflutter/feature/admin/class-manager/domain/entity/class_management_entity.dart';
 
@@ -258,6 +259,18 @@ class _AssignTeacherDialogState extends State<AssignTeacherDialog> {
           selectedTeacherId,
         );
         Navigator.pop(context);
+        // Hiển thị success dialog
+        final screenContext = Get.context;
+        if (screenContext != null && screenContext.mounted) {
+          Future.delayed(const Duration(milliseconds: 200), () {
+            showDialog(
+              context: screenContext,
+              builder: (context) => SuccessDialog(
+                title: "Chọn GVCN thành công",
+              ),
+            );
+          });
+        }
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

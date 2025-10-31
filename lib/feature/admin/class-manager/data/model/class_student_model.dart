@@ -10,15 +10,10 @@ class ClassStudentModel extends ClassStudentEntity {
     required super.classId,
     required super.className,
     required super.classCode,
-    required super.enrollmentId,
-    required super.enrollmentStatus,
-    required super.enrolledAt,
-    required super.enrollmentNotes,
   });
 
   factory ClassStudentModel.fromJson(Map<String, dynamic> json) {
     final currentClass = json['currentClass'] as Map<String, dynamic>?;
-    final enrollmentInfo = json['enrollmentInfo'] as Map<String, dynamic>?;
     
     return ClassStudentModel(
       id: json['_id'] as String,
@@ -29,10 +24,6 @@ class ClassStudentModel extends ClassStudentEntity {
       classId: currentClass?['_id'] as String? ?? '',
       className: currentClass?['name'] as String? ?? '',
       classCode: currentClass?['code'] as String? ?? '',
-      enrollmentId: enrollmentInfo?['_id'] as String? ?? '',
-      enrollmentStatus: enrollmentInfo?['status'] as String? ?? '',
-      enrolledAt: DateTime.parse(enrollmentInfo?['enrolledAt'] as String? ?? DateTime.now().toIso8601String()),
-      enrollmentNotes: enrollmentInfo?['notes'] as String? ?? '',
     );
   }
 
@@ -47,12 +38,6 @@ class ClassStudentModel extends ClassStudentEntity {
         'name': className,
         'code': classCode,
       },
-      'enrollmentInfo': {
-        '_id': enrollmentId,
-        'status': enrollmentStatus,
-        'enrolledAt': enrolledAt.toIso8601String(),
-        'notes': enrollmentNotes,
-      },
     };
   }
 }
@@ -65,6 +50,7 @@ class ClassStudentsResponseModel extends ClassStudentsResponseEntity {
     required super.description,
     required super.maxStudents,
     required super.isActive,
+    super.homeroomTeacherName,
     required super.students,
   });
 
@@ -76,6 +62,15 @@ class ClassStudentsResponseModel extends ClassStudentsResponseEntity {
       ClassStudentModel.fromJson(studentJson as Map<String, dynamic>)
     ).toList();
 
+    // Parse homeroom teacher name from class data
+    String? homeroomTeacherName;
+    if (classData['homeroomTeacher'] != null) {
+      final teacherData = classData['homeroomTeacher'];
+      if (teacherData is Map<String, dynamic>) {
+        homeroomTeacherName = _buildTeacherName(teacherData);
+      }
+    }
+
     return ClassStudentsResponseModel(
       classId: classData['_id'] as String,
       className: classData['name'] as String,
@@ -83,8 +78,33 @@ class ClassStudentsResponseModel extends ClassStudentsResponseEntity {
       description: classData['description'] as String? ?? '',
       maxStudents: classData['maxStudents'] as int,
       isActive: classData['isActive'] as bool,
+      homeroomTeacherName: homeroomTeacherName,
       students: students,
     );
+  }
+
+  static String? _buildTeacherName(Map<String, dynamic> teacherData) {
+    // Try different possible formats for teacher name
+    if (teacherData['fullName'] != null) {
+      return teacherData['fullName'];
+    }
+    if (teacherData['name'] != null) {
+      return teacherData['name'];
+    }
+    
+    // Build from firstName and lastName
+    final firstName = teacherData['firstName']?.toString() ?? '';
+    final lastName = teacherData['lastName']?.toString() ?? '';
+    
+    if (firstName.isNotEmpty && lastName.isNotEmpty) {
+      return '$firstName $lastName';
+    } else if (firstName.isNotEmpty) {
+      return firstName;
+    } else if (lastName.isNotEmpty) {
+      return lastName;
+    }
+    
+    return null;
   }
 
   Map<String, dynamic> toJson() {

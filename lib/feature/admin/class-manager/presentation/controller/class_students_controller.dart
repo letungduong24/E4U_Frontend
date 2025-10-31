@@ -14,6 +14,7 @@ class ClassStudentsController extends GetxController {
   final RxString classId = ''.obs;
   final RxInt maxStudents = 0.obs;
   final RxBool isActive = true.obs;
+  final RxString homeroomTeacherName = ''.obs;
   final RxList<Map<String, dynamic>> unassignedStudents = <Map<String, dynamic>>[].obs;
 
   // Dependencies
@@ -47,19 +48,20 @@ class ClassStudentsController extends GetxController {
       isLoading.value = true;
       error.value = '';
       
+      // Load class information from /classes/:id to get full details including teacher
+      final classInfo = await _repository.getClassById(classId.value);
+      
+      // Update class info
+      className.value = classInfo.name;
+      classCode.value = classInfo.code;
+      maxStudents.value = classInfo.maxStudents;
+      isActive.value = classInfo.isActive;
+      homeroomTeacherName.value = classInfo.homeroomTeacherName ?? 'Chưa có giáo viên';
+      
+      // Load students list from /classes/:id/students
       final response = await _repository.getClassStudents(classId.value);
-      
       students.value = response.students;
-      maxStudents.value = response.maxStudents;
-      isActive.value = response.isActive;
       
-      // Update class info if not set from arguments
-      if (className.value.isEmpty) {
-        className.value = response.className;
-      }
-      if (classCode.value.isEmpty) {
-        classCode.value = response.classCode;
-      }
     } catch (e) {
       error.value = e.toString();
     } finally {
@@ -93,17 +95,23 @@ class ClassStudentsController extends GetxController {
     await loadClassStudents();
   }
 
-  Future<void> loadUnassignedStudents() async {
+  Future<void> loadUnassignedStudents({bool setLoading = true}) async {
     try {
-      isLoading.value = true;
-      error.value = '';
+      if (setLoading) {
+        isLoading.value = true;
+        error.value = '';
+      }
       
       final students = await _repository.getUnassignedStudents();
       unassignedStudents.value = students;
     } catch (e) {
-      error.value = e.toString();
+      if (setLoading) {
+        error.value = e.toString();
+      }
     } finally {
-      isLoading.value = false;
+      if (setLoading) {
+        isLoading.value = false;
+      }
     }
   }
 
@@ -118,6 +126,8 @@ class ClassStudentsController extends GetxController {
       
       // Reload students after successful removal
       await loadClassStudents();
+      // Reload unassigned students list to reflect the change (without setting loading state)
+      await loadUnassignedStudents(setLoading: false);
     } catch (e) {
       error.value = e.toString();
       rethrow; // Re-throw để dialog có thể catch
@@ -137,6 +147,8 @@ class ClassStudentsController extends GetxController {
       
       // Reload students after successful addition
       await loadClassStudents();
+      // Reload unassigned students list to reflect the change (without setting loading state)
+      await loadUnassignedStudents(setLoading: false);
     } catch (e) {
       error.value = e.toString();
       rethrow; // Re-throw để dialog có thể catch

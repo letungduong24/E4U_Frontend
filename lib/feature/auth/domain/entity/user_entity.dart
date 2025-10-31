@@ -8,7 +8,6 @@ class UserEntity {
   final ProfileEntity? profile;
   final String? currentClass;
   final String? teachingClass;
-  final List<EnrollmentEntity>? enrollmentHistory;
 
   const UserEntity({
     required this.id,
@@ -20,7 +19,6 @@ class UserEntity {
     this.profile,
     this.currentClass,
     this.teachingClass,
-    this.enrollmentHistory,
   });
 }
 
@@ -39,19 +37,5 @@ class ProfileEntity {
     this.gender,
     this.address,
     this.notification,
-  });
-}
-
-class EnrollmentEntity {
-  final String className;
-  final String status;
-  final DateTime? completedAt;
-  final DateTime enrolledAt;
-
-  const EnrollmentEntity({
-    required this.className,
-    required this.status,
-    this.completedAt,
-    required this.enrolledAt,
   });
 }

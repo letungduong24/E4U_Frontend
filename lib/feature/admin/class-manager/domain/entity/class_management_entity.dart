@@ -6,7 +6,6 @@ class ClassManagementEntity {
   final String homeroomTeacherId;
   final String? homeroomTeacherName;
   final List<String> studentIds;
-  final List<String> enrollmentIds;
   final int maxStudents;
   final bool isActive;
   final DateTime createdAt;
@@ -20,7 +19,6 @@ class ClassManagementEntity {
     required this.homeroomTeacherId,
     this.homeroomTeacherName,
     required this.studentIds,
-    required this.enrollmentIds,
     required this.maxStudents,
     required this.isActive,
     required this.createdAt,

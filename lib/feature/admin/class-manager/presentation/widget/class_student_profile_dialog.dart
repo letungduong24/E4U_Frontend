@@ -3,15 +3,20 @@ import 'package:get/get.dart';
 import 'package:e4uflutter/feature/admin/class-manager/domain/entity/class_student_entity.dart';
 import 'package:e4uflutter/feature/admin/class-manager/presentation/controller/class_students_controller.dart';
 import 'package:e4uflutter/shared/presentation/dialog/delete_confirmation_dialog.dart';
-import 'package:intl/intl.dart';
 
-class ClassStudentProfileDialog extends StatelessWidget {
+class ClassStudentProfileDialog extends StatefulWidget {
   final ClassStudentEntity student;
 
   const ClassStudentProfileDialog({
     super.key,
     required this.student,
   });
+
+  @override
+  State<ClassStudentProfileDialog> createState() => _ClassStudentProfileDialogState();
+}
+
+class _ClassStudentProfileDialogState extends State<ClassStudentProfileDialog> {
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +77,7 @@ class ClassStudentProfileDialog extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
-                                student.fullName,
+                                widget.student.fullName,
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 20,
@@ -111,7 +116,7 @@ class ClassStudentProfileDialog extends StatelessWidget {
                               const SizedBox(height: 5),
                               Expanded(
                                 child: Text(
-                                  student.email,
+                                  widget.student.email,
                                   style: const TextStyle(fontSize: 15),
                                   textAlign: TextAlign.end,
                                 ),
@@ -132,7 +137,7 @@ class ClassStudentProfileDialog extends StatelessWidget {
                               ),
                               const SizedBox(height: 5),
                               Text(
-                                student.className,
+                                widget.student.className,
                                 style: const TextStyle(fontSize: 15),
                               ),
                             ],
@@ -151,45 +156,7 @@ class ClassStudentProfileDialog extends StatelessWidget {
                               ),
                               const SizedBox(height: 5),
                               Text(
-                                student.classCode,
-                                style: const TextStyle(fontSize: 15),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
-                                "Ngày nhập học:",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15,
-                                ),
-                              ),
-                              const SizedBox(height: 5),
-                              Text(
-                                DateFormat('dd/MM/yyyy').format(student.enrolledAt),
-                                style: const TextStyle(fontSize: 15),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
-                                "Ghi chú:",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15,
-                                ),
-                              ),
-                              const SizedBox(height: 5),
-                              Text(
-                                student.enrollmentNotes.isNotEmpty ? student.enrollmentNotes : "Không có ghi chú",
+                                widget.student.classCode,
                                 style: const TextStyle(fontSize: 15),
                               ),
                             ],
@@ -209,7 +176,6 @@ class ClassStudentProfileDialog extends StatelessWidget {
                                     child: InkWell(
                                       borderRadius: BorderRadius.circular(20),
                                       onTap: () {
-                                        Navigator.pop(context); // Đóng dialog hiện tại
                                         _showRemoveStudentConfirmation(context);
                                       },
                                       child: Container(
@@ -246,23 +212,30 @@ class ClassStudentProfileDialog extends StatelessWidget {
 
   void _showRemoveStudentConfirmation(BuildContext context) {
     final controller = Get.find<ClassStudentsController>();
+    // Lưu context của profile dialog để đóng sau khi xóa thành công
+    final profileDialogContext = context;
+    // Lấy context của class_students_screen để hiển thị success dialog đúng
+    final screenContext = Get.context;
     showDialog(
       context: context,
-      builder: (context) => DeleteConfirmationDialog(
+      builder: (dialogContext) => DeleteConfirmationDialog(
         objectName: "học sinh khỏi lớp",
         deleteFunction: () async {
-          Navigator.pop(context); // Close confirmation dialog
-          await controller.removeStudentFromClass(student.id);
-          Navigator.pop(context); // Close profile dialog after API call
+          await controller.removeStudentFromClass(widget.student.id);
         },
         controller: controller,
+        onSuccess: () {
+          // Đóng profile dialog sau khi xóa thành công
+          Navigator.pop(profileDialogContext);
+        },
+        successDialogContext: screenContext,
       ),
     );
   }
 
   void _showTransferClassDialog(BuildContext context) {
     // TODO: Implement transfer class dialog
-    print('Transfer student ${student.id} to another class');
+    print('Transfer student ${widget.student.id} to another class');
     Navigator.pop(context); // Close profile dialog
   }
 }

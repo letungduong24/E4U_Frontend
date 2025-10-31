@@ -7,10 +7,6 @@ class ClassStudentEntity {
   final String classId;
   final String className;
   final String classCode;
-  final String enrollmentId;
-  final String enrollmentStatus;
-  final DateTime enrolledAt;
-  final String enrollmentNotes;
 
   const ClassStudentEntity({
     required this.id,
@@ -21,10 +17,6 @@ class ClassStudentEntity {
     required this.classId,
     required this.className,
     required this.classCode,
-    required this.enrollmentId,
-    required this.enrollmentStatus,
-    required this.enrolledAt,
-    required this.enrollmentNotes,
   });
 }
 
@@ -35,6 +27,7 @@ class ClassStudentsResponseEntity {
   final String description;
   final int maxStudents;
   final bool isActive;
+  final String? homeroomTeacherName;
   final List<ClassStudentEntity> students;
 
   const ClassStudentsResponseEntity({
@@ -44,6 +37,7 @@ class ClassStudentsResponseEntity {
     required this.description,
     required this.maxStudents,
     required this.isActive,
+    this.homeroomTeacherName,
     required this.students,
   });
 }

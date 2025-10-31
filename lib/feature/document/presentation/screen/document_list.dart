@@ -5,10 +5,41 @@ import 'package:e4uflutter/feature/document/presentation/widget/create_document_
 import 'package:e4uflutter/feature/document/domain/entity/document_management_entity.dart';
 import 'package:e4uflutter/shared/presentation/scaffold/header_scaffold.dart';
 import 'package:e4uflutter/feature/auth/presentation/controller/auth_controller.dart';
+import 'package:e4uflutter/shared/presentation/dialog/error_dialog.dart';
 import 'package:intl/intl.dart';
 
-class DocumentListScreen extends StatelessWidget {
+class DocumentListScreen extends StatefulWidget {
   const DocumentListScreen({super.key});
+
+  @override
+  State<DocumentListScreen> createState() => _DocumentListScreenState();
+}
+
+class _DocumentListScreenState extends State<DocumentListScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkTeacherClass();
+    });
+  }
+
+  void _checkTeacherClass() {
+    final user = AuthController.user.value;
+    final teachingClass = user?.teachingClass;
+    if (user?.role == 'teacher' && (teachingClass == null || teachingClass.isEmpty)) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => ErrorDialog(
+          message: "Bạn chưa được phân công vào lớp học. Vui lòng liên hệ quản trị viên để được phân công lớp.",
+        ),
+      ).then((_) {
+        // Navigate về home khi đóng dialog
+        Get.offAllNamed('/teacher-home');
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
