@@ -29,6 +29,9 @@ class AuthController extends GetxController {
   }
 
   void _initializeDependencies() {
+    //khoi tao depen datasource, khoi tao gia tri
+    //lay user o dong 40
+    //sau jkhi khoi tao xong quay ve middlke ửae
     _authDatasource = AuthDatasource();
     _tokenStorage = TokenStorage();
     _authRepository = AuthRepositoryImpl(_authDatasource, _tokenStorage);
