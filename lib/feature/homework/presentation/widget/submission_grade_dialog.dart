@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e4uflutter/feature/homework/domain/entity/submission_entity.dart';
+import 'package:e4uflutter/feature/homework/presentation/controller/grade_controller.dart';
 import 'package:e4uflutter/feature/homework/presentation/controller/homework_controller.dart';
 import 'package:e4uflutter/shared/presentation/dialog/success_dialog.dart';
 import 'package:e4uflutter/shared/presentation/dialog/error_dialog.dart';
@@ -415,12 +416,21 @@ class _SubmissionGradeDialogState extends State<SubmissionGradeDialog> {
     }
 
     try {
-      final controller = Get.find<HomeworkController>();
-      await controller.gradeSubmission(
+      // Get or create GradeController instance
+      final gradeController = Get.put(GradeController());
+      await gradeController.gradeSubmission(
         submissionId: widget.submission.id,
         grade: grade,
         feedback: feedbackController.text,
       );
+      
+      // Reload homework submissions if HomeworkController exists
+      try {
+        final homeworkController = Get.find<HomeworkController>();
+        await homeworkController.loadSubmissionsByHomework(widget.submission.homeworkId);
+      } catch (_) {
+        // HomeworkController might not be available, ignore
+      }
       
       // Only close dialog if successful
       Navigator.pop(context);

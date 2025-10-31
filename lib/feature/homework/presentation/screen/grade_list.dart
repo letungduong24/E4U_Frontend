@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:e4uflutter/feature/homework/presentation/controller/submission_controller.dart';
+import 'package:e4uflutter/feature/homework/presentation/controller/grade_controller.dart';
 import 'package:e4uflutter/shared/presentation/scaffold/header_scaffold.dart';
 import 'package:e4uflutter/feature/auth/presentation/controller/auth_controller.dart';
 import 'package:intl/intl.dart';
@@ -10,7 +10,7 @@ class GradeListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(SubmissionController(), tag: 'graded');
+    final controller = Get.put(GradeController(), tag: 'graded');
     
     // Always load graded submissions on first build
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -175,7 +175,7 @@ class GradeListScreen extends StatelessWidget {
   Widget _buildSubmissionRow(BuildContext context, dynamic submission) {
     final homework = submission.homework;
     final isGraded = submission.status == 'graded';
-    final submissionController = Get.find<SubmissionController>(tag: 'graded');
+    final submissionController = Get.find<GradeController>(tag: 'graded');
     final gradeColor = submissionController.getGradeColor(submission.grade);
 
     return Container(
@@ -289,7 +289,7 @@ class GradeListScreen extends StatelessWidget {
                             height: 60,
                             decoration: BoxDecoration(
                               color: Color(int.parse(
-                                Get.find<SubmissionController>(tag: 'graded')
+                                Get.find<GradeController>(tag: 'graded')
                                     .getGradeColor(submission.grade)!
                                     .replaceFirst('#', '0xFF')
                               )),

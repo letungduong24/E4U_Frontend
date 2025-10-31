@@ -3,52 +3,42 @@ import 'package:e4uflutter/feature/homework/data/datasource/submission_datasourc
 import 'package:e4uflutter/feature/homework/data/repository/submission_repository_impl.dart';
 import 'package:e4uflutter/feature/homework/domain/entity/submission_entity.dart';
 
-class SubmissionController extends GetxController {
+class GradeController extends GetxController {
   // Observable state
+
+  //ds bài nộp
+  //tải dữ liệu loading
+  //tbao lỗi
+  // thay đổi trạng thái lọc submiit hoặc graded
   final RxList<SubmissionEntity> submissions = <SubmissionEntity>[].obs;
   final RxBool isLoading = false.obs;
   final RxString error = ''.obs;
   final RxString selectedStatus = ''.obs;
 
   // Dependencies
+  //Controller phụ thuộc vào repository, nên nó cần khởi tạo SubmissionRepositoryImpl.
   late final SubmissionRepositoryImpl _repository;
-
+  //hàm khưởi tạo  ban đầu giống initState
   @override
   void onInit() {
     super.onInit();
     _initializeDependencies();
     // Don't auto-load - let the screen decide which data to load
   }
-
+  // khởi tạo phụ thuộc
   void _initializeDependencies() {
     final datasource = SubmissionDatasource();
     _repository = SubmissionRepositoryImpl(datasource);
   }
 
-  Future<void> loadSubmissions() async {
-    try {
-      isLoading.value = true;
-      error.value = '';
 
-      final result = await _repository.getStudentSubmissions(
-        status: selectedStatus.value.isEmpty ? null : selectedStatus.value,
-      );
-
-      submissions.value = result;
-    } catch (e) {
-      error.value = e.toString().replaceFirst('Exception: ', '');
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
+  //xem danh sách abfi tập đã chấm điểm
   Future<void> loadGradedSubmissions() async {
     try {
       isLoading.value = true;
       error.value = '';
 
       final result = await _repository.getGradedSubmissions();
-
       submissions.value = result;
     } catch (e) {
       error.value = e.toString().replaceFirst('Exception: ', '');
@@ -57,27 +47,28 @@ class SubmissionController extends GetxController {
     }
   }
 
-  Future<void> refreshSubmissions() async {
-    await loadGradedSubmissions();
-  }
-
-  Future<void> filterByStatus(String status) async {
-    selectedStatus.value = status;
-    await loadSubmissions();
-  }
-
-  void clearStatusFilter() {
-    selectedStatus.value = '';
-  }
-
-  String getStatusDisplayName(String status) {
-    switch (status) {
-      case 'submitted':
-        return 'Đã nộp';
-      case 'graded':
-        return 'Đã chấm';
-      default:
-        return status;
+  Future<void> gradeSubmission({
+    required String submissionId,
+    required int grade,
+    String? feedback,
+  }) async {
+    try {
+      isLoading.value = true;
+      error.value = '';
+      
+      await _repository.gradeSubmission(
+        submissionId: submissionId,
+        grade: grade,
+        feedback: feedback,
+      );
+      
+      // Reload graded submissions to get updated data
+      await loadGradedSubmissions();
+    } catch (e) {
+      error.value = e.toString().replaceFirst('Exception: ', '');
+      rethrow;
+    } finally {
+      isLoading.value = false;
     }
   }
 

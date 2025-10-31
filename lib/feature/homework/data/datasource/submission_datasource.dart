@@ -4,7 +4,7 @@ import 'package:e4uflutter/feature/homework/data/model/submission_model.dart';
 
 class SubmissionDatasource {
   final Dio _dio = DioClient().dio;
-
+  //xem ds bai nop cua hs
   Future<List<SubmissionModel>> getStudentSubmissions({String? status}) async {
     try {
       final queryParams = <String, dynamic>{};
@@ -40,7 +40,7 @@ class SubmissionDatasource {
       throw Exception('Lấy danh sách bài nộp thất bại');
     }
   }
-
+  //xem chi tiet btvn cu the
   Future<SubmissionModel> getSubmissionById(String submissionId) async {
     try {
       final response = await _dio.get('/submissions/$submissionId');
@@ -94,7 +94,7 @@ class SubmissionDatasource {
       throw Exception('Lấy danh sách bài nộp thất bại');
     }
   }
-
+  //xembafaif tập về nhà
   Future<SubmissionModel?> getStudentSubmissionByHomeworkId(String homeworkId) async {
     try {
       final response = await _dio.get('/submissions/homework/$homeworkId/student');
@@ -194,7 +194,7 @@ class SubmissionDatasource {
       throw Exception('Chấm bài thất bại');
     }
   }
-
+  //xem ds bài đc chấm
   Future<List<SubmissionModel>> getGradedSubmissions() async {
     try {
       final response = await _dio.get('/submissions/student/graded');

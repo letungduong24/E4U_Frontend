@@ -7,6 +7,7 @@ import 'package:e4uflutter/feature/homework/data/repository/submission_repositor
 import 'package:e4uflutter/feature/homework/domain/entity/submission_entity.dart';
 
 class HomeworkController extends GetxController {
+  // Home
   final RxList<HomeworkEntity> homeworks = <HomeworkEntity>[].obs;
   final RxBool isLoading = false.obs;
   final RxString error = ''.obs;
@@ -17,10 +18,10 @@ class HomeworkController extends GetxController {
   final RxList<Map<String, dynamic>> classes = <Map<String, dynamic>>[].obs;
   
   // Submissions for homework detail
-        final RxList<SubmissionEntity> submissions = <SubmissionEntity>[].obs;
-        final RxBool isLoadingSubmissions = false.obs;
-        final Rx<SubmissionEntity?> studentSubmission = Rx<SubmissionEntity?>(null);
-        final RxBool isLoadingStudentSubmission = false.obs;
+  final RxList<SubmissionEntity> submissions = <SubmissionEntity>[].obs;
+  final RxBool isLoadingSubmissions = false.obs;
+  final Rx<SubmissionEntity?> studentSubmission = Rx<SubmissionEntity?>(null);
+  final RxBool isLoadingStudentSubmission = false.obs;
 
   late final HomeworkRepositoryImpl _repository;
   late final SubmissionRepositoryImpl _submissionRepository;
@@ -229,25 +230,4 @@ class HomeworkController extends GetxController {
     }
   }
 
-  Future<void> gradeSubmission({
-    required String submissionId,
-    required int grade,
-    String? feedback,
-  }) async {
-    try {
-      isLoadingSubmissions.value = true;
-      error.value = '';
-      await _submissionRepository.gradeSubmission(
-        submissionId: submissionId,
-        grade: grade,
-        feedback: feedback,
-      );
-      // Reload submissions to get updated data
-      await loadSubmissionsByHomework(submissions.first.homeworkId);
-    } catch (e) {
-      error.value = e.toString();
-    } finally {
-      isLoadingSubmissions.value = false;
-    }
-  }
 }
